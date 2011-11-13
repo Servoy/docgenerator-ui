@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Servoy Documentation Generator Plugin (UI Contributions)
+Bundle-SymbolicName: com.servoy.eclipse.docgenerator.ui;singleton:=true
+Bundle-Version: 1.0.0.0
+Bundle-Activator: com.servoy.eclipse.docgenerator.ui.Activator
+Bundle-Vendor: Servoy
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime,
+ com.servoy.eclipse.docgenerator,
+ org.eclipse.jdt.core,
+ org.eclipse.core.resources
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy

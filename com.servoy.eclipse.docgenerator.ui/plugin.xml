@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+	<extension point="org.eclipse.ui.commands">
+		<command
+			defaultHandler="com.servoy.eclipse.docgenerator.ui.handler.AutopilotDocumentationGenerationHandler"
+			id="com.servoy.eclipse.docgenerator.ui.generateWithAutopilotCommand" name="Generate documentation XML for each Plugin and Bean under this package">
+		</command>
+		<command
+			defaultHandler="com.servoy.eclipse.docgenerator.ui.handler.ExplicitDocumentationGenerationHandler"
+			id="com.servoy.eclipse.docgenerator.ui.generateExplicitlyCommand" name="Generate documentation XML specifically for this package">
+		</command>
+	</extension>
+	<extension point="org.eclipse.ui.menus">
+		<menuContribution locationURI="popup:org.eclipse.jdt.ui.PackageExplorer">
+			<menu label="Servoy">
+				<command commandId="com.servoy.eclipse.docgenerator.ui.generateWithAutopilotCommand"
+					icon="icons/docgenerator_bean.gif" label="Generate documentation XMLs for Plugins and Beans"
+					style="push">
+					<visibleWhen>
+						<with variable="activeMenuSelection">
+							<count value="1"/>
+							<iterate>
+								<or>
+									<instanceof value="org.eclipse.jdt.core.IPackageFragment">
+									</instanceof>
+									<instanceof value="org.eclipse.jdt.core.IJavaProject">
+									</instanceof>
+								</or>
+							</iterate>
+						</with>
+					</visibleWhen>
+				</command>
+				<command commandId="com.servoy.eclipse.docgenerator.ui.generateExplicitlyCommand"
+					icon="icons/docgenerator.gif" label="Generate single documentation XML"
+					style="push">
+					<visibleWhen>
+						<with variable="activeMenuSelection">
+							<count value="1"/>
+							<iterate>
+								<instanceof value="org.eclipse.jdt.core.IPackageFragment">
+								</instanceof>
+							</iterate>
+						</with>
+					</visibleWhen>
+				</command>
+			</menu>
+		</menuContribution>
+	</extension>
+	<extension point="org.eclipse.ui.preferencePages">
+	 	<page id="com.servoy.eclipse.docgenerator.ui.preferences"
+	 		name="Servoy Documentation Generator"
+	    	class="com.servoy.eclipse.docgenerator.ui.DocGeneratorPreferencePage">
+	   	</page>
+	</extension>
+</plugin>

@@ -103,25 +103,25 @@
 			<pathelement path="../eclipse_target/compile_target/install/plugins/org.eclipse.osgi.services_3.2.100.v20100503.jar"/>
 			<pathelement path="../eclipse_target/compile_target/install/plugins/javax.servlet_2.5.0.v200910301333.jar"/>
 			<pathelement path="../eclipse_target/compile_target/install/plugins/org.eclipse.swt_3.6.2.v3659c.jar"/>
+			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.cocoa.macosx.x86_64_3.6.2.v3659b.jar"/>
+			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.win32.win32.x86_64_3.6.2.v3659c.jar"/>
+			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.motif.linux.x86_3.6.2.v3659b.jar"/>
+			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.cocoa.macosx_3.6.2.v3659b.jar"/>
 			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.photon.qnx.x86_3.6.2.v3659b.jar"/>
 			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.gtk.linux.x86_64_3.6.2.v3659b.jar"/>
-			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.motif.aix.ppc_3.6.2.v3659b.jar"/>
-			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.gtk.linux.s390_3.6.2.v3659b.jar"/>
-			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.gtk.linux.ppc64_3.6.2.v3659b.jar"/>
-			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.gtk.linux.x86_3.6.2.v3659b.jar"/>
-			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.win32.win32.x86_3.6.2.v3659c.jar"/>
 			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.carbon.macosx_3.6.2.v3659b.jar"/>
+			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.win32.win32.x86_3.6.2.v3659c.jar"/>
+			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.gtk.linux.x86_3.6.2.v3659b.jar"/>
 			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.gtk.solaris.x86_3.6.2.v3659b.jar"/>
-			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.motif.linux.x86_3.6.2.v3659b.jar"/>
-			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.win32.win32.x86_64_3.6.2.v3659c.jar"/>
-			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.cocoa.macosx.x86_64_3.6.2.v3659b.jar"/>
-			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.motif.hpux.ia64_32_3.6.2.v3659b.jar"/>
 			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.motif.solaris.sparc_3.6.2.v3659b.jar"/>
 			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.gtk.linux.s390x_3.6.2.v3659b.jar"/>
-			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.gtk.aix.ppc64_3.6.2.v3659b.jar"/>
-			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.gtk.solaris.sparc_3.6.2.v3659b.jar"/>
-			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.cocoa.macosx_3.6.2.v3659b.jar"/>
+			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.gtk.linux.s390_3.6.2.v3659b.jar"/>
+			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.gtk.linux.ppc64_3.6.2.v3659b.jar"/>
 			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.gtk.linux.ppc_3.6.2.v3659b.jar"/>
+			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.gtk.solaris.sparc_3.6.2.v3659b.jar"/>
+			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.motif.hpux.ia64_32_3.6.2.v3659b.jar"/>
+			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.gtk.aix.ppc64_3.6.2.v3659b.jar"/>
+			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.swt.motif.aix.ppc_3.6.2.v3659b.jar"/>
 			<pathelement path="../eclipse_target/compile_target/install/plugins/org.eclipse.jface_3.6.2.M20110210-1200.jar"/>
 			<pathelement path="../eclipse_target/compile_target/install/plugins/org.eclipse.core.commands_3.6.0.I20100512-1500.jar"/>
 			<pathelement path="../eclipse_target/compile_target/install/plugins/org.eclipse.ui.workbench_3.6.2.M20110210-1200.jar"/>
@@ -140,15 +140,15 @@
 			<pathelement path="../eclipse_target/compile_target/install/plugins/org.eclipse.ant.core_3.2.201.v20110203_r362.jar"/>
 			<pathelement path="../eclipse_target/compile_target/install/plugins/org.eclipse.core.variables_3.2.400.v20100505.jar"/>
 			<pathelement path="../eclipse_target/compile_target/install/plugins/org.eclipse.core.filesystem_1.3.1.R36x_v20100727-0745.jar"/>
-			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.core.filesystem.linux.x86_1.4.0.v20100505-1235.jar"/>
-			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.core.filesystem.hpux.ia64_32_1.0.100.v20100505.jar"/>
-			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.core.filesystem.win32.x86_64_1.1.201.R36x_v20100727-0745.jar"/>
 			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.core.filesystem.macosx_1.3.0.v20100505.jar"/>
-			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.core.filesystem.aix.ppc_1.1.0.v20100505-1235.jar"/>
-			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.core.filesystem.win32.x86_1.1.201.R36x_v20100727-0745.jar"/>
-			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.core.filesystem.linux.x86_64_1.2.0.v20100505-1235.jar"/>
 			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.core.filesystem.solaris.sparc_1.2.0.v20100505-1235.jar"/>
 			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.core.filesystem.linux.ppc_1.0.200.v20100505-1235.jar"/>
+			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.core.filesystem.linux.x86_64_1.2.0.v20100505-1235.jar"/>
+			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.core.filesystem.hpux.ia64_32_1.0.100.v20100505.jar"/>
+			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.core.filesystem.linux.x86_1.4.0.v20100505-1235.jar"/>
+			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.core.filesystem.aix.ppc_1.1.0.v20100505-1235.jar"/>
+			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.core.filesystem.win32.x86_64_1.1.201.R36x_v20100727-0745.jar"/>
+			<pathelement path="../eclipse_target/compile_target/install/deltapack/plugins/org.eclipse.core.filesystem.win32.x86_1.1.201.R36x_v20100727-0745.jar"/>
 			<pathelement path="../com.servoy.eclipse.docgenerator/bin/"/>
 			<pathelement path="${build.result.folder}/../com.servoy.eclipse.docgenerator_1.0.0.0/bin/"/>
 			<pathelement path="${build.result.folder}/../com.servoy.eclipse.docgenerator/@dot"/>
@@ -205,7 +205,7 @@
 	<target name="checkCompilationResults" if="compilation.error.occured">
 		<echo file="${compilation.problem.marker}" message="com.servoy.eclipse.docgenerator.ui_1.0.0.0${line.separator}compilation.error.occured=${compilation.error.occured}"/>
 		<eclipse.logCompileError bundle="com.servoy.eclipse.docgenerator.ui_1.0.0.0" log="${compilation.prereq.log}">
-			<include name="S:/servoy/dev/trunk/com.servoy.eclipse.docgenerator/compilation.problem"/>
+			<include name="C:/Users/Administrator/dev_trunk/com.servoy.eclipse.docgenerator/compilation.problem"/>
 			<include name="${pluginTemp}/com.servoy.eclipse.docgenerator_1.0.0.0/compilation.problem"/>
 		</eclipse.logCompileError>
 	</target>
@@ -227,7 +227,7 @@
 		<antcall target="apitools.generation">
 			<param name="target.folder" value="${build.result.folder}"/>
 			<param name="projectLocation" value="${basedir}"/>
-			<param name="binary.folders" value="S:\servoy\dev\trunk\com.servoy.eclipse.docgenerator.ui"/>
+			<param name="binary.folders" value="C:\Users\Administrator\dev_trunk\com.servoy.eclipse.docgenerator.ui"/>
 			<param name="projectName" value="${bundleId}_${bundleVersion}"/>
 		</antcall>
 		<eclipse.gatherBundle 
@@ -251,7 +251,7 @@
 		<antcall target="apitools.generation">
 			<param name="target.folder" value="${destination.temp.folder}/com.servoy.eclipse.docgenerator.ui_1.0.0.0"/>
 			<param name="projectLocation" value="${basedir}"/>
-			<param name="binary.folders" value="S:\servoy\dev\trunk\com.servoy.eclipse.docgenerator.ui"/>
+			<param name="binary.folders" value="C:\Users\Administrator\dev_trunk\com.servoy.eclipse.docgenerator.ui"/>
 			<param name="projectName" value="${bundleId}_${bundleVersion}"/>
 		</antcall>
 	</target>
@@ -298,7 +298,7 @@
 	</target>
 
 	<target name="refresh" depends="init" if="eclipse.running" description="Refresh this folder.">
-		<eclipse.convertPath fileSystemPath="S:/servoy/dev/trunk/com.servoy.eclipse.docgenerator.ui" property="resourcePath"/>
+		<eclipse.convertPath fileSystemPath="C:/Users/Administrator/dev_trunk/com.servoy.eclipse.docgenerator.ui" property="resourcePath"/>
 		<eclipse.refreshLocal resource="${resourcePath}" depth="infinite"/>
 	</target>
 

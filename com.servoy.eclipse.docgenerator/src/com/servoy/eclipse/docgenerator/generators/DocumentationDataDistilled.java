@@ -38,10 +38,10 @@ import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
  * - sample code
  * - list of @param tags
  * - @return tag
- * - list of @see tags
  * - list of @link tags
  * - @since tag
  * - @until tag
+ * - @deprecated tag
  * 
  * If any of the @sameas, @sampleas or @clonedesc tags appear inside the Javadoc, they are also recorded.
  * 

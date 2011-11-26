@@ -88,6 +88,18 @@ public class ExtractorUtil
 		}
 	}
 
+	public static String grabDescription(JavadocMetaModel jdoc, Set<DocumentationWarning> warnings, String location)
+	{
+		String result = null;
+		JavadocTagPart tag = grabFirstTag(JavadocMetaModel.TEXT_TAG, jdoc, false, warnings, location);
+		if (tag != null)
+		{
+			result = tag.getAsString(true);
+			result = result.trim();
+		}
+		return result;
+	}
+
 	public static JavadocTagPart grabFirstTag(String tagName, JavadocMetaModel jdoc, boolean mayBeEmpty, Set<DocumentationWarning> warnings, String location)
 	{
 		JavadocTagPart result = null;

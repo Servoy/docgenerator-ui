@@ -66,6 +66,19 @@ public abstract class MemberMetaModel extends GenericMemberMetaModel
 		statc = Modifier.isStatic(astNode.getModifiers());
 	}
 
+	protected MemberMetaModel(MemberMetaModel original)
+	{
+		this.className = original.className;
+		this.name = original.name;
+		this.visibility = original.visibility;
+		this.statc = original.statc;
+		if (original.annotations != null)
+		{
+			this.annotations = new AnnotationsList();
+			this.annotations.putAll(original.annotations);
+		}
+	}
+
 	public String getClassName()
 	{
 		return className;

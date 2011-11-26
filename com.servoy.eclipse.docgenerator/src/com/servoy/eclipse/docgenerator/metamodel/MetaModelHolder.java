@@ -89,7 +89,7 @@ public class MetaModelHolder extends TreeMap<String, TypeMetaModel>
 			{
 				if (!target.containsKey(memberMM.getIndexSignature()))
 				{
-					target.put(memberMM.getIndexSignature(), memberMM);
+					target.put(memberMM.getIndexSignature(), memberMM.duplicate());
 				}
 			}
 		}

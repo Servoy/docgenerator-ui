@@ -19,8 +19,6 @@ package com.servoy.eclipse.docgenerator.metamodel;
 
 import java.util.LinkedHashMap;
 
-import org.eclipse.jdt.core.dom.IMethodBinding;
-import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
@@ -96,6 +94,16 @@ public class MethodMetaModel extends MemberMetaModel
 		fullSignature = fullSig.toString();
 	}
 
+	private MethodMetaModel(MethodMetaModel original)
+	{
+		super(original);
+		this.indexSignature = original.indexSignature;
+		this.fullSignature = original.fullSignature;
+		this.parameters.putAll(original.parameters);
+		this.returnType = original.returnType;
+		this.varargs = original.varargs;
+	}
+
 	@Override
 	public String getIndexSignature()
 	{
@@ -168,25 +176,8 @@ public class MethodMetaModel extends MemberMetaModel
 		return parameters;
 	}
 
-	/**
-	 * Helper method that builds the signature from a method binding.
-	 */
-	public static String buildSignature(IMethodBinding met)
+	public MethodMetaModel duplicate()
 	{
-		StringBuffer sb = new StringBuffer();
-		sb.append(met.getDeclaringClass().getQualifiedName());
-		sb.append(".");
-		sb.append(met.getName());
-		sb.append("(");
-		boolean first = true;
-		for (ITypeBinding par : met.getParameterTypes())
-		{
-			if (!first) sb.append(",");
-			first = false;
-			sb.append(par.getQualifiedName());
-		}
-		sb.append(")");
-		return sb.toString();
+		return new MethodMetaModel(this);
 	}
-
 }

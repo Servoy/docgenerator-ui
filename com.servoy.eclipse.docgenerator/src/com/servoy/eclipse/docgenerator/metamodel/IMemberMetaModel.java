@@ -45,4 +45,6 @@ public interface IMemberMetaModel extends IPublicStore
 	Visibility getVisibility();
 
 	boolean isStatic();
+
+	IMemberMetaModel duplicate();
 }

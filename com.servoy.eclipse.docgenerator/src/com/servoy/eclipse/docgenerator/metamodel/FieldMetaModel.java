@@ -51,15 +51,19 @@ public class FieldMetaModel extends MemberMetaModel
 		fullSignature = sb.toString();
 	}
 
+	private FieldMetaModel(FieldMetaModel original)
+	{
+		super(original);
+		this.type = original.type;
+		this.indexSignature = original.indexSignature;
+		this.fullSignature = original.indexSignature;
+	}
+
+	@Override
 	public TypeName getType()
 	{
 		return type;
 	}
-
-//	public void setType(TypeName type)
-//	{
-//		this.type = type;
-//	}
 
 	@Override
 	public String getFullSignature()
@@ -77,5 +81,10 @@ public class FieldMetaModel extends MemberMetaModel
 	public boolean matchesSignature(String signature)
 	{
 		return indexSignature.equals(signature);
+	}
+
+	public FieldMetaModel duplicate()
+	{
+		return new FieldMetaModel(this);
 	}
 }

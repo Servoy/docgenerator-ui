@@ -15,20 +15,38 @@
  Software Foundation,Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301
  */
 
-package com.servoy.eclipse.docgenerator.generators;
+package com.servoy.eclipse.docgenerator.metamodel;
 
-import com.servoy.eclipse.docgenerator.metamodel.MemberMetaModel;
-import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
- * @author gerzse
+ * @author gabi
+ *
  */
-public class DefaultMemberDataFactory implements IMemberDataFactory
+public abstract class GenericMemberMetaModel implements IMemberMetaModel
 {
+	/**
+	 * Public store where documentation generators can put any kind of data during processing.
+	 */
+	private final Map<String, Object> store = new HashMap<String, Object>();
 
-	public MemberDataRaw getData(TypeMetaModel typeMM, MemberMetaModel memberMM)
+	/**
+	 * Set of warnings raised while parsing the Javadoc of this member or while solving
+	 * its dependencies.
+	 */
+	private final Set<DocumentationWarning> warnings = new TreeSet<DocumentationWarning>();
+
+	public Map<String, Object> getStore()
 	{
-		return new MemberDataRaw(memberMM, typeMM);
+		return store;
+	}
+
+	public Set<DocumentationWarning> getWarnings()
+	{
+		return warnings;
 	}
 
 }

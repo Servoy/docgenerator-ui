@@ -33,7 +33,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
-import com.servoy.eclipse.docgenerator.DocumentationXMLBuilder;
+import com.servoy.eclipse.docgenerator.DocumentationBuilder;
 import com.servoy.eclipse.docgenerator.metamodel.MetaModelHolder;
 import com.servoy.eclipse.docgenerator.service.DocumentationGenerationRequest;
 import com.servoy.eclipse.docgenerator.service.LogUtil;
@@ -62,7 +62,7 @@ public abstract class DocumentationGenerationRequestFromUI implements Documentat
 		if (!autopilot)
 		{
 			// If autopilot is disabled, we generate a single XML file for the entire tree rooted at the given package.
-			outputFile = pkg.getResource().getFullPath().append(DocumentationXMLBuilder.EXTENSION_XML_FILE);
+			outputFile = pkg.getResource().getFullPath().append(DocumentationBuilder.EXTENSION_XML_FILE);
 		}
 		else
 		{

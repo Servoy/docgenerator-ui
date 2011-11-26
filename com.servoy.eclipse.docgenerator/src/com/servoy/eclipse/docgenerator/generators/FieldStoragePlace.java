@@ -17,13 +17,29 @@
 
 package com.servoy.eclipse.docgenerator.generators;
 
-import com.servoy.eclipse.docgenerator.metamodel.MemberMetaModel;
+import com.servoy.eclipse.docgenerator.metamodel.IMemberMetaModel;
+import com.servoy.eclipse.docgenerator.metamodel.MemberMetaModel.Visibility;
 import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
 
 /**
  * @author gerzse
  */
-public interface IMemberDataFactory
+public class FieldStoragePlace extends MemberStoragePlace
 {
-	MemberDataRaw getData(TypeMetaModel typeMM, MemberMetaModel memberMM);
+	public FieldStoragePlace(IMemberMetaModel memberMM, TypeMetaModel typeMM)
+	{
+		super(memberMM, typeMM);
+	}
+
+	@Override
+	public String getKind()
+	{
+		return DefaultDocumentationGenerator.TAG_CONSTANT;
+	}
+
+	@Override
+	public boolean shouldShow(TypeMetaModel realTypeMM)
+	{
+		return memberMM.getVisibility() == Visibility.Public && memberMM.isStatic();
+	}
 }

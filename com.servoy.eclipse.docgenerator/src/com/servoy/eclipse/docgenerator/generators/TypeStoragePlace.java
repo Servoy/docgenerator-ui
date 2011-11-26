@@ -17,37 +17,27 @@
 
 package com.servoy.eclipse.docgenerator.generators;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
+import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
 
 /**
  * @author gerzse
  */
-public class MemberKind
+public class TypeStoragePlace
 {
-	protected final LinkedHashMap<String, String> kindsToTags = new LinkedHashMap<String, String>();
+	private String extendsComponent;
 
-	protected MemberKind()
+	public TypeStoragePlace(TypeMetaModel typeMM)
 	{
-		kindsToTags.put(DefaultDocumentationGenerator.TAG_CONSTANT, DefaultDocumentationGenerator.TAG_CONSTANTS);
-		kindsToTags.put(DefaultDocumentationGenerator.TAG_CONSTRUCTOR, DefaultDocumentationGenerator.TAG_CONSTRUCTORS);
-		kindsToTags.put(DefaultDocumentationGenerator.TAG_PROPERTY, DefaultDocumentationGenerator.TAG_PROPERTIES);
-		kindsToTags.put(DefaultDocumentationGenerator.TAG_FUNCTION, DefaultDocumentationGenerator.TAG_FUNCTIONS);
+		extendsComponent = typeMM.getExtendsComponent();
 	}
 
-	public List<String> getKinds()
+	public String getExtendsComponent()
 	{
-		List<String> kinds = new ArrayList<String>();
-		for (String key : kindsToTags.keySet())
-		{
-			kinds.add(key);
-		}
-		return kinds;
+		return extendsComponent;
 	}
 
-	public String getHolderTag(String kind)
+	public void setExtendsComponent(String extendsComponent)
 	{
-		return kindsToTags.get(kind);
+		this.extendsComponent = extendsComponent;
 	}
 }

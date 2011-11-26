@@ -27,9 +27,9 @@ import org.eclipse.jdt.core.dom.TagElement;
 
 import com.servoy.eclipse.docgenerator.metamodel.DocumentationWarning;
 import com.servoy.eclipse.docgenerator.metamodel.DocumentationWarning.WarningType;
+import com.servoy.eclipse.docgenerator.metamodel.IMemberMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.JavadocMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.JavadocTagPart;
-import com.servoy.eclipse.docgenerator.metamodel.MemberMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
 
 /**
@@ -48,7 +48,7 @@ import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
  * @author gerzse
  */
 @SuppressWarnings("nls")
-public class DocumentationDataRaw
+public class DocumentationDataDistilled
 {
 	public static final String TAG_SAMPLE = "@sample";
 	public static final String TAG_SAMEAS = "@sameas";
@@ -62,7 +62,7 @@ public class DocumentationDataRaw
 	private String text;
 	private String summary;
 	private String sample;
-	private final List<ParamDataRaw> parameters = new ArrayList<ParamDataRaw>();
+	private final List<DocumentedParameterData> parameters = new ArrayList<DocumentedParameterData>();
 	private String ret;
 	private final List<String> links = new ArrayList<String>();
 	private String since;
@@ -73,7 +73,7 @@ public class DocumentationDataRaw
 	private boolean special = false;
 	private String deprecatedText;
 
-	public DocumentationDataRaw(MemberMetaModel memberMM, TypeMetaModel typeMM)
+	public DocumentationDataDistilled(IMemberMetaModel memberMM, TypeMetaModel typeMM)
 	{
 		JavadocMetaModel jdoc = memberMM.getJavadoc();
 		Set<DocumentationWarning> warnings = memberMM.getWarnings();
@@ -147,7 +147,7 @@ public class DocumentationDataRaw
 					warnings.add(new DocumentationWarning(WarningType.ParamTagWithoutContent, location, TagElement.TAG_PARAM + " tag without text: '" +
 						paramName + "'."));
 				}
-				ParamDataRaw parData = new ParamDataRaw(paramName, isOptional, paramDescription);
+				DocumentedParameterData parData = new DocumentedParameterData(paramName, isOptional, paramDescription);
 				parameters.add(parData);
 			}
 			else
@@ -221,12 +221,12 @@ public class DocumentationDataRaw
 		this.sample = sample;
 	}
 
-	public void addParameter(ParamDataRaw param)
+	public void addParameter(DocumentedParameterData param)
 	{
 		parameters.add(param);
 	}
 
-	public List<ParamDataRaw> getParameters()
+	public List<DocumentedParameterData> getParameters()
 	{
 		return parameters;
 	}

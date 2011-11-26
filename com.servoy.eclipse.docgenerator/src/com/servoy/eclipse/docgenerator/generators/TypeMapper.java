@@ -31,17 +31,14 @@ import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.TypeName;
 
 /**
- * After all documentation is indexed, this class performs a set of transformations before rendering
- * the documentation into XML. Specifically:
- * - it checks if any of the @param tags refers to a type in its description (the first word of the
- *   description may denote a type name)
- * - maps the types of method parameters, types of fields and return types of methods to publicly visible
- *   types (if this mapping fails, non-public types are removed so that they don't get rendered in the XML) 
+ * Performs type mapping. We don't want to expose certain types, and we want 
+ * to map standard types to a set of classes which represent JavaScript types
+ * and have Javadocs.
  * 
  * @author gerzse
  */
 @SuppressWarnings("nls")
-public class FinalProcessor
+public class TypeMapper
 {
 	public static final String DOCS_PACKAGE = "com.servoy.j2db.documentation.scripting.docs.";
 
@@ -49,7 +46,7 @@ public class FinalProcessor
 
 	private final boolean mapUndocumentedTypes;
 
-	public FinalProcessor(boolean mapUndocumentedTypes)
+	public TypeMapper(boolean mapUndocumentedTypes)
 	{
 		this.mapUndocumentedTypes = mapUndocumentedTypes;
 

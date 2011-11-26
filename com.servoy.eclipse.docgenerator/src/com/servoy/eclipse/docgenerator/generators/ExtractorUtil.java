@@ -28,11 +28,13 @@ import com.servoy.eclipse.docgenerator.metamodel.JavadocTagPart;
 import com.servoy.eclipse.docgenerator.metamodel.ReferenceMetaModel;
 
 /**
+ * Helper class to extract tags from Javadocs.
+ * 
  * @author gerzse
  */
+@SuppressWarnings("nls")
 public class ExtractorUtil
 {
-
 	public static String grabExactlyOne(String tagName, boolean clean, JavadocMetaModel jdoc, Set<DocumentationWarning> warnings, String location)
 	{
 		String result = null;

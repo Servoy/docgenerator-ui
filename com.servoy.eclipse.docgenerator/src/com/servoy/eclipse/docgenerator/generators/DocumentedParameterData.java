@@ -31,7 +31,7 @@ import com.servoy.eclipse.docgenerator.metamodel.TypeName;
  * @author gerzse
  */
 @SuppressWarnings("nls")
-public class ParamDataRaw
+public class DocumentedParameterData
 {
 	private static final String TAG_PARAMETER = "parameter";
 	private static final String ATTR_NAME = "name";
@@ -44,7 +44,7 @@ public class ParamDataRaw
 	private TypeName type;
 	private boolean typeWasChecked = false;
 
-	public ParamDataRaw(String name, boolean optional, String description)
+	public DocumentedParameterData(String name, boolean optional, String description)
 	{
 		super();
 		this.name = name;
@@ -72,7 +72,7 @@ public class ParamDataRaw
 		return type;
 	}
 
-	public void checkIfHasType(MetaModelHolder holder, FinalProcessor proc)
+	public void checkIfHasType(MetaModelHolder holder, TypeMapper proc)
 	{
 		if (!typeWasChecked)
 		{
@@ -96,7 +96,7 @@ public class ParamDataRaw
 		}
 	}
 
-	public void checkIfHasType(MetaModelHolder holder, FinalProcessor proc, String typeString)
+	public void checkIfHasType(MetaModelHolder holder, TypeMapper proc, String typeString)
 	{
 		if (!typeWasChecked)
 		{

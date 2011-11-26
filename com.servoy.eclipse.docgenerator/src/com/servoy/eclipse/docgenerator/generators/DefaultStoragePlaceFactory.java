@@ -17,29 +17,25 @@
 
 package com.servoy.eclipse.docgenerator.generators;
 
+import com.servoy.eclipse.docgenerator.metamodel.IMemberMetaModel;
+import com.servoy.eclipse.docgenerator.metamodel.MethodMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
 
 /**
- * @author gabi
- *
+ * @author gerzse
  */
-public class TypeDataRaw
+public class DefaultStoragePlaceFactory implements IStoragePlaceFactory
 {
-	private String extendsComponent;
-
-	public TypeDataRaw(TypeMetaModel typeMM)
+	public MemberStoragePlace getData(TypeMetaModel typeMM, IMemberMetaModel memberMM)
 	{
-		extendsComponent = typeMM.getExtendsComponent();
+		// Split in two: methods or fields.
+		if (memberMM instanceof MethodMetaModel)
+		{
+			return new MethodStoragePlace((MethodMetaModel)memberMM, typeMM);
+		}
+		else
+		{
+			return new FieldStoragePlace(memberMM, typeMM);
+		}
 	}
-
-	public String getExtendsComponent()
-	{
-		return extendsComponent;
-	}
-
-	public void setExtendsComponent(String extendsComponent)
-	{
-		this.extendsComponent = extendsComponent;
-	}
-
 }

@@ -17,11 +17,6 @@
 
 package com.servoy.eclipse.docgenerator.metamodel;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 
@@ -36,7 +31,7 @@ import org.eclipse.jdt.core.dom.Modifier;
  * 
  * @author gerzse
  */
-public abstract class MemberMetaModel implements IPublicStore
+public abstract class MemberMetaModel extends GenericMemberMetaModel
 {
 	public static enum Visibility
 	{
@@ -52,17 +47,6 @@ public abstract class MemberMetaModel implements IPublicStore
 
 	private AnnotationsList annotations = null;
 	private JavadocMetaModel javadoc = null;
-
-	/**
-	 * Public store where documentation generators can put any kind of data during processing.
-	 */
-	private final Map<String, Object> store = new HashMap<String, Object>();
-
-	/**
-	 * Set of warnings raised while parsing the Javadoc of this member or while solving
-	 * its dependencies.
-	 */
-	private final Set<DocumentationWarning> warnings = new TreeSet<DocumentationWarning>();
 
 	protected MemberMetaModel(String className, String name, BodyDeclaration astNode)
 	{
@@ -80,11 +64,6 @@ public abstract class MemberMetaModel implements IPublicStore
 		}
 		visibility = vis;
 		statc = Modifier.isStatic(astNode.getModifiers());
-	}
-
-	public Map<String, Object> getStore()
-	{
-		return store;
 	}
 
 	public String getClassName()
@@ -153,9 +132,4 @@ public abstract class MemberMetaModel implements IPublicStore
 	abstract public String getFullSignature();
 
 	abstract public TypeName getType();
-
-	public Set<DocumentationWarning> getWarnings()
-	{
-		return warnings;
-	}
 }

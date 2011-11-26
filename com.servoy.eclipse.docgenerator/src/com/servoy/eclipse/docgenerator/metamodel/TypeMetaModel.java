@@ -44,7 +44,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
  * @author gerzse
  */
 @SuppressWarnings("nls")
-public class TypeMetaModel extends TreeMap<String, MemberMetaModel> implements Comparable<TypeMetaModel>, IPublicStore
+public class TypeMetaModel extends TreeMap<String, IMemberMetaModel> implements Comparable<TypeMetaModel>, IPublicStore
 {
 	/**
 	 * Default category to use when the "category" attribute is not explicitly given in the @ServoyDocumented annotation.

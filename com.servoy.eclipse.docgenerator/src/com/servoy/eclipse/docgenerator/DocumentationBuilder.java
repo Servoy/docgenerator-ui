@@ -65,7 +65,7 @@ import com.servoy.eclipse.docgenerator.service.LogUtil;
  * @author gerzse
  */
 @SuppressWarnings("nls")
-public class DocumentationXMLBuilder
+public class DocumentationBuilder
 {
 	/**
 	 * The name of the XML file which holds documentation and other Servoy extension related info.
@@ -82,7 +82,7 @@ public class DocumentationXMLBuilder
 	 */
 	private final ASTParser parser;
 
-	public DocumentationXMLBuilder(DocumentationGenerationRequest req)
+	public DocumentationBuilder(DocumentationGenerationRequest req)
 	{
 		this.req = req;
 		parser = ASTParser.newParser(AST.JLS3);

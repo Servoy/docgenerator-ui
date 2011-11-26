@@ -85,7 +85,7 @@ public class MetaModelHolder extends TreeMap<String, TypeMetaModel>
 		}
 		for (TypeMetaModel typeMM : sources)
 		{
-			for (MemberMetaModel memberMM : typeMM.values())
+			for (IMemberMetaModel memberMM : typeMM.values())
 			{
 				if (!target.containsKey(memberMM.getIndexSignature()))
 				{

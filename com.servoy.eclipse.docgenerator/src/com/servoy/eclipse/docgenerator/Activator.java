@@ -139,7 +139,7 @@ public class Activator extends Plugin
 							{
 								IDocumentationGenerator generator = (IDocumentationGenerator)cc.createExecutableExtension("class");
 								generators.put(generator.getID(), generator);
-								LogUtil.logger().info("Registered generator '" + generator.getID() + "' from extension point.");
+								LogUtil.logger().fine("Registered generator '" + generator.getID() + "' from extension point.");
 							}
 							catch (CoreException e1)
 							{
@@ -178,7 +178,7 @@ public class Activator extends Plugin
 					LogUtil.logger().fine(sb.toString());
 				}
 
-				DocumentationXMLBuilder xmlBuilder = new DocumentationXMLBuilder(req);
+				DocumentationBuilder xmlBuilder = new DocumentationBuilder(req);
 				xmlBuilder.build();
 			}
 			catch (Exception e)

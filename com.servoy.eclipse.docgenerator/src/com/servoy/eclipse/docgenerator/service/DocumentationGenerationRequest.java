@@ -107,8 +107,9 @@ public interface DocumentationGenerationRequest
 	 * 
 	 * @param docs The documentation as it was gathered from the Javadocs. Any needed modification
 	 * 				can be performed upon it, for example renaming types, replacing content, etc.
+	 * @param actualOutputFile The actual output path where the data will be written.
 	 */
-	void postProcess(MetaModelHolder docs);
+	void postProcess(MetaModelHolder docs, IPath actualOutputFile);
 
 	/**
 	 * Notification sent when the documentation generation has ended.

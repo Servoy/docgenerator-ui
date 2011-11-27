@@ -453,7 +453,7 @@ public class DocumentationBuilder
 
 			if (docgen != null)
 			{
-				InputStream xmlStream = docgen.generate(req, holder, allWarnings);
+				InputStream xmlStream = docgen.generate(req, holder, allWarnings, xmlFile);
 				if (xmlStream != null)
 				{
 					if (writeFile(root, xmlFile, xmlStream))

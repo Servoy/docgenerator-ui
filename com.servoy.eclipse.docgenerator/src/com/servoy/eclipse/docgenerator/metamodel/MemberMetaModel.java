@@ -48,6 +48,8 @@ public abstract class MemberMetaModel extends GenericMemberMetaModel
 	private AnnotationsList annotations = null;
 	private JavadocMetaModel javadoc = null;
 
+	private final boolean duplicate;
+
 	protected MemberMetaModel(String className, String name, BodyDeclaration astNode)
 	{
 		this.className = className;
@@ -64,6 +66,7 @@ public abstract class MemberMetaModel extends GenericMemberMetaModel
 		}
 		visibility = vis;
 		statc = Modifier.isStatic(astNode.getModifiers());
+		duplicate = false;
 	}
 
 	protected MemberMetaModel(MemberMetaModel original)
@@ -77,6 +80,12 @@ public abstract class MemberMetaModel extends GenericMemberMetaModel
 			this.annotations = new AnnotationsList();
 			this.annotations.putAll(original.annotations);
 		}
+		duplicate = true;
+	}
+
+	public boolean isDuplicate()
+	{
+		return duplicate;
 	}
 
 	public String getClassName()

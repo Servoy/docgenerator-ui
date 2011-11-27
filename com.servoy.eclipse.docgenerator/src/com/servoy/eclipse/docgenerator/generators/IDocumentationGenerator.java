@@ -20,6 +20,8 @@ package com.servoy.eclipse.docgenerator.generators;
 import java.io.InputStream;
 import java.util.Set;
 
+import org.eclipse.core.runtime.IPath;
+
 import com.servoy.eclipse.docgenerator.metamodel.DocumentationWarning;
 import com.servoy.eclipse.docgenerator.metamodel.MetaModelHolder;
 import com.servoy.eclipse.docgenerator.service.DocumentationGenerationRequest;
@@ -34,5 +36,5 @@ public interface IDocumentationGenerator
 
 	String getID();
 
-	InputStream generate(DocumentationGenerationRequest req, MetaModelHolder holder, Set<DocumentationWarning> allWarnings);
+	InputStream generate(DocumentationGenerationRequest req, MetaModelHolder holder, Set<DocumentationWarning> allWarnings, IPath outputPath);
 }

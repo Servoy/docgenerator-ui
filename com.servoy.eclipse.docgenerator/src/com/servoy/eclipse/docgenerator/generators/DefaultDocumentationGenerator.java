@@ -34,6 +34,7 @@ import java.util.logging.Level;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.eclipse.core.runtime.IPath;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -85,7 +86,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 		return STORE_KEY;
 	}
 
-	public InputStream generate(DocumentationGenerationRequest req, MetaModelHolder holder, Set<DocumentationWarning> allWarnings)
+	public InputStream generate(DocumentationGenerationRequest req, MetaModelHolder holder, Set<DocumentationWarning> allWarnings, IPath outputPath)
 	{
 		TypeMapper typeMapper = new TypeMapper(req.tryToMapUndocumentedTypes());
 		IStoragePlaceFactory storageFactory = getDataFactory(holder, typeMapper);
@@ -97,7 +98,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 		doTypeMappingForAll(holder, typeMapper);
 
 		// Post-processing, just before sending to XML.
-		req.postProcess(holder);
+		req.postProcess(holder, outputPath);
 
 		collectAllWarnings(holder, allWarnings);
 

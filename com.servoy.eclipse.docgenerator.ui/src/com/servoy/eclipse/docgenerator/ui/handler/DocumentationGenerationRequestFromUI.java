@@ -163,7 +163,7 @@ public abstract class DocumentationGenerationRequestFromUI implements Documentat
 		}
 	}
 
-	public void postProcess(MetaModelHolder docs)
+	public void postProcess(MetaModelHolder docs, IPath actualOutputFile)
 	{
 		// No post-processing when running from GUI.
 	}

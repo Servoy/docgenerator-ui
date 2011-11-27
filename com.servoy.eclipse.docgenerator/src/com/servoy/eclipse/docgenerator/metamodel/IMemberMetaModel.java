@@ -47,4 +47,6 @@ public interface IMemberMetaModel extends IPublicStore
 	boolean isStatic();
 
 	IMemberMetaModel duplicate();
+
+	boolean isDuplicate();
 }

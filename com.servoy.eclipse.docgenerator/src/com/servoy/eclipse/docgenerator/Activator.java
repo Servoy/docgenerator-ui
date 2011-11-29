@@ -82,7 +82,7 @@ public class Activator extends Plugin
 		{
 			context.addServiceListener(listener, filter);
 			// Send any service instances that maybe got registered earlier.
-			ServiceReference[] existing = context.getServiceReferences(null, filter);
+			ServiceReference[] existing = context.getServiceReferences((String)null, filter);
 			if (existing != null)
 			{
 				for (ServiceReference sr : existing)

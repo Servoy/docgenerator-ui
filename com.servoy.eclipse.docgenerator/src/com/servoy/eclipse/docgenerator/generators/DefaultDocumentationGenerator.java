@@ -20,7 +20,7 @@ package com.servoy.eclipse.docgenerator.generators;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.PrintWriter;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +33,11 @@ import java.util.logging.Level;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.eclipse.core.runtime.IPath;
 import org.w3c.dom.Document;
@@ -46,8 +51,6 @@ import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.TypeName;
 import com.servoy.eclipse.docgenerator.service.DocumentationGenerationRequest;
 import com.servoy.eclipse.docgenerator.service.LogUtil;
-import com.sun.org.apache.xml.internal.serialize.OutputFormat;
-import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
 
 /**
  * @author gerzse
@@ -413,7 +416,6 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 	// TODO: If the XML is large, this memory based approach is not the best choice. Keep an eye on this.
 	private InputStream writeToXML(MetaModelHolder holder, Set<String> categories, boolean autopilotMode, MemberKindIndex availableMemberKinds)
 	{
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		try
 		{
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
@@ -458,14 +460,13 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 				}
 			}
 
-			OutputFormat outformat = new OutputFormat(doc);
-			outformat.setIndenting(true);
-			outformat.setIndent(2);
-			outformat.setLineWidth(0);
-			PrintWriter wr = new PrintWriter(baos);
-			XMLSerializer serializer = new XMLSerializer(wr, outformat);
-			serializer.serialize(doc);
-			wr.close();
+			DOMSource source = new DOMSource(doc);
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			transformerFactory.setAttribute("indent-number", new Integer(2));
+			Transformer transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.transform(source, new StreamResult(new OutputStreamWriter(baos, "utf-8")));
 			baos.close();
 
 			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());

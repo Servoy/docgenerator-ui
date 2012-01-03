@@ -115,7 +115,7 @@ public class DocumentationBuilder
 				for (int i = 0; i < projects.length && !req.cancelRequested(); i++)
 				{
 					IProject prj = projects[i];
-					if (prj.isNatureEnabled("org.eclipse.jdt.core.javanature"))
+					if (prj.isOpen() && prj.isNatureEnabled("org.eclipse.jdt.core.javanature"))
 					{
 						if (req.getProjectsAndPackagesToDocument().containsKey(prj.getName()))
 						{
@@ -319,7 +319,7 @@ public class DocumentationBuilder
 		for (int i = 0; i < projects.length && !req.cancelRequested(); i++)
 		{
 			IProject prj = projects[i];
-			if (prj.isNatureEnabled("org.eclipse.jdt.core.javanature"))
+			if (prj.isOpen() && prj.isNatureEnabled("org.eclipse.jdt.core.javanature"))
 			{
 				if (packagesByProject.containsKey(prj.getName()))
 				{

@@ -46,6 +46,7 @@ public class MethodStoragePlace extends MemberStoragePlace
 	private static final String ATTR_VARARGS = "varargs";
 
 	private static final String ANNOTATION_JS_READONLY_PROPERTY = "JSReadonlyProperty";
+	private static final String ANNOTATION_JS_GETTER = "JSGetter";
 	private static final String ANNOTATION_JS_FUNCTION = "JSFunction";
 
 	private static final String JS_PREFIX = "js_";
@@ -87,7 +88,7 @@ public class MethodStoragePlace extends MemberStoragePlace
 		else
 		{
 			boolean isProperty = false;
-			if (methodMM.getAnnotations().hasAnnotation(ANNOTATION_JS_READONLY_PROPERTY))
+			if (methodMM.getAnnotations().hasAnnotation(ANNOTATION_JS_READONLY_PROPERTY) || methodMM.getAnnotations().hasAnnotation(ANNOTATION_JS_GETTER))
 			{
 				isProperty = true;
 			}
@@ -278,7 +279,8 @@ public class MethodStoragePlace extends MemberStoragePlace
 		}
 
 		// if it's annotated properly, then it should show
-		if (methodMM.getAnnotations().hasAnnotation(ANNOTATION_JS_FUNCTION) || methodMM.getAnnotations().hasAnnotation(ANNOTATION_JS_READONLY_PROPERTY))
+		if (methodMM.getAnnotations().hasAnnotation(ANNOTATION_JS_FUNCTION) || methodMM.getAnnotations().hasAnnotation(ANNOTATION_JS_READONLY_PROPERTY) ||
+			methodMM.getAnnotations().hasAnnotation(ANNOTATION_JS_GETTER))
 		{
 			return true;
 		}
@@ -327,15 +329,8 @@ public class MethodStoragePlace extends MemberStoragePlace
 			}
 			return true;
 		}
-		else if (methodMM.getName().startsWith(JS_FUNCTION_PREFIX))
-		{
-			return true;
-		}
-		else if (methodMM.getName().startsWith(JS_CONSTRUCTOR_PREFIX))
-		{
-			return true;
-		}
-		return false;
+
+		return methodMM.getName().startsWith(JS_FUNCTION_PREFIX) || methodMM.getName().startsWith(JS_CONSTRUCTOR_PREFIX);
 	}
 
 	private boolean hideParameters()

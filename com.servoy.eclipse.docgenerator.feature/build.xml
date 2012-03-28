@@ -169,7 +169,7 @@
 	</target>
 
 	<target name="refresh" depends="init" if="eclipse.running" description="Refresh this folder.">
-		<eclipse.convertPath fileSystemPath="C:/Users/Administrator/dev_trunk/com.servoy.eclipse.docgenerator.feature/" property="resourcePath"/>
+		<eclipse.convertPath fileSystemPath="C:/workspace_trunk/com.servoy.eclipse.docgenerator.feature/" property="resourcePath"/>
 		<eclipse.refreshLocal resource="${resourcePath}" depth="infinite"/>
 		<antcall target="all.children">
 			<param name="target" value="refresh"/>

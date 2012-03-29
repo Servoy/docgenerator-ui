@@ -193,6 +193,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 			TypeMetaModel sup = holder.get(current.getSupertype().getQualifiedName());
 			if (sup != null)
 			{
+				copyMissingDocsFromAbove(holder, sup, sup);
 				sources.add(sup);
 			}
 		}
@@ -201,6 +202,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 			TypeMetaModel src = holder.get(interf.getQualifiedName());
 			if (src != null)
 			{
+				copyMissingDocsFromAbove(holder, src, src);
 				sources.add(src);
 			}
 		}

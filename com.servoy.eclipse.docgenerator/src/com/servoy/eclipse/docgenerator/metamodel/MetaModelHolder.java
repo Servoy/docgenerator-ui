@@ -72,6 +72,7 @@ public class MetaModelHolder extends TreeMap<String, TypeMetaModel>
 			TypeMetaModel sup = get(current.getSupertype().getQualifiedName());
 			if (sup != null)
 			{
+				copyMissingMembersFromAbove(sup, sup);
 				sources.add(sup);
 			}
 		}
@@ -80,6 +81,7 @@ public class MetaModelHolder extends TreeMap<String, TypeMetaModel>
 			TypeMetaModel src = get(interf.getQualifiedName());
 			if (src != null)
 			{
+				copyMissingMembersFromAbove(src, src);
 				sources.add(src);
 			}
 		}

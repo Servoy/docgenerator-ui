@@ -357,6 +357,7 @@ public class MethodStoragePlace extends MemberStoragePlace
 			official = official.substring(JS_CONSTRUCTOR_PREFIX.length());
 		}
 
+		String original = official;
 		if (DefaultDocumentationGenerator.TAG_PROPERTY.equals(getKind()))
 		{
 			boolean dontCheckFurther = false;
@@ -392,6 +393,10 @@ public class MethodStoragePlace extends MemberStoragePlace
 					official = official.substring(0, 1).toLowerCase() + official.substring(1);
 				}
 			}
+			if (ReservedWordsChecker.isReserved(official))
+			{
+				return original;
+			}
 		}
 		else
 		{
@@ -400,7 +405,6 @@ public class MethodStoragePlace extends MemberStoragePlace
 				official = official.substring("flow_".length()).replace("_", " ");
 			}
 		}
-
 		return official;
 	}
 

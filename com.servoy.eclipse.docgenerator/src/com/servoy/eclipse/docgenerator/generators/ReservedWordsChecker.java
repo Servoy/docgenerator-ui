@@ -57,6 +57,7 @@ public class ReservedWordsChecker
 		javascriptKeywords.add("void");
 		javascriptKeywords.add("while");
 		javascriptKeywords.add("with");
+		javascriptKeywords.add("null");
 	}
 
 	public static boolean isReserved(String word)

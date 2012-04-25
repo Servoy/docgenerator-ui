@@ -136,9 +136,9 @@ public abstract class DocumentationGenerationRequestFromUI implements Documentat
 					"The following file already exists and will be overwritten: '" + path.toOSString() +
 						"'. Are you sure you want the file to be overwritten?" + "\n\n" +
 						"You can disable this confirmation dialog from the plugin preferences page.", MessageDialog.CONFIRM,
-					new String[] { IDialogConstants.NO_LABEL, IDialogConstants.YES_LABEL, "All", IDialogConstants.CANCEL_LABEL }, 3);
+					new String[] { IDialogConstants.NO_LABEL, IDialogConstants.YES_LABEL, IDialogConstants.YES_TO_ALL_LABEL, IDialogConstants.CANCEL_LABEL }, 3);
 				int result = dlg.open();
-				if (result == 2) // the "All" button
+				if (result == 2) // the "Yes to All" button
 				{
 					confirmAll = true;
 				}
@@ -146,7 +146,7 @@ public abstract class DocumentationGenerationRequestFromUI implements Documentat
 				{
 					canceled = true;
 				}
-				choice[0] = result == 1 || result == 2; // The "Yes" or "All" buttons were pressed.
+				choice[0] = result == 1 || result == 2; // The "Yes" or "Yes to All" buttons were pressed.
 			}
 		});
 		return choice[0];

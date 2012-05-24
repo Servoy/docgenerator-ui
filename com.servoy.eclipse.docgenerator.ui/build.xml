@@ -222,7 +222,7 @@
 	<target name="checkCompilationResults" if="compilation.error.occured">
 		<echo file="${compilation.problem.marker}" message="com.servoy.eclipse.docgenerator.ui_1.0.0.0${line.separator}compilation.error.occured=${compilation.error.occured}"/>
 		<eclipse.logCompileError bundle="com.servoy.eclipse.docgenerator.ui_1.0.0.0" log="${compilation.prereq.log}">
-			<include name="C:/Users/Administrator/dev_trunk/com.servoy.eclipse.docgenerator/compilation.problem"/>
+			<include name="S:/Dev/dev_trunk/com.servoy.eclipse.docgenerator/compilation.problem"/>
 			<include name="${pluginTemp}/com.servoy.eclipse.docgenerator_1.0.0.0/compilation.problem"/>
 		</eclipse.logCompileError>
 	</target>
@@ -244,7 +244,7 @@
 		<antcall target="apitools.generation">
 			<param name="target.folder" value="${build.result.folder}"/>
 			<param name="projectLocation" value="${basedir}"/>
-			<param name="binary.folders" value="C:\Users\Administrator\dev_trunk\com.servoy.eclipse.docgenerator.ui"/>
+			<param name="binary.folders" value="S:\Dev\dev_trunk\com.servoy.eclipse.docgenerator.ui"/>
 			<param name="projectName" value="${bundleId}_${bundleVersion}"/>
 		</antcall>
 		<eclipse.gatherBundle 
@@ -268,7 +268,7 @@
 		<antcall target="apitools.generation">
 			<param name="target.folder" value="${destination.temp.folder}/com.servoy.eclipse.docgenerator.ui_1.0.0.0"/>
 			<param name="projectLocation" value="${basedir}"/>
-			<param name="binary.folders" value="C:\Users\Administrator\dev_trunk\com.servoy.eclipse.docgenerator.ui"/>
+			<param name="binary.folders" value="S:\Dev\dev_trunk\com.servoy.eclipse.docgenerator.ui"/>
 			<param name="projectName" value="${bundleId}_${bundleVersion}"/>
 		</antcall>
 	</target>
@@ -315,7 +315,7 @@
 	</target>
 
 	<target name="refresh" depends="init" if="eclipse.running" description="Refresh this folder.">
-		<eclipse.convertPath fileSystemPath="C:/Users/Administrator/dev_trunk/com.servoy.eclipse.docgenerator.ui" property="resourcePath"/>
+		<eclipse.convertPath fileSystemPath="S:/Dev/dev_trunk/com.servoy.eclipse.docgenerator.ui" property="resourcePath"/>
 		<eclipse.refreshLocal resource="${resourcePath}" depth="infinite"/>
 	</target>
 

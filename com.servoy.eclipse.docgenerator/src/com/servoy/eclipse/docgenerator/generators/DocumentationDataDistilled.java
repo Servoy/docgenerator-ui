@@ -56,6 +56,8 @@ public class DocumentationDataDistilled
 	public static final String TAG_CLONEDESC = "@clonedesc";
 	public static final String TAG_UNTIL = "@until";
 	public static final String TAG_SPECIAL = "@special";
+	public static final String TAG_SIMPLIFIEDSIGNATURE = "@simplifiedSignature";
+	public static final String TAG_STATICCALL = "@staticCall";
 
 	public static final String FLAG_OPTIONAL = "optional"; //$NON-NLS-1$
 
@@ -71,6 +73,8 @@ public class DocumentationDataDistilled
 	private QualifiedNameRaw cloneSample;
 	private QualifiedNameRaw cloneDescription;
 	private boolean special = false;
+	private boolean simplifiedSignature = false;
+	private boolean staticCall = false;
 	private String deprecatedText;
 
 	public DocumentationDataDistilled(IMemberMetaModel memberMM, TypeMetaModel typeMM)
@@ -113,6 +117,18 @@ public class DocumentationDataDistilled
 		if (specialTag != null)
 		{
 			special = true;
+		}
+
+		JavadocTagPart simplifiedSignatureTag = ExtractorUtil.grabFirstTag(TAG_SIMPLIFIEDSIGNATURE, jdoc, true, warnings, location);
+		if (simplifiedSignatureTag != null)
+		{
+			simplifiedSignature = true;
+		}
+
+		JavadocTagPart staticCallTag = ExtractorUtil.grabFirstTag(TAG_STATICCALL, jdoc, true, warnings, location);
+		if (staticCallTag != null)
+		{
+			staticCall = true;
 		}
 
 		List<JavadocTagPart> paramTags = jdoc.findTags(TagElement.TAG_PARAM);
@@ -314,5 +330,31 @@ public class DocumentationDataDistilled
 	public List<String> getLinks()
 	{
 		return links;
+	}
+
+	public boolean isSimplifiedSignature()
+	{
+		return simplifiedSignature;
+	}
+
+	public void setSimplifiedSignature(boolean simplifiedSignature)
+	{
+		this.simplifiedSignature = simplifiedSignature;
+	}
+
+	/**
+	 * @return the staticCall
+	 */
+	public boolean isStaticCall()
+	{
+		return staticCall;
+	}
+
+	/**
+	 * @param staticCall the staticCall to set
+	 */
+	public void setStaticCall(boolean staticCall)
+	{
+		this.staticCall = staticCall;
 	}
 }

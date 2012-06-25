@@ -47,6 +47,8 @@ public abstract class MemberStoragePlace
 	private static final String ATTR_SINCE = "since";
 	private static final String ATTR_UNTIL = "until";
 	private static final String ATTR_SPECIAL = "special";
+	private static final String ATTR_SIMPLIFIEDSIGNATURE = "simplifiedSignature";
+	private static final String ATTR_STATICCALL = "staticCall";
 	protected static final String ATTR_NAME = "name";
 	private static final String TAG_RETURN = "return";
 
@@ -148,6 +150,14 @@ public abstract class MemberStoragePlace
 			if (ddr.isSpecial())
 			{
 				root.setAttribute(ATTR_SPECIAL, Boolean.TRUE.toString());
+			}
+			if (ddr.isSimplifiedSignature())
+			{
+				root.setAttribute(ATTR_SIMPLIFIEDSIGNATURE, Boolean.TRUE.toString());
+			}
+			if (ddr.isStaticCall())
+			{
+				root.setAttribute(ATTR_STATICCALL, Boolean.TRUE.toString());
 			}
 			Element descr = domDoc.createElement(TAG_DESCRIPTION);
 			root.appendChild(descr);

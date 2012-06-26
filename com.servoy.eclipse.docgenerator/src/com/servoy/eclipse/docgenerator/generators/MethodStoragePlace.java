@@ -92,6 +92,10 @@ public class MethodStoragePlace extends MemberStoragePlace
 			{
 				isProperty = true;
 			}
+			else if (methodMM.getAnnotations().hasAnnotation(ANNOTATION_JS_FUNCTION))
+			{
+				isProperty = false;
+			}
 			else
 			{
 				String shortName = methodMM.getName();

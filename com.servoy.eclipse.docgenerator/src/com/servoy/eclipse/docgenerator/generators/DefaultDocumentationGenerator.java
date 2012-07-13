@@ -232,8 +232,9 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 	private void solveDependenciesForMember(IMemberMetaModel memberMM, MetaModelHolder holder, Stack<String> visited)
 	{
 		// If already solved, do nothing.
-		if (!solved.contains(memberMM.getFullSignature()))
+		if (!solved.contains(memberMM.getFullSignature()) || memberMM.getFullSignature().equals(memberMM.getIndexSignature()))
 		{
+			// if it is inherited may be present multiple times
 			String fullSig = memberMM.getFullSignature();
 			// If we are already visiting this member, then we got a circular dependency.
 			if (visited.contains(fullSig))

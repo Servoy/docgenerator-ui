@@ -419,8 +419,12 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 	// TODO: If the XML is large, this memory based approach is not the best choice. Keep an eye on this.
 	private InputStream writeToXML(MetaModelHolder holder, Set<String> categories, boolean autopilotMode, MemberKindIndex availableMemberKinds)
 	{
+		//Writer writer = null;
 		try
 		{
+//			File apiFile = new File("servoy_api.txt");
+//			writer = new BufferedWriter(new FileWriter(apiFile));
+//			System.out.println("writing api file:" + apiFile.getAbsolutePath());
 			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			LogUtil.logger().fine("Using document builder '" + builder.getClass().getCanonicalName() + "'.");
 			Document doc = builder.newDocument();
@@ -473,12 +477,44 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 			baos.close();
 
 			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+
+//			holder.finalTouch();
+//			for (String category : categories)
+//			{
+//				for (TypeMetaModel typeMM : holder.getSortedTypes())
+//				{
+//					if (typeMM.isServoyDocumented() && category.equals(typeMM.getCategory()))
+//					{
+//						writer.write("\n-----------------API for:  " + typeMM.getPublicName() + "-----------------\n\n");
+//						for (IMemberMetaModel memberMM : typeMM.values())
+//						{
+//							MemberStoragePlace memberData = (MemberStoragePlace)memberMM.getStore().get(STORE_KEY);
+//							if (memberData != null && memberData.shouldShow(typeMM))
+//							{
+//								writer.write(memberMM.getIndexSignature() + "\n");
+//							}
+//						}
+//					}
+//				}
+//			}
+
 			return bais;
 		}
 		catch (Exception e)
 		{
 			LogUtil.logger().log(Level.SEVERE, "Exception while generating documentation.", e);
 			return null;
+		}
+		finally
+		{
+//			if (writer != null) try
+//			{
+//				writer.close();
+//			}
+//			catch (IOException e)
+//			{
+//				e.printStackTrace();
+//			}
 		}
 	}
 

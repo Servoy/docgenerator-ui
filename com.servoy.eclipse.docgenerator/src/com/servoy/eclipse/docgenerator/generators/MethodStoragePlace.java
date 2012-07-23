@@ -38,6 +38,8 @@ import com.servoy.eclipse.docgenerator.metamodel.TypeName;
 @SuppressWarnings("nls")
 public class MethodStoragePlace extends MemberStoragePlace
 {
+
+	public static final String ARRAY_INDEX_PROPERTY_PREFIX = "array__indexedby_";
 	// for methods
 	private static final String TAG_PARAMETER = "parameter";
 	private static final String TAG_PARAMETERS = "parameters";
@@ -365,27 +367,37 @@ public class MethodStoragePlace extends MemberStoragePlace
 		if (DefaultDocumentationGenerator.TAG_PROPERTY.equals(getKind()))
 		{
 			boolean dontCheckFurther = false;
+			boolean checkForArrayIndexProperty = false;
 			if (official.startsWith("get"))
 			{
 				official = official.substring("get".length());
-				if (official.toLowerCase().startsWith("index_"))
-				{
-					official = official.substring("index_".length());
-					if (methodMM.getType() != null && methodMM.getType().getShortName().equals(String.class.getSimpleName()))
-					{
-						official = "['" + official + "']";
-					}
-					else
-					{
-						official = "[" + official + "]";
-					}
-					dontCheckFurther = true;
-				}
+				checkForArrayIndexProperty = true;
 			}
 			else if (official.startsWith("is"))
 			{
 				official = official.substring("is".length());
 			}
+			else
+			{
+				checkForArrayIndexProperty = true; // also check annotation-marked properties... (so that you can have read-only array use)
+			}
+
+			if (checkForArrayIndexProperty)
+			{
+				if (official.toLowerCase().startsWith(ARRAY_INDEX_PROPERTY_PREFIX)) // see also TypeCreator.ARRAY_INDEX_PROPERTY_PREFIX which serves the same purpose
+				{
+					official = official.substring(ARRAY_INDEX_PROPERTY_PREFIX.length());
+					// commented out because the return type should not be the index type, but the actual type of the array elements (for code completion)
+//					if (methodMM.getType() != null && methodMM.getType().getShortName().equals(String.class.getSimpleName()))
+//					{
+//						official = "['" + official + "']";
+//					}
+//					else
+					official = "[" + official + "]";
+					dontCheckFurther = true;
+				}
+			}
+
 			if (!dontCheckFurther)
 			{
 				if (official.startsWith("samecase_"))

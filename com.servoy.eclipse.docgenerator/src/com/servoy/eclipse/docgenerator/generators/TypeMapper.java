@@ -48,6 +48,9 @@ public class TypeMapper
 
 	public TypeMapper(boolean mapUndocumentedTypes)
 	{
+		// -------------------------------- IMPORTANT -------------------------------------
+		// if you CHANGE something in these mappings you probably need to update JavaToDocumentedJSTypeTranslator's map as well
+
 		this.mapUndocumentedTypes = mapUndocumentedTypes;
 
 		// Create some default mappings for standard types.
@@ -69,8 +72,9 @@ public class TypeMapper
 		store(long.class, Number.class.getSimpleName());
 		store(Date.class, Date.class.getSimpleName());
 		store("org.mozilla.javascript.NativeArray", Array.class.getSimpleName());
+		store("org.mozilla.javascript.NativeJavaArray", Array.class.getSimpleName());
 		store("org.mozilla.javascript.Function", "Function");
-		store("com.servoy.j2db.scripting.FormScope", "com.servoy.j2db.FormController$JSForm");
+		store("com.servoy.j2db.scripting.FormScope", "Form");
 		storeSimple(void.class);
 		store(Point.class, String.class.getSimpleName());
 		store(Insets.class, String.class.getSimpleName());

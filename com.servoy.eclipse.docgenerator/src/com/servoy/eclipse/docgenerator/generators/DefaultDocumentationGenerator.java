@@ -30,6 +30,8 @@ import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -390,6 +392,19 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 				DocumentationDataDistilled doc = memberData.getDocData();
 				if (doc != null)
 				{
+					// replace @link
+					for (int i = 0; i < doc.getLinks().size(); i++)
+					{
+						String newLinkContent = replaceLinksWIthPublicName(holder, typeMM, doc.getLinks().get(i));
+						doc.getLinks().set(i, newLinkContent);
+					}
+					//replace Deprecated 
+					if (doc.getDeprecatedText() != null)
+					{
+						String newLinkContent = replaceLinksWIthPublicName(holder, typeMM, doc.getDeprecatedText());
+						doc.setDeprecatedText(newLinkContent);
+					}
+
 					if (doc.getParameters() != null)
 					{
 						for (DocumentedParameterData par : doc.getParameters())
@@ -400,6 +415,61 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 				}
 				memberData.mapTypes(holder, typeMapper);
 			}
+		}
+	}
+
+	/**
+	 * Input : 
+	 * linkContent , ex :  1 - com.servoy.extensions.plugins.dialog.DialogProvider#js_showDialog()
+	 *                     2 - com.servoy.extensions.plugins.dialog.DialogProvider
+	 *                     3 - #js_showDialog() 
+	 *                     4 - http://www.quartz-scheduler.org/docs/tutorials/crontrigger.html
+	 *                     5 - Lorem ipsum  com.servoy.extensions.plugins.dialog.DialogProvider#js_showDialog() , com.servoy.extensions.plugins.dialog.DialogProvider#js_showDialog()
+	 * 
+	 * Output (return) , ex: 1 - dialogs#showDialog()
+	 *                       2 - dialogs
+	 *                       3 - #showDialog
+	 *                       4 -  http://www.quartz-scheduler.org/docs/tutorials/crontrigger.html  (the same as input)
+	 *                       5 -  Lorem ipsum dialogs#showDialog() , dialogs#showDialog()
+	 * @param holder
+	 * @param currentTypeMM
+	 * @param linkContent
+	 */
+	private String replaceLinksWIthPublicName(MetaModelHolder holder, TypeMetaModel currentTypeMM, String linkContent)
+	{
+		//pattern mathcing xxx.yy.zzz#tttt or xxx.yy.zzz#tttt  or xxx.yy.zzz#tttt(aa, aa[])
+		String packagePattern = "(([\\w\\$][\\w\\d\\$]*\\.)+)([\\w][\\w\\$])*";
+		String functionSignaturePattern = "(\\w+\\s*\\(?[\\w\\s,\\[\\]]*\\)?)*";
+		Pattern pattern = Pattern.compile("(" + packagePattern + "#?" + functionSignaturePattern + ")");
+
+		Matcher matcher = pattern.matcher(linkContent);
+		StringBuffer finalString = new StringBuffer();
+		String currentMatch = linkContent;
+		while (matcher.find())
+		{
+			currentMatch = matcher.group(0);
+			String[] parts = currentMatch.split("#");
+			String qName = parts[0];
+			//fully qualified name case
+			if (holder.get(qName) != null)
+			{
+				TypeMetaModel mm = holder.get(qName);
+
+				//replace oldpackage name with new public name and if method was not present(only full qName was given ) do not append '#'
+				currentMatch = currentMatch.replaceAll(packagePattern + "#?",/* "$1" */
+					mm.getPublicName() + (parts.length > 1 ? "#" : ""));
+
+			}
+			matcher.appendReplacement(finalString, currentMatch);
+
+		}
+		if (finalString.length() > 1)
+		{
+			return finalString.toString().replaceAll("#js_", "#");
+		}
+		else
+		{
+			return linkContent.replaceAll("#js_", "#");
 		}
 	}
 

@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.print.PrinterJob;
 import java.lang.reflect.Array;
 import java.util.Date;
 import java.util.HashMap;
@@ -79,6 +80,8 @@ public class TypeMapper
 		store(Point.class, String.class.getSimpleName());
 		store(Insets.class, String.class.getSimpleName());
 		store(Exception.class, "com.servoy.j2db.util.ServoyException");
+
+		store(PrinterJob.class, PrinterJob.class.getSimpleName());
 	}
 
 	private void store(Class< ? > cls, String target)

@@ -392,18 +392,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 				DocumentationDataDistilled doc = memberData.getDocData();
 				if (doc != null)
 				{
-					// replace @link
-					for (int i = 0; i < doc.getLinks().size(); i++)
-					{
-						String newLinkContent = replaceLinksWIthPublicName(holder, typeMM, doc.getLinks().get(i));
-						doc.getLinks().set(i, newLinkContent);
-					}
-					//replace Deprecated 
-					if (doc.getDeprecatedText() != null)
-					{
-						String newLinkContent = replaceLinksWIthPublicName(holder, typeMM, doc.getDeprecatedText());
-						doc.setDeprecatedText(newLinkContent);
-					}
+					substituteLinksWithPublicName(holder, typeMM, doc);
 
 					if (doc.getParameters() != null)
 					{
@@ -419,28 +408,57 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 	}
 
 	/**
+	 * @param holder
+	 * @param typeMM
+	 * @param doc
+	 */
+	private void substituteLinksWithPublicName(MetaModelHolder holder, TypeMetaModel typeMM, DocumentationDataDistilled doc)
+	{
+		// replace @link
+		for (int i = 0; i < doc.getLinks().size(); i++)
+		{
+			String newLinkContent = resolvePublicLinks(holder, typeMM, doc.getLinks().get(i));
+			doc.getLinks().set(i, newLinkContent);
+		}
+		//replace Deprecated 
+		if (doc.getDeprecatedText() != null)
+		{
+			String newTextContent = resolvePublicLinks(holder, typeMM, doc.getDeprecatedText());
+			doc.setDeprecatedText(newTextContent);
+		}
+		//
+		if (doc.getText() != null)
+		{
+			String newTextContent = resolvePublicLinks(holder, typeMM, doc.getText());
+			doc.setText(newTextContent);
+		}
+	}
+
+	/**
 	 * Input : 
-	 * linkContent , ex :  1 - com.servoy.extensions.plugins.dialog.DialogProvider#js_showDialog()
-	 *                     2 - com.servoy.extensions.plugins.dialog.DialogProvider
-	 *                     3 - #js_showDialog() 
-	 *                     4 - http://www.quartz-scheduler.org/docs/tutorials/crontrigger.html
-	 *                     5 - Lorem ipsum  com.servoy.extensions.plugins.dialog.DialogProvider#js_showDialog() , com.servoy.extensions.plugins.dialog.DialogProvider#js_showDialog()
+	 * linkContent , ex :  <p>1 - com.servoy.extensions.plugins.dialog.DialogProvider#js_showDialog() <br/>
+	 *                     2 - com.servoy.extensions.plugins.dialog.DialogProvider<br/>
+	 *                     3 - #js_showDialog() <br/>
+	 *                     4 - http://www.quartz-scheduler.org/docs/tutorials/crontrigger.html <br/>
+	 *                     5 - Lorem ipsum  com.servoy.extensions.plugins.dialog.DialogProvider#js_showDialog() , com.servoy.extensions.plugins.dialog.DialogProvider#js_showDialog() <br/>
+	 *                     </p>
 	 * 
-	 * Output (return) , ex: 1 - dialogs#showDialog()
-	 *                       2 - dialogs
-	 *                       3 - #showDialog
-	 *                       4 -  http://www.quartz-scheduler.org/docs/tutorials/crontrigger.html  (the same as input)
-	 *                       5 -  Lorem ipsum dialogs#showDialog() , dialogs#showDialog()
+	 * Output (return) , ex: <p>1 - dialogs#showDialog()  <br/>
+	 *                       2 - dialogs <br/>
+	 *                       3 - #showDialog <br/>
+	 *                       4 -  http://www.quartz-scheduler.org/docs/tutorials/crontrigger.html  (the same as input) <br/>
+	 *                       5 -  Lorem ipsum dialogs#showDialog() , dialogs#showDialog() <br/>
+	 *                       </p>
 	 * @param holder
 	 * @param currentTypeMM
 	 * @param linkContent
 	 */
-	private String replaceLinksWIthPublicName(MetaModelHolder holder, TypeMetaModel currentTypeMM, String linkContent)
+	private String resolvePublicLinks(MetaModelHolder holder, TypeMetaModel currentTypeMM, String linkContent)
 	{
 		//pattern mathcing xxx.yy.zzz#tttt or xxx.yy.zzz#tttt  or xxx.yy.zzz#tttt(aa, aa[])
-		String packagePattern = "(([\\w\\$][\\w\\d\\$]*\\.)+)([\\w][\\w\\$])*";
-		String functionSignaturePattern = "(\\w+\\s*\\(?[\\w\\s,\\[\\]]*\\)?)*";
-		Pattern pattern = Pattern.compile("(" + packagePattern + "#?" + functionSignaturePattern + ")");
+		String packagePattern = "(([a-zA-Z\\$][\\w\\d\\$]*\\.)+)([a-zA-Z\\$][\\w\\$])*";
+		String functionSignaturePattern = "(#\\w*\\s*(\\([\\w\\s,\\[\\]<>\\.]*\\))?)?"; //function name is optional , also '(params)' is optional
+		Pattern pattern = Pattern.compile("(" + packagePattern + functionSignaturePattern + ")");
 
 		Matcher matcher = pattern.matcher(linkContent);
 		StringBuffer finalString = new StringBuffer();
@@ -456,13 +474,14 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 				TypeMetaModel mm = holder.get(qName);
 
 				//replace oldpackage name with new public name and if method was not present(only full qName was given ) do not append '#'
-				currentMatch = currentMatch.replaceAll(packagePattern + "#?",/* "$1" */
-					mm.getPublicName() + (parts.length > 1 ? "#" : ""));
+				currentMatch = currentMatch.replaceAll(packagePattern + functionSignaturePattern,/* "$1" */
+					mm.getPublicName() + (parts.length > 1 ? "#" + parts[1] : ""));
 
 			}
 			matcher.appendReplacement(finalString, currentMatch);
 
 		}
+		matcher.appendTail(finalString);
 		if (finalString.length() > 1)
 		{
 			return finalString.toString().replaceAll("#js_", "#");

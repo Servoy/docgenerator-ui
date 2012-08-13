@@ -55,33 +55,74 @@ public class TypeMapper
 		this.mapUndocumentedTypes = mapUndocumentedTypes;
 
 		// Create some default mappings for standard types.
-		store(Color.class, String.class.getSimpleName());
-		store(Dimension.class, String.class.getSimpleName());
-		store(Object.class, Object.class.getSimpleName());
-		store(String.class, String.class.getSimpleName());
 		store(Boolean.class, Boolean.class.getSimpleName());
 		store(boolean.class, Boolean.class.getSimpleName());
-		store(Number.class, Number.class.getSimpleName());
-		store(byte.class, Number.class.getSimpleName());
+
 		store(Double.class, Number.class.getSimpleName());
 		store(double.class, Number.class.getSimpleName());
 		store(Float.class, Number.class.getSimpleName());
 		store(float.class, Number.class.getSimpleName());
-		store(Integer.class, Number.class.getSimpleName());
-		store(int.class, Number.class.getSimpleName());
 		store(Long.class, Number.class.getSimpleName());
 		store(long.class, Number.class.getSimpleName());
+		store(Integer.class, Number.class.getSimpleName());
+		store(int.class, Number.class.getSimpleName());
+		store(Byte.class, Number.class.getSimpleName());
+		store(byte.class, Number.class.getSimpleName());
+		store(Short.class, Number.class.getSimpleName());
+		store(short.class, Number.class.getSimpleName());
+		store(Number.class, Number.class.getSimpleName());
+
 		store(Date.class, Date.class.getSimpleName());
+		store(java.sql.Date.class, Date.class.getSimpleName());
+
+		store(Character.class, String.class.getSimpleName());
+		store(char.class, String.class.getSimpleName());
+		store(String.class, String.class.getSimpleName());
+		store(Dimension.class, String.class.getSimpleName());
+		store(Insets.class, String.class.getSimpleName());
+		store(Point.class, String.class.getSimpleName());
+		store(Color.class, String.class.getSimpleName());
+
 		store("org.mozilla.javascript.NativeArray", Array.class.getSimpleName());
 		store("org.mozilla.javascript.NativeJavaArray", Array.class.getSimpleName());
+
+		store(Object.class, Object.class.getSimpleName());
+		store("org.mozilla.javascript.Scriptable", Object.class.getSimpleName());
+		store("com.servoy.j2db.scripting.JSMap", Object.class.getSimpleName());
+
 		store("org.mozilla.javascript.Function", "Function");
-		store("com.servoy.j2db.scripting.FormScope", "Form");
-		storeSimple(void.class);
-		store(Point.class, String.class.getSimpleName());
-		store(Insets.class, String.class.getSimpleName());
+
 		store(Exception.class, "com.servoy.j2db.util.ServoyException");
 
+		store("com.servoy.j2db.dataprocessing.IFoundSetInternal", "com.servoy.j2db.dataprocessing.FoundSet");
+		store("com.servoy.j2db.dataprocessing.IFoundSet", "com.servoy.j2db.dataprocessing.FoundSet");
+		store("com.servoy.j2db.dataprocessing.RelatedFoundSet", "com.servoy.j2db.dataprocessing.FoundSet");
+
+		store("com.servoy.j2db.dataprocessing.IDataSet", "com.servoy.j2db.dataprocessing.JSDataSet");
+		store("com.servoy.j2db.dataprocessing.IRecordInternal", "com.servoy.j2db.dataprocessing.Record");
+		store("com.servoy.j2db.dataprocessing.IRecordInternal", "com.servoy.j2db.dataprocessing.Record");
+
+		store("com.servoy.j2db.ui.IComponent", "IRuntimeComponent");
+
+		store("com.servoy.j2db.solutionmodel.ISMComponent", "com.servoy.j2db.scripting.solutionmodel.JSComponent");
+
+		store("com.servoy.j2db.solutionmodel.ISMMethod", "com.servoy.j2db.scripting.solutionmodel.JSMethod");
+
+		store("com.servoy.j2db.solutionmodel.ISMForm", "com.servoy.j2db.scripting.solutionmodel.JSForm");
+
+		store("com.servoy.j2db.IForm", "Form");
+		store("com.servoy.j2db.scripting.FormScope", "Form");
+
+		store("com.servoy.j2db.querybuilder.IQueryBuilderCondition", "com.servoy.j2db.querybuilder.impl.QBCondition");
+		store("com.servoy.j2db.querybuilder.IQueryBuilderLogicalCondition", "com.servoy.j2db.querybuilder.impl.QBLogicalCondition");
+
+		store("com.servoy.j2db.ui.IScriptRenderMethods", "com.servoy.j2db.ui.IScriptRenderMethodsWithFormat");
+
 		store(PrinterJob.class, PrinterJob.class.getSimpleName());
+
+		store("com.servoy.extensions.plugins.window.menu.AbstractMenuItem", "com.servoy.extensions.plugins.window.menu.MenuItem");
+
+		storeSimple(void.class);
 	}
 
 	private void store(Class< ? > cls, String target)

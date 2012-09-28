@@ -66,8 +66,8 @@ public class TypeMapper
 		store(long.class, Number.class.getSimpleName());
 		store(Integer.class, Number.class.getSimpleName());
 		store(int.class, Number.class.getSimpleName());
-		store(Byte.class, Number.class.getSimpleName());
-		store(byte.class, Number.class.getSimpleName());
+		store(Byte.class, "byte");
+		store(byte.class, "byte");
 		store(Short.class, Number.class.getSimpleName());
 		store(short.class, Number.class.getSimpleName());
 		store(Number.class, Number.class.getSimpleName());

@@ -17,6 +17,8 @@
 
 package com.servoy.eclipse.docgenerator.metamodel;
 
+import java.util.Iterator;
+
 import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 
@@ -166,34 +168,24 @@ public abstract class MemberMetaModel extends GenericMemberMetaModel
 		if (tmm == null || holder == null) return false;
 
 		// if the member was defined in an interface or overrides a superclass member which has the ServoyMobile annotation
-		// search for annotation in supertype definition
-		if (tmm.getSupertype() != null)
+		TypeName aux = null;
+		Iterator<TypeName> it = tmm.getInterfaces().iterator();
+		for (aux = tmm.getSupertype();; aux = it.next())
 		{
-			TypeMetaModel parent = holder.get(tmm.getSupertype().getQualifiedName());
-			if (parent != null)
+			if (aux != null)
 			{
-				IMemberMetaModel imm = parent.get(getIndexSignature());
-				if (imm instanceof MemberMetaModel)
+				TypeMetaModel src = holder.get(aux.getQualifiedName());
+				if (src != null)
 				{
-					MemberMetaModel mmm = (MemberMetaModel)imm;
-					if (mmm.hasServoyMobileAnnotation(parent, holder)) return true;
+					IMemberMetaModel imm = src.get(getIndexSignature());
+					if (imm instanceof MemberMetaModel)
+					{
+						MemberMetaModel mmm = (MemberMetaModel)imm;
+						if (mmm.hasServoyMobileAnnotation(src, holder)) return true;
+					}
 				}
 			}
-		}
-
-		// search for annotation in interface definition
-		for (TypeName interf : tmm.getInterfaces())
-		{
-			TypeMetaModel src = holder.get(interf.getQualifiedName());
-			if (src != null)
-			{
-				IMemberMetaModel imm = src.get(getIndexSignature());
-				if (imm instanceof MemberMetaModel)
-				{
-					MemberMetaModel mmm = (MemberMetaModel)imm;
-					if (mmm.hasServoyMobileAnnotation(src, holder)) return true;
-				}
-			}
+			if (!it.hasNext()) break;
 		}
 
 		return false;

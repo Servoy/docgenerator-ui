@@ -54,6 +54,9 @@ public class TypeMetaModel extends TreeMap<String, IMemberMetaModel> implements 
 	private static final String DEFAULT_CATEGORY = "plugins";
 
 	public static final String ANNOTATION_SERVOY_DOCUMENTED = "ServoyDocumented";
+	private static final String ANNOTATION_SERVOY_MOBILE = "ServoyMobile"; //$NON-NLS-1$
+	private static final String ANNOTATION_SERVOY_MOBILE_FILTER_OUT = "ServoyMobileFilterOut"; //$NON-NLS-1$
+
 	private static final String ATTR_PUBLIC_NAME = "publicName";
 	private static final String ATTR_SCRIPTING_NAME = "scriptingName";
 	private static final String ATTR_CATEGORY_NAME = "category";
@@ -185,6 +188,58 @@ public class TypeMetaModel extends TreeMap<String, IMemberMetaModel> implements 
 	public boolean isServoyDocumented()
 	{
 		return ann.hasAnnotation(ANNOTATION_SERVOY_DOCUMENTED);
+	}
+
+	private boolean hasServoyMobileAnnotation(TypeMetaModel tmm, MetaModelHolder holder)
+	{
+		if (tmm == null) return false;
+
+		if (tmm.getAnnotations() != null && tmm.getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE))
+		{
+			return true;
+		}
+		else
+		{
+			if (tmm.getSupertype() != null)
+			{
+				TypeMetaModel parent = holder.get(tmm.getSupertype().getQualifiedName());
+				if (parent != null)
+				{
+					if (parent.getAnnotations() != null && parent.getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE))
+					{
+						return true;
+					}
+					else
+					{
+						for (TypeName interf : tmm.getInterfaces())
+						{
+							TypeMetaModel src = holder.get(interf.getQualifiedName());
+							if (src != null)
+							{
+								if (hasServoyMobileAnnotation(src, holder)) return true;
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				for (TypeName interf : tmm.getInterfaces())
+				{
+					TypeMetaModel src = holder.get(interf.getQualifiedName());
+					if (src != null)
+					{
+						if (hasServoyMobileAnnotation(src, holder)) return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	public boolean hasServoyMobileAnnotation(MetaModelHolder holder)
+	{
+		return hasServoyMobileAnnotation(this, holder);
 	}
 
 	public TypeName getSupertype()

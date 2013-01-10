@@ -21,6 +21,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.servoy.eclipse.docgenerator.metamodel.IMemberMetaModel;
+import com.servoy.eclipse.docgenerator.metamodel.MemberMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.MetaModelHolder;
 import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.TypeName;
@@ -51,6 +52,7 @@ public abstract class MemberStoragePlace
 	private static final String ATTR_STATICCALL = "staticCall";
 	protected static final String ATTR_NAME = "name";
 	private static final String TAG_RETURN = "return";
+	protected static final String ATTR_SERVOY_MOBILE = DefaultDocumentationGenerator.ATTR_SERVOY_MOBILE;
 
 	private DocumentationDataDistilled docData;
 	private TypeName type;
@@ -125,7 +127,16 @@ public abstract class MemberStoragePlace
 		return memberMM.getIndexSignature();
 	}
 
-	protected Element toXML(Document domDoc, boolean includeSample)
+	public boolean hasServoyMobileAnnotation(MetaModelHolder holder)
+	{
+		if (memberMM instanceof MemberMetaModel)
+		{
+			return ((MemberMetaModel)memberMM).hasServoyMobileAnnotation(typeMM, holder);
+		}
+		return false;
+	}
+
+	protected Element toXML(Document domDoc, boolean includeSample, MetaModelHolder holder, boolean docMobile)
 	{
 		Element root = domDoc.createElement(getKind());
 		root.setAttribute(ATTR_NAME, getOfficialName());
@@ -144,6 +155,10 @@ public abstract class MemberStoragePlace
 				retType.appendChild(domDoc.createCDATASection(ddr.getReturn().trim()));
 			}
 			root.appendChild(retType);
+		}
+		if (docMobile && hasServoyMobileAnnotation(holder))
+		{
+			root.setAttribute(ATTR_SERVOY_MOBILE, Boolean.TRUE.toString());
 		}
 		if (ddr != null && ddr.hasDocumentation())
 		{

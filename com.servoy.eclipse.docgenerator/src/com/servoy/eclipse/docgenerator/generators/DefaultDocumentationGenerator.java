@@ -71,6 +71,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 	private static final String ATTR_SCRIPTINGNAME = "scriptingName";
 	private static final String ATTR_QUALIFIEDNAME = "qualifiedName";
 	private static final String ATTR_EXTENDSCOMPONENT = "extendsComponent";
+	public static final String ATTR_SERVOY_MOBILE = "servoyMobile";
 	protected static final String ATTR_DEPRECATED = "deprecated";
 	public static final String TAG_CONSTANTS = "constants";
 	public static final String TAG_PROPERTIES = "properties";
@@ -107,7 +108,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 
 		collectAllWarnings(holder, allWarnings);
 
-		return writeToXML(holder, req.getCategoryFilter(), req.autopilot(), availableMemberKinds);
+		return writeToXML(holder, req.getCategoryFilter(), req.autopilot(), availableMemberKinds, req.docmobile());
 	}
 
 	@SuppressWarnings("unused")
@@ -506,7 +507,8 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 	 * is fed to the Eclipse resources API when generating the file on disk.
 	 */
 	// TODO: If the XML is large, this memory based approach is not the best choice. Keep an eye on this.
-	private InputStream writeToXML(MetaModelHolder holder, Set<String> categories, boolean autopilotMode, MemberKindIndex availableMemberKinds)
+	private InputStream writeToXML(MetaModelHolder holder, Set<String> categories, boolean autopilotMode, MemberKindIndex availableMemberKinds,
+		boolean docMobile)
 	{
 		//Writer writer = null;
 		try
@@ -550,7 +552,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 				{
 					if (typeMM.isServoyDocumented() && category.equals(typeMM.getCategory()))
 					{
-						Element el = toXML(typeMM, doc, false, availableMemberKinds);
+						Element el = toXML(typeMM, doc, false, availableMemberKinds, holder, docMobile);
 						catRoot.appendChild(el);
 					}
 				}
@@ -610,7 +612,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 	/**
 	 * Returns an XML element that corresponds to this class.
 	 */
-	private Element toXML(TypeMetaModel typeMM, Document doc, boolean hideDeprecated, MemberKindIndex mk)
+	private Element toXML(TypeMetaModel typeMM, Document doc, boolean hideDeprecated, MemberKindIndex mk, MetaModelHolder holder, boolean docMobile)
 	{
 		Element objElement = doc.createElement(TAG_OBJECT);
 		TypeStoragePlace typeData = (TypeStoragePlace)typeMM.getStore().get(STORE_KEY);
@@ -627,6 +629,10 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 		{
 			objElement.setAttribute(ATTR_DEPRECATED, Boolean.TRUE.toString());
 		}
+		if (docMobile && typeMM.hasServoyMobileAnnotation(holder))
+		{
+			objElement.setAttribute(ATTR_SERVOY_MOBILE, Boolean.TRUE.toString());
+		}
 		if (typeData.getExtendsComponent() != null && typeData.getExtendsComponent().trim().length() > 0)
 		{
 			objElement.setAttribute(ATTR_EXTENDSCOMPONENT, typeData.getExtendsComponent());
@@ -635,7 +641,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 		List<String> kinds = mk.getKinds();
 		for (String kind : kinds)
 		{
-			putMembersByType(typeMM, kind, doc, objElement, mk.getWrapperTag(kind), hideDeprecated);
+			putMembersByType(typeMM, kind, doc, objElement, mk.getWrapperTag(kind), hideDeprecated, holder, docMobile);
 		}
 
 		return objElement;
@@ -644,7 +650,8 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 	/**
 	 * Add to the generated XML all members of a certain type (constructor, constants, properties, functions).
 	 */
-	private void putMembersByType(TypeMetaModel typeMM, String kind, Document doc, Element objElement, String holderName, boolean hideDeprecated)
+	private void putMembersByType(TypeMetaModel typeMM, String kind, Document doc, Element objElement, String holderName, boolean hideDeprecated,
+		MetaModelHolder holder, boolean docMobile)
 	{
 		Map<String, Element> children = new TreeMap<String, Element>();
 		for (IMemberMetaModel memberMM : typeMM.values())
@@ -652,7 +659,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 			MemberStoragePlace memberData = (MemberStoragePlace)memberMM.getStore().get(STORE_KEY);
 			if (memberData.getKind() == kind && memberData.shouldShow(typeMM) && (!memberMM.isDeprecated() || !hideDeprecated))
 			{
-				Element child = memberData.toXML(doc, includeSample());
+				Element child = memberData.toXML(doc, includeSample(), holder, docMobile);
 				String sig = memberData.getOfficialSignature();
 				children.put(sig, child);
 			}

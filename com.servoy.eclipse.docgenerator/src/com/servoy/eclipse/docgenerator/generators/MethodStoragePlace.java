@@ -151,13 +151,17 @@ public class MethodStoragePlace extends MemberStoragePlace
 	}
 
 	@Override
-	public Element toXML(Document doc, boolean includeSample)
+	public Element toXML(Document doc, boolean includeSample, MetaModelHolder holder, boolean docMobile)
 	{
-		Element root = super.toXML(doc, includeSample);
+		Element root = super.toXML(doc, includeSample, holder, docMobile);
 		if (methodMM.isVarargs())
 		{
 			root.setAttribute(ATTR_VARARGS, Boolean.TRUE.toString());
 		}
+//		if (docMobile && methodMM.hasServoyMobileAnnotation(typeMM, holder))
+//		{
+//			root.setAttribute(ATTR_SERVOY_MOBILE, Boolean.TRUE.toString());
+//		}
 		DocumentationDataDistilled ddr = getDocData();
 		if (!hideParameters())
 		{

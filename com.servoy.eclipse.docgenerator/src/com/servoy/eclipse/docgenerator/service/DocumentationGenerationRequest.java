@@ -58,6 +58,12 @@ public interface DocumentationGenerationRequest
 	 */
 	boolean autopilot();
 
+	/** 
+	 * If this method returns true, we generate docs for the mobile client.
+	 * Maybe this method should not be in the interface. 
+	 */
+	boolean docmobile();
+
 	/**
 	 * If this method returns true, then, whenever a type that is not marked with
 	 * @ServoyDocumented shows up as parameter or return type of methods, an attempt

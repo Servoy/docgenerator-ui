@@ -39,6 +39,8 @@ public abstract class MemberMetaModel extends GenericMemberMetaModel
 	}
 
 	public static final String ANNOTATION_DEPRECATED = "Deprecated"; //$NON-NLS-1$
+	private static final String ANNOTATION_SERVOY_MOBILE = "ServoyMobile"; //$NON-NLS-1$
+	private static final String ANNOTATION_SERVOY_MOBILE_FILTER_OUT = "ServoyMobileFilterOut"; //$NON-NLS-1$
 
 	private final String className;
 	private final String name;
@@ -154,4 +156,46 @@ public abstract class MemberMetaModel extends GenericMemberMetaModel
 	abstract public String getFullSignature();
 
 	abstract public TypeName getType();
+
+	public boolean hasServoyMobileAnnotation(TypeMetaModel tmm, MetaModelHolder holder)
+	{
+		// if the member has the annotation or if it is part of an interface which has the annotation
+		if (getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE) ||
+			(tmm.getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE) && !getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE_FILTER_OUT))) return true;
+
+		if (tmm == null || holder == null) return false;
+
+		// if the member was defined in an interface or overrides a superclass member which has the ServoyMobile annotation
+		// search for annotation in supertype definition
+		if (tmm.getSupertype() != null)
+		{
+			TypeMetaModel parent = holder.get(tmm.getSupertype().getQualifiedName());
+			if (parent != null)
+			{
+				IMemberMetaModel imm = parent.get(getIndexSignature());
+				if (imm instanceof MemberMetaModel)
+				{
+					MemberMetaModel mmm = (MemberMetaModel)imm;
+					if (mmm.hasServoyMobileAnnotation(parent, holder)) return true;
+				}
+			}
+		}
+
+		// search for annotation in interface definition
+		for (TypeName interf : tmm.getInterfaces())
+		{
+			TypeMetaModel src = holder.get(interf.getQualifiedName());
+			if (src != null)
+			{
+				IMemberMetaModel imm = src.get(getIndexSignature());
+				if (imm instanceof MemberMetaModel)
+				{
+					MemberMetaModel mmm = (MemberMetaModel)imm;
+					if (mmm.hasServoyMobileAnnotation(src, holder)) return true;
+				}
+			}
+		}
+
+		return false;
+	}
 }

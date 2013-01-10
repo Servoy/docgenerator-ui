@@ -19,6 +19,7 @@ package com.servoy.eclipse.docgenerator.metamodel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -200,38 +201,16 @@ public class TypeMetaModel extends TreeMap<String, IMemberMetaModel> implements 
 		}
 		else
 		{
-			if (tmm.getSupertype() != null)
+			TypeName aux = null;
+			Iterator<TypeName> it = tmm.getInterfaces().iterator();
+			for (aux = tmm.getSupertype(); aux != null; aux = it.next())
 			{
-				TypeMetaModel parent = holder.get(tmm.getSupertype().getQualifiedName());
-				if (parent != null)
+				TypeMetaModel src = holder.get(aux.getQualifiedName());
+				if (src != null && hasServoyMobileAnnotation(src, holder))
 				{
-					if (parent.getAnnotations() != null && parent.getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE))
-					{
-						return true;
-					}
-					else
-					{
-						for (TypeName interf : tmm.getInterfaces())
-						{
-							TypeMetaModel src = holder.get(interf.getQualifiedName());
-							if (src != null)
-							{
-								if (hasServoyMobileAnnotation(src, holder)) return true;
-							}
-						}
-					}
+					return true;
 				}
-			}
-			else
-			{
-				for (TypeName interf : tmm.getInterfaces())
-				{
-					TypeMetaModel src = holder.get(interf.getQualifiedName());
-					if (src != null)
-					{
-						if (hasServoyMobileAnnotation(src, holder)) return true;
-					}
-				}
+				if (!it.hasNext()) break;
 			}
 		}
 		return false;

@@ -203,12 +203,15 @@ public class TypeMetaModel extends TreeMap<String, IMemberMetaModel> implements 
 		{
 			TypeName aux = null;
 			Iterator<TypeName> it = tmm.getInterfaces().iterator();
-			for (aux = tmm.getSupertype(); aux != null; aux = it.next())
+			for (aux = tmm.getSupertype();; aux = it.next())
 			{
-				TypeMetaModel src = holder.get(aux.getQualifiedName());
-				if (src != null && hasServoyMobileAnnotation(src, holder))
+				if (aux != null)
 				{
-					return true;
+					TypeMetaModel src = holder.get(aux.getQualifiedName());
+					if (src != null && hasServoyMobileAnnotation(src, holder))
+					{
+						return true;
+					}
 				}
 				if (!it.hasNext()) break;
 			}

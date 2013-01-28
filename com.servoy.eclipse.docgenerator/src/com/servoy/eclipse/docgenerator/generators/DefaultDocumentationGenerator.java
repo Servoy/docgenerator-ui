@@ -629,7 +629,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 		{
 			objElement.setAttribute(ATTR_DEPRECATED, Boolean.TRUE.toString());
 		}
-		if (docMobile && typeMM.hasServoyMobileAnnotation(holder))
+		if (docMobile && typeMM.hasServoyMobileAnnotation(holder) && !typeMM.hasServoyMobileFilterOutAnnotation(holder))
 		{
 			objElement.setAttribute(ATTR_SERVOY_MOBILE, Boolean.TRUE.toString());
 		}
@@ -657,7 +657,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 		for (IMemberMetaModel memberMM : typeMM.values())
 		{
 			MemberStoragePlace memberData = (MemberStoragePlace)memberMM.getStore().get(STORE_KEY);
-			if (memberData.getKind() == kind && memberData.shouldShow(typeMM) && (!memberMM.isDeprecated() || !hideDeprecated))
+			if (memberData.getKind() == kind && memberData.shouldShow(typeMM, docMobile) && (!memberMM.isDeprecated() || !hideDeprecated))
 			{
 				Element child = memberData.toXML(doc, includeSample(), holder, docMobile);
 				String sig = memberData.getOfficialSignature();

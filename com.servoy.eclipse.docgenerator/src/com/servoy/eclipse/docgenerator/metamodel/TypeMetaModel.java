@@ -195,6 +195,11 @@ public class TypeMetaModel extends TreeMap<String, IMemberMetaModel> implements 
 	{
 		if (tmm == null) return false;
 
+		if (tmm.getAnnotations() != null && tmm.getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE_FILTER_OUT))
+		{
+			return false;
+		}
+
 		if (tmm.getAnnotations() != null && tmm.getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE))
 		{
 			return true;
@@ -217,6 +222,39 @@ public class TypeMetaModel extends TreeMap<String, IMemberMetaModel> implements 
 			}
 		}
 		return false;
+	}
+
+	private boolean hasServoyMobileFilterOutAnnotation(TypeMetaModel tmm, MetaModelHolder holder)
+	{
+		if (tmm == null) return false;
+
+		if (tmm.getAnnotations() != null && tmm.getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE_FILTER_OUT))
+		{
+			return true;
+		}
+		else
+		{
+			TypeName aux = null;
+			Iterator<TypeName> it = tmm.getInterfaces().iterator();
+			for (aux = tmm.getSupertype();; aux = it.next())
+			{
+				if (aux != null)
+				{
+					TypeMetaModel src = holder.get(aux.getQualifiedName());
+					if (src != null && hasServoyMobileFilterOutAnnotation(src, holder))
+					{
+						return true;
+					}
+				}
+				if (!it.hasNext()) break;
+			}
+		}
+		return false;
+	}
+
+	public boolean hasServoyMobileFilterOutAnnotation(MetaModelHolder holder)
+	{
+		return hasServoyMobileAnnotation(this, holder);
 	}
 
 	public boolean hasServoyMobileAnnotation(MetaModelHolder holder)

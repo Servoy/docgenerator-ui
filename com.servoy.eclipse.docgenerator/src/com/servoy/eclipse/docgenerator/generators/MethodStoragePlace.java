@@ -275,7 +275,7 @@ public class MethodStoragePlace extends MemberStoragePlace
 	}
 
 	@Override
-	public boolean shouldShow(TypeMetaModel realTypeMM)
+	public boolean shouldShow(TypeMetaModel realTypeMM, boolean docMobile)
 	{
 		// if it's private, don't show
 		if (methodMM.getVisibility() == Visibility.Private)

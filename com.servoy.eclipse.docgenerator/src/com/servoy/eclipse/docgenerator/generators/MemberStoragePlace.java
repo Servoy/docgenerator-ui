@@ -236,7 +236,7 @@ public abstract class MemberStoragePlace
 		setType(newTN);
 	}
 
-	abstract public boolean shouldShow(TypeMetaModel realTypeMM);
+	abstract public boolean shouldShow(TypeMetaModel realTypeMM, boolean docMobile);
 
 	protected boolean hideReturnType()
 	{

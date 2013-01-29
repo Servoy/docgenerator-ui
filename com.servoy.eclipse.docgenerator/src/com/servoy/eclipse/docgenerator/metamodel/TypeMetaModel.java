@@ -254,7 +254,7 @@ public class TypeMetaModel extends TreeMap<String, IMemberMetaModel> implements 
 
 	public boolean hasServoyMobileFilterOutAnnotation(MetaModelHolder holder)
 	{
-		return hasServoyMobileAnnotation(this, holder);
+		return hasServoyMobileFilterOutAnnotation(this, holder);
 	}
 
 	public boolean hasServoyMobileAnnotation(MetaModelHolder holder)

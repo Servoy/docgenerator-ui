@@ -102,6 +102,46 @@ public class TypeName
 	 */
 	private final int nestingLevel;
 
+	private final boolean varargs;
+
+	public TypeName(ITypeBinding binding, boolean varargs)
+	{
+		this.varargs = varargs;
+		ITypeBinding inner = binding;
+		if (varargs)
+		{
+			dimensions = 1;
+		}
+		else
+		{
+			int dims = 0;
+			while (inner.isArray())
+			{
+				inner = inner.getComponentType();
+				dims += 1;
+			}
+			dimensions = dims;
+		}
+		if (inner.isParameterizedType())
+		{
+			inner = inner.getErasure();
+		}
+		ITypeBinding parent = inner;
+		int nesting = 0;
+		while (parent.isNested())
+		{
+			nesting++;
+			parent = parent.getDeclaringClass();
+		}
+		nestingLevel = nesting;
+		primitive = inner.isPrimitive();
+		baseQualifiedName = adaptQualifiedName(inner.getQualifiedName());
+		baseBinaryName = inner.getBinaryName();
+		shortName = buildShortName();
+		qualifiedName = buildQualifiedName();
+		binaryName = buildBinaryName();
+	}
+
 	/**
 	 * Create an instance based on a JDT type.
 	 * 
@@ -110,6 +150,7 @@ public class TypeName
 	 */
 	public TypeName(Type t, boolean varargs, String location, String context, Set<DocumentationWarning> warnings)
 	{
+		this.varargs = varargs;
 		// Try to resolve the binding.
 		ITypeBinding binding = t.resolveBinding();
 		// If binding was resolved, then use it to extract the names.
@@ -183,6 +224,7 @@ public class TypeName
 	public TypeName(String qName, String containerName)
 	{
 		dimensions = 0;
+		varargs = false;
 		int nesting = 0;
 		StringBuffer sb = new StringBuffer();
 		if (containerName != null)
@@ -233,6 +275,7 @@ public class TypeName
 		shortName = buildShortName();
 		qualifiedName = buildQualifiedName();
 		binaryName = buildBinaryName();
+		varargs = false;
 	}
 
 	/**
@@ -245,10 +288,19 @@ public class TypeName
 		this.nestingLevel = source.nestingLevel;
 		this.baseBinaryName = baseBinaryName;
 		this.binaryName = binaryName;
+		this.varargs = source.varargs;
 		dimensions = newDimensions;
 		primitive = source.primitive;
 		shortName = buildShortName();
 		qualifiedName = buildQualifiedName();
+	}
+
+	/**
+	 * @return the varargs
+	 */
+	public boolean isVarargs()
+	{
+		return varargs;
 	}
 
 	public String getShortName()
@@ -379,5 +431,16 @@ public class TypeName
 			sb.append(baseQualifiedName);
 		}
 		return sb.toString();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString()
+	{
+		return "TypeName[" + getQualifiedName() + ':' + getBinaryName() + ']';
 	}
 }

@@ -18,7 +18,9 @@
 package com.servoy.eclipse.docgenerator.metamodel;
 
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
@@ -36,9 +38,11 @@ public class MethodMetaModel extends MemberMetaModel
 {
 	private final String indexSignature;
 	private final String fullSignature;
-	private final TypeName returnType;
-	private final LinkedHashMap<String, TypeName> parameters = new LinkedHashMap<String, TypeName>();
 	private final boolean varargs;
+	private TypeName returnType;
+	private LinkedHashMap<String, TypeName> parameters = new LinkedHashMap<String, TypeName>();
+
+	private static final String ANNOTATION_JS_SIGNATUE = "JSSignature";
 
 	public MethodMetaModel(String className, MethodDeclaration astNode)
 	{
@@ -179,5 +183,39 @@ public class MethodMetaModel extends MemberMetaModel
 	public MethodMetaModel duplicate()
 	{
 		return new MethodMetaModel(this);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.servoy.eclipse.docgenerator.metamodel.MemberMetaModel#setAnnotations(com.servoy.eclipse.docgenerator.metamodel.AnnotationsList)
+	 */
+	@Override
+	public void setAnnotations(AnnotationsList ann)
+	{
+		super.setAnnotations(ann);
+		AnnotationMetaModel jsSignature = ann.get(ANNOTATION_JS_SIGNATUE);
+		if (jsSignature != null)
+		{
+			Object arguments = jsSignature.get("arguments");
+			if (arguments instanceof Object[])
+			{
+				Object[] array = (Object[])arguments;
+				int index = 0;
+				LinkedHashMap<String, TypeName> newParams = new LinkedHashMap<String, TypeName>();
+				for (Entry<String, TypeName> entry : parameters.entrySet())
+				{
+					ITypeBinding tb = (ITypeBinding)array[index++];
+					TypeName value = new TypeName(tb, entry.getValue().isVarargs());
+					newParams.put(entry.getKey(), value);
+				}
+				this.parameters = newParams;
+			}
+			Object returns = jsSignature.get("returns");
+			if (returns instanceof ITypeBinding && !((ITypeBinding)returns).getBinaryName().equals("java.lang.Object"))
+			{
+				returnType = new TypeName((ITypeBinding)returns, false);
+			}
+		}
 	}
 }

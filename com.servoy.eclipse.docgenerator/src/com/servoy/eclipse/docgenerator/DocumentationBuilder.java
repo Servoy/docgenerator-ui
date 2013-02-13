@@ -103,6 +103,9 @@ public class DocumentationBuilder
 			// separate documentation XMLs for each of these found packages.
 			if (req.autopilot())
 			{
+				List<String> extraToProcessProjectNames = new ArrayList<String>();
+				List<String> extraToProcessPackageNames = new ArrayList<String>();
+
 				List<String> toProcessProjectNames = new ArrayList<String>();
 				List<String> toProcessPackageNames = new ArrayList<String>();
 				List<IPath> toProcessXmlFiles = new ArrayList<IPath>();
@@ -196,10 +199,29 @@ public class DocumentationBuilder
 											}
 											else
 											{
-												LogUtil.logger().fine(
-													"Skipping package '" + thisPackageName + "' in project '" + prj.getName() +
-														"' because it does not contain a Servoy plugin and autopilot is on.");
+												// for mobile, when documenting plugins, we take non-plugin packages as well (may contain needed interfaces)
+												// currently this is hardcoded to take in only servoy_base plugin's project
+												// comment the check below to allow all projects/packages 
+												if (req.docmobile())
+												{
+													if (thisPackageName.contains("base.plugins") && prj.getName().contains("servoy_base"))
+													{
+														extraToProcessProjectNames.add(prj.getName());
+														extraToProcessPackageNames.add(thisPackageName);
+													}
+
+													LogUtil.logger().fine(
+														"Will process package '" + thisPackageName + "' in project '" + prj.getName() +
+															"' needed to document plugins for mobile.");
+												}
+												else
+												{
+													LogUtil.logger().fine(
+														"Skipping package '" + thisPackageName + "' in project '" + prj.getName() +
+															"' because it does not contain a Servoy plugin and autopilot is on.");
+												}
 											}
+
 										}
 									}
 									else
@@ -222,6 +244,7 @@ public class DocumentationBuilder
 					}
 				}
 				req.progressUpdate(0);
+
 				if (toProcessProjectNames.size() > 0)
 				{
 					// Process all scheduled packages.
@@ -240,6 +263,25 @@ public class DocumentationBuilder
 						IPath warningsFile = xmlFile.removeFileExtension().addFileExtension("warnings.txt");
 						int startPercent = i * delta;
 						int endPercent = startPercent + delta - 1;
+
+						// this is to include any extra projects/packages that may be needed when documenting for mobile 
+						if (req.docmobile() && extraToProcessProjectNames.size() > 0)
+						{
+							for (int x = 0; x < extraToProcessProjectNames.size() && !req.cancelRequested(); x++)
+							{
+								projectName = extraToProcessProjectNames.get(x);
+								packageName = extraToProcessPackageNames.get(x);
+
+								Object packages4project = packagesToVisit.get(projectName);
+								if (packages4project != null) listWithThisPackage = (ArrayList<String>)packages4project;
+								else listWithThisPackage = new ArrayList<String>();
+
+								listWithThisPackage.add(packageName);
+
+								packagesToVisit.put(projectName, listWithThisPackage);
+							}
+						}
+
 						try
 						{
 							processRoot(packagesToVisit, xmlFile, warningsFile, startPercent, endPercent, xmlFiles, warningsFiles);

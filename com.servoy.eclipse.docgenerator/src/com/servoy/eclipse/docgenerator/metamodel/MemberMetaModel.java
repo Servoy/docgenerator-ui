@@ -161,6 +161,9 @@ public abstract class MemberMetaModel extends GenericMemberMetaModel
 
 	public boolean hasServoyMobileAnnotation(TypeMetaModel tmm, MetaModelHolder holder)
 	{
+		// if the member's type is filtered out of mobile we do not allow the member
+		if (tmm.hasServoyMobileFilterOutAnnotation(holder)) return false;
+
 		// if the member has the annotation or if it is part of an interface which has the annotation
 		if (getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE) ||
 			(tmm.getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE) && !getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE_FILTER_OUT))) return true;

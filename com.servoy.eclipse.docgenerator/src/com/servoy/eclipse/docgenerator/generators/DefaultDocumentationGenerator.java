@@ -45,6 +45,7 @@ import org.eclipse.core.runtime.IPath;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.servoy.eclipse.docgenerator.metamodel.ClientSupport;
 import com.servoy.eclipse.docgenerator.metamodel.DocumentationWarning;
 import com.servoy.eclipse.docgenerator.metamodel.DocumentationWarning.WarningType;
 import com.servoy.eclipse.docgenerator.metamodel.IMemberMetaModel;
@@ -71,7 +72,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 	private static final String ATTR_SCRIPTINGNAME = "scriptingName";
 	private static final String ATTR_QUALIFIEDNAME = "qualifiedName";
 	private static final String ATTR_EXTENDSCOMPONENT = "extendsComponent";
-	public static final String ATTR_SERVOY_MOBILE = "servoyMobile";
+	public static final String ATTR_CLIENT_SUPPORT = "clientSupport";
 	protected static final String ATTR_DEPRECATED = "deprecated";
 	public static final String TAG_CONSTANTS = "constants";
 	public static final String TAG_PROPERTIES = "properties";
@@ -129,7 +130,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 
 	private void createStoragePlaceForAll(MetaModelHolder holder, IStoragePlaceFactory mdFactory)
 	{
-		for (TypeMetaModel typeMM : holder.values())
+		for (TypeMetaModel typeMM : holder.getTypes())
 		{
 			if (!typeMM.getStore().containsKey(STORE_KEY))
 			{
@@ -137,7 +138,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 				typeMM.getStore().put(STORE_KEY, typeData);
 			}
 
-			for (IMemberMetaModel memberMM : typeMM.values())
+			for (IMemberMetaModel memberMM : typeMM.getMembers())
 			{
 				if (!memberMM.getStore().containsKey(STORE_KEY))
 				{
@@ -154,15 +155,15 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 	 */
 	private void solveDependencies(MetaModelHolder holder)
 	{
-		for (TypeMetaModel typeMM : holder.values())
+		for (TypeMetaModel typeMM : holder.getTypes())
 		{
 			// try to fix the "extendsComponent", in case it holds just a public name and not a qualified name
 			TypeStoragePlace typeData = (TypeStoragePlace)typeMM.getStore().get(STORE_KEY);
 			if (typeData.getExtendsComponent() != null)
 			{
-				if (!holder.containsKey(typeData.getExtendsComponent()))
+				if (!holder.hasType(typeData.getExtendsComponent()))
 				{
-					for (TypeMetaModel candidate : holder.values())
+					for (TypeMetaModel candidate : holder.getTypes())
 					{
 						if (typeData.getExtendsComponent().equals(candidate.getPublicName()))
 						{
@@ -177,7 +178,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 			copyMissingDocsFromAbove(holder, typeMM, typeMM);
 
 			// solve @sameas, @sampleas and @clonedesc references
-			for (IMemberMetaModel member : typeMM.values())
+			for (IMemberMetaModel member : typeMM.getMembers())
 			{
 				solveDependenciesForMember(member, holder, new Stack<String>());
 			}
@@ -193,7 +194,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 		List<TypeMetaModel> sources = new ArrayList<TypeMetaModel>();
 		if (current.getSupertype() != null)
 		{
-			TypeMetaModel sup = holder.get(current.getSupertype().getQualifiedName());
+			TypeMetaModel sup = holder.getType(current.getSupertype().getQualifiedName());
 			if (sup != null)
 			{
 				copyMissingDocsFromAbove(holder, sup, sup);
@@ -202,7 +203,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 		}
 		for (TypeName interf : current.getInterfaces())
 		{
-			TypeMetaModel src = holder.get(interf.getQualifiedName());
+			TypeMetaModel src = holder.getType(interf.getQualifiedName());
 			if (src != null)
 			{
 				copyMissingDocsFromAbove(holder, src, src);
@@ -211,9 +212,9 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 		}
 		for (TypeMetaModel typeMM : sources)
 		{
-			for (IMemberMetaModel memberMM : typeMM.values())
+			for (IMemberMetaModel memberMM : typeMM.getMembers())
 			{
-				IMemberMetaModel mine = target.get(memberMM.getIndexSignature());
+				IMemberMetaModel mine = target.getMember(memberMM.getIndexSignature());
 				MemberStoragePlace myData = (MemberStoragePlace)mine.getStore().get(STORE_KEY);
 				MemberStoragePlace theirData = (MemberStoragePlace)memberMM.getStore().get(STORE_KEY);
 				if (myData.getDocData() == null && theirData.getDocData() != null)
@@ -343,11 +344,11 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 	 */
 	private IMemberMetaModel find(MetaModelHolder holder, IMemberMetaModel target, QualifiedNameRaw redirect, boolean reportMissing)
 	{
-		TypeMetaModel typeMM = holder.get(redirect.getClassName());
+		TypeMetaModel typeMM = holder.getType(redirect.getClassName());
 		if (typeMM != null)
 		{
 			IMemberMetaModel memberMM = null;
-			for (IMemberMetaModel candidate : typeMM.values())
+			for (IMemberMetaModel candidate : typeMM.getMembers())
 			{
 				if (candidate.matchesSignature(redirect.getMemberSignature()))
 				{
@@ -385,9 +386,9 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 
 	public void doTypeMappingForAll(MetaModelHolder holder, TypeMapper typeMapper)
 	{
-		for (TypeMetaModel typeMM : holder.values())
+		for (TypeMetaModel typeMM : holder.getTypes())
 		{
-			for (IMemberMetaModel memberMM : typeMM.values())
+			for (IMemberMetaModel memberMM : typeMM.getMembers())
 			{
 				MemberStoragePlace memberData = (MemberStoragePlace)memberMM.getStore().get(DefaultDocumentationGenerator.STORE_KEY);
 				DocumentationDataDistilled doc = memberData.getDocData();
@@ -470,10 +471,9 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 			String[] parts = currentMatch.split("#");
 			String qName = parts[0];
 			//fully qualified name case
-			if (holder.get(qName) != null)
+			TypeMetaModel mm = holder.getType(qName);
+			if (mm != null)
 			{
-				TypeMetaModel mm = holder.get(qName);
-
 				//replace oldpackage name with new public name and if method was not present(only full qName was given ) do not append '#'
 				currentMatch = currentMatch.replaceAll(packagePattern + functionSignaturePattern,/* "$1" */
 					mm.getPublicName() + (parts.length > 1 ? "#" + parts[1] : ""));
@@ -629,9 +629,13 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 		{
 			objElement.setAttribute(ATTR_DEPRECATED, Boolean.TRUE.toString());
 		}
-		if (docMobile && typeMM.hasServoyMobileAnnotation(holder) && !typeMM.hasServoyMobileFilterOutAnnotation(holder))
+		if (docMobile)
 		{
-			objElement.setAttribute(ATTR_SERVOY_MOBILE, Boolean.TRUE.toString());
+			ClientSupport scp = typeMM.getServoyClientSupport(holder);
+			if (scp != null && scp != ClientSupport.Default)
+			{
+				objElement.setAttribute(ATTR_CLIENT_SUPPORT, scp.toAttribute());
+			}
 		}
 		if (typeData.getExtendsComponent() != null && typeData.getExtendsComponent().trim().length() > 0)
 		{
@@ -654,7 +658,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 		MetaModelHolder holder, boolean docMobile)
 	{
 		Map<String, Element> children = new TreeMap<String, Element>();
-		for (IMemberMetaModel memberMM : typeMM.values())
+		for (IMemberMetaModel memberMM : typeMM.getMembers())
 		{
 			MemberStoragePlace memberData = (MemberStoragePlace)memberMM.getStore().get(STORE_KEY);
 			if (memberData.getKind() == kind && memberData.shouldShow(typeMM, docMobile) && (!memberMM.isDeprecated() || !hideDeprecated))
@@ -675,11 +679,11 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 
 	private void collectAllWarnings(MetaModelHolder holder, Set<DocumentationWarning> allWarnings)
 	{
-		for (TypeMetaModel typeMM : holder.values())
+		for (TypeMetaModel typeMM : holder.getTypes())
 		{
 			allWarnings.addAll(typeMM.getWarnings());
 
-			for (IMemberMetaModel memberMM : typeMM.values())
+			for (IMemberMetaModel memberMM : typeMM.getMembers())
 			{
 				allWarnings.addAll(memberMM.getWarnings());
 			}

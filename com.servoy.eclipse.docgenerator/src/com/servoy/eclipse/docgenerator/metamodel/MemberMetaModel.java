@@ -40,9 +40,6 @@ public abstract class MemberMetaModel extends GenericMemberMetaModel
 		Private, Protected, Public
 	}
 
-	public static final String ANNOTATION_DEPRECATED = "Deprecated"; //$NON-NLS-1$
-	private static final String ANNOTATION_SERVOY_MOBILE = "ServoyMobile"; //$NON-NLS-1$
-	private static final String ANNOTATION_SERVOY_MOBILE_FILTER_OUT = "ServoyMobileFilterOut"; //$NON-NLS-1$
 
 	private final String className;
 	private final String name;
@@ -81,8 +78,7 @@ public abstract class MemberMetaModel extends GenericMemberMetaModel
 		this.statc = original.statc;
 		if (original.annotations != null)
 		{
-			this.annotations = new AnnotationsList();
-			this.annotations.putAll(original.annotations);
+			this.annotations = new AnnotationsList(original.annotations);
 		}
 		duplicate = true;
 	}
@@ -159,16 +155,29 @@ public abstract class MemberMetaModel extends GenericMemberMetaModel
 
 	abstract public TypeName getType();
 
-	public boolean hasServoyMobileAnnotation(TypeMetaModel tmm, MetaModelHolder holder)
+	public ClientSupport getServoyClientSupport(TypeMetaModel tmm, MetaModelHolder holder)
 	{
+		AnnotationMetaModel csp = getAnnotations().getAnnotation(ANNOTATION_SERVOY_CLIENT_SUPPORT);
+		if (csp != null)
+		{
+			return ClientSupport.fromAnnotation(csp);
+		}
+
+		if (tmm == null) return null;
+		csp = tmm.getAnnotations().getAnnotation(ANNOTATION_SERVOY_CLIENT_SUPPORT);
+		if (csp != null)
+		{
+			return ClientSupport.fromAnnotation(csp);
+		}
+
 		// if the member's type is filtered out of mobile we do not allow the member
-		if (tmm.hasServoyMobileFilterOutAnnotation(holder)) return false;
+		if (tmm.hasServoyMobileFilterOutAnnotation(holder)) return ClientSupport.wc_sc;
 
 		// if the member has the annotation or if it is part of an interface which has the annotation
 		if (getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE) ||
-			(tmm.getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE) && !getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE_FILTER_OUT))) return true;
+			(tmm.getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE) && !getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE_FILTER_OUT))) return ClientSupport.mc_wc_sc;
 
-		if (tmm == null || holder == null) return false;
+		if (holder == null) return null;
 
 		// if the member was defined in an interface or overrides a superclass member which has the ServoyMobile annotation
 		TypeName aux = null;
@@ -177,20 +186,20 @@ public abstract class MemberMetaModel extends GenericMemberMetaModel
 		{
 			if (aux != null)
 			{
-				TypeMetaModel src = holder.get(aux.getQualifiedName());
+				TypeMetaModel src = holder.getType(aux.getQualifiedName());
 				if (src != null)
 				{
-					IMemberMetaModel imm = src.get(getIndexSignature());
+					IMemberMetaModel imm = src.getMember(getIndexSignature());
 					if (imm instanceof MemberMetaModel)
 					{
-						MemberMetaModel mmm = (MemberMetaModel)imm;
-						if (mmm.hasServoyMobileAnnotation(src, holder)) return true;
+						ClientSupport mcsp = ((MemberMetaModel)imm).getServoyClientSupport(src, holder);
+						if (mcsp != null) return mcsp;
 					}
 				}
 			}
 			if (!it.hasNext()) break;
 		}
 
-		return false;
+		return null;
 	}
 }

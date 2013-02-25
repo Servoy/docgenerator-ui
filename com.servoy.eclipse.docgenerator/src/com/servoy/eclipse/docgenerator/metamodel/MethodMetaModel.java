@@ -42,7 +42,7 @@ public class MethodMetaModel extends MemberMetaModel
 	private TypeName returnType;
 	private LinkedHashMap<String, TypeName> parameters = new LinkedHashMap<String, TypeName>();
 
-	private static final String ANNOTATION_JS_SIGNATUE = "JSSignature";
+	private static final String ANNOTATION_JS_SIGNATURE = "JSSignature";
 
 	public MethodMetaModel(String className, MethodDeclaration astNode)
 	{
@@ -194,10 +194,10 @@ public class MethodMetaModel extends MemberMetaModel
 	public void setAnnotations(AnnotationsList ann)
 	{
 		super.setAnnotations(ann);
-		AnnotationMetaModel jsSignature = ann.get(ANNOTATION_JS_SIGNATUE);
+		AnnotationMetaModel jsSignature = ann.getAnnotation(ANNOTATION_JS_SIGNATURE);
 		if (jsSignature != null)
 		{
-			Object arguments = jsSignature.get("arguments");
+			Object arguments = jsSignature.getAttribute("arguments");
 			if (arguments instanceof Object[])
 			{
 				Object[] array = (Object[])arguments;
@@ -211,7 +211,7 @@ public class MethodMetaModel extends MemberMetaModel
 				}
 				this.parameters = newParams;
 			}
-			Object returns = jsSignature.get("returns");
+			Object returns = jsSignature.getAttribute("returns");
 			if (returns instanceof ITypeBinding && !((ITypeBinding)returns).getBinaryName().equals("java.lang.Object"))
 			{
 				returnType = new TypeName((ITypeBinding)returns, false);

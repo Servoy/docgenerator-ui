@@ -163,9 +163,9 @@ public class TypeMapper
 			wasFound[0] = true;
 			// If the type is already public, then keep it.
 			String baseName = originalType.getBaseName();
-			if (docs.containsKey(baseName))
+			if (docs.hasType(baseName))
 			{
-				TypeMetaModel existing = docs.get(baseName);
+				TypeMetaModel existing = docs.getType(baseName);
 				if (existing.isServoyDocumented())
 				{
 					return originalType;
@@ -189,7 +189,7 @@ public class TypeMapper
 			if (partialMatch)
 			{
 				// Try a search based on short names.
-				for (TypeMetaModel typeMM : docs.values())
+				for (TypeMetaModel typeMM : docs.getTypes())
 				{
 					String typeShortName = typeMM.getName().getShortName().replaceAll("\\[\\]", "");
 					if (typeShortName.equals(originalType.getShortName()))
@@ -199,7 +199,7 @@ public class TypeMapper
 				}
 
 				// Try a search based on public names
-				for (TypeMetaModel typeMM : docs.values())
+				for (TypeMetaModel typeMM : docs.getTypes())
 				{
 					if (typeMM.getPublicName().equals(originalType.getShortName()))
 					{
@@ -213,7 +213,7 @@ public class TypeMapper
 				// if nothing succeeded so far, try to find a class
 				// that implements our type
 				TypeName equiv = null;
-				for (TypeMetaModel cdr : docs.values())
+				for (TypeMetaModel cdr : docs.getTypes())
 				{
 					if (cdr.isServoyDocumented())
 					{

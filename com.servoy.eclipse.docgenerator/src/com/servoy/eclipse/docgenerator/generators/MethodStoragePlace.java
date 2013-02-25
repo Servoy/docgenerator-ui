@@ -305,16 +305,16 @@ public class MethodStoragePlace extends MemberStoragePlace
 				{
 					String pair = JS_PREFIX + "get" + shortName.substring("set".length()) + "()";
 					IMemberMetaModel getter = null;
-					if (realTypeMM.containsKey(pair))
+					if (realTypeMM.hasMember(pair))
 					{
-						getter = realTypeMM.get(pair);
+						getter = realTypeMM.getMember(pair);
 					}
 					else
 					{
 						pair = JS_PREFIX + "is" + shortName.substring("set".length()) + "()";
-						if (realTypeMM.containsKey(pair))
+						if (realTypeMM.hasMember(pair))
 						{
-							getter = realTypeMM.get(pair);
+							getter = realTypeMM.getMember(pair);
 						}
 					}
 					if (getter != null)
@@ -460,9 +460,9 @@ public class MethodStoragePlace extends MemberStoragePlace
 		{
 			setterSignature = JS_PREFIX + setterSignature;
 		}
-		if (typeMM.containsKey(setterSignature))
+		if (typeMM.hasMember(setterSignature))
 		{
-			IMemberMetaModel setterRaw = typeMM.get(setterSignature);
+			IMemberMetaModel setterRaw = typeMM.getMember(setterSignature);
 			if (setterRaw instanceof MethodMetaModel)
 			{
 				MethodMetaModel setter = (MethodMetaModel)setterRaw;

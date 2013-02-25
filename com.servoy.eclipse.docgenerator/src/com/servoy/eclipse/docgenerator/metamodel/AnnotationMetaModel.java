@@ -18,13 +18,15 @@
 package com.servoy.eclipse.docgenerator.metamodel;
 
 import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * @author gerzse
  */
-@SuppressWarnings("nls")
-public class AnnotationMetaModel extends LinkedHashMap<String, Object>
+public class AnnotationMetaModel
 {
+	private final Map<String, Object> attributes = new LinkedHashMap<String, Object>();
 	private final String name;
 
 	public AnnotationMetaModel(String name)
@@ -37,39 +39,54 @@ public class AnnotationMetaModel extends LinkedHashMap<String, Object>
 		return name;
 	}
 
+	public void addAttribute(String nm, Object attribute)
+	{
+		attributes.put(nm, attribute);
+	}
+
+	public boolean hasAttribute(String nm)
+	{
+		return attributes.containsKey(nm);
+	}
+
+	public Object getAttribute(String nm)
+	{
+		return attributes.get(nm);
+	}
+
 	@Override
 	public String toString()
 	{
-		StringBuffer sb = new StringBuffer();
-		sb.append("@").append(name);
-		if (size() > 0)
+		StringBuilder sb = new StringBuilder();
+		sb.append('@').append(name);
+		if (attributes.size() > 0)
 		{
-			sb.append("(");
+			sb.append('(');
 			boolean first = true;
-			for (String key : keySet())
+			for (Entry<String, Object> entry : attributes.entrySet())
 			{
 				if (!first)
 				{
-					sb.append(",");
+					sb.append(',');
 				}
-				sb.append(key).append("=");
-				Object value = get(key);
+				sb.append(entry.getKey()).append('=');
+				Object value = entry.getValue();
 				if (value.getClass().isArray())
 				{
 					Object[] arr = (Object[])value;
-					sb.append("{");
+					sb.append('{');
 					for (int i = 0; i < arr.length; i++)
 					{
-						if (i > 0) sb.append(",");
+						if (i > 0) sb.append(',');
 						sb.append(arr[i].toString());
 					}
-					sb.append("}");
+					sb.append('}');
 				}
 				else if (value instanceof String)
 				{
-					sb.append("\"");
+					sb.append('"');
 					sb.append(value.toString());
-					sb.append("\"");
+					sb.append('"');
 				}
 				else
 				{
@@ -77,7 +94,7 @@ public class AnnotationMetaModel extends LinkedHashMap<String, Object>
 				}
 				first = false;
 			}
-			sb.append(")");
+			sb.append(')');
 		}
 		return sb.toString();
 	}

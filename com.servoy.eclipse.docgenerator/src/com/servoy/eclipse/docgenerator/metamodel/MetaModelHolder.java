@@ -18,7 +18,9 @@
 package com.servoy.eclipse.docgenerator.metamodel;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -30,18 +32,18 @@ import java.util.TreeSet;
  * 
  * @author gerzse
  */
-public class MetaModelHolder extends TreeMap<String, TypeMetaModel>
+public class MetaModelHolder
 {
+	private final Map<String, TypeMetaModel> types = new TreeMap<String, TypeMetaModel>();
+
 	// In the XML the classes used to be written in alphabetic order of their public name,
 	// so we also keep them in a sorted set to respect this order.
 	private final SortedSet<TypeMetaModel> sortedTypes = new TreeSet<TypeMetaModel>();
 
-	@Override
-	public TypeMetaModel put(String key, TypeMetaModel value)
+	public void addType(String key, TypeMetaModel value)
 	{
-		TypeMetaModel previous = super.put(key, value);
+		types.put(key, value);
 		sortedTypes.add(value);
-		return previous;
 	}
 
 	public SortedSet<TypeMetaModel> getSortedTypes()
@@ -54,7 +56,7 @@ public class MetaModelHolder extends TreeMap<String, TypeMetaModel>
 	 */
 	public void finalTouch()
 	{
-		for (TypeMetaModel typeMM : values())
+		for (TypeMetaModel typeMM : types.values())
 		{
 			copyMissingMembersFromAbove(typeMM, typeMM);
 		}
@@ -69,7 +71,7 @@ public class MetaModelHolder extends TreeMap<String, TypeMetaModel>
 		List<TypeMetaModel> sources = new ArrayList<TypeMetaModel>();
 		if (current.getSupertype() != null)
 		{
-			TypeMetaModel sup = get(current.getSupertype().getQualifiedName());
+			TypeMetaModel sup = getType(current.getSupertype().getQualifiedName());
 			if (sup != null)
 			{
 				copyMissingMembersFromAbove(sup, sup);
@@ -78,7 +80,7 @@ public class MetaModelHolder extends TreeMap<String, TypeMetaModel>
 		}
 		for (TypeName interf : current.getInterfaces())
 		{
-			TypeMetaModel src = get(interf.getQualifiedName());
+			TypeMetaModel src = getType(interf.getQualifiedName());
 			if (src != null)
 			{
 				copyMissingMembersFromAbove(src, src);
@@ -87,11 +89,11 @@ public class MetaModelHolder extends TreeMap<String, TypeMetaModel>
 		}
 		for (TypeMetaModel typeMM : sources)
 		{
-			for (IMemberMetaModel memberMM : typeMM.values())
+			for (IMemberMetaModel memberMM : typeMM.getMembers())
 			{
-				if (!target.containsKey(memberMM.getIndexSignature()))
+				if (!target.hasMember(memberMM.getIndexSignature()))
 				{
-					target.put(memberMM.getIndexSignature(), memberMM.duplicate());
+					target.addMember(memberMM.getIndexSignature(), memberMM.duplicate());
 				}
 			}
 		}
@@ -99,6 +101,21 @@ public class MetaModelHolder extends TreeMap<String, TypeMetaModel>
 		{
 			copyMissingMembersFromAbove(src, target);
 		}
+	}
+
+	public TypeMetaModel getType(String name)
+	{
+		return types.get(name);
+	}
+
+	public boolean hasType(String name)
+	{
+		return types.containsKey(name);
+	}
+
+	public Collection<TypeMetaModel> getTypes()
+	{
+		return types.values();
 	}
 
 }

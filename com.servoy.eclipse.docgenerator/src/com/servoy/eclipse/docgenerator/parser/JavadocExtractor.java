@@ -138,7 +138,7 @@ public class JavadocExtractor extends ASTVisitor
 		TypeMetaModel typeMM = typesStack.pop();
 		AnnotationsList annotations = annotationsStack.pop();
 		typeMM.setAnnotations(annotations);
-		allTypes.put(typeMM.getName().getQualifiedName(), typeMM);
+		allTypes.addType(typeMM.getName().getQualifiedName(), typeMM);
 	}
 
 	@Override
@@ -147,7 +147,7 @@ public class JavadocExtractor extends ASTVisitor
 		if (!typesStack.isEmpty())
 		{
 			MethodMetaModel methodMM = new MethodMetaModel(typesStack.peek().getName().getQualifiedName(), node);
-			typesStack.peek().put(methodMM.getIndexSignature(), methodMM);
+			typesStack.peek().addMember(methodMM.getIndexSignature(), methodMM);
 			currentMembers.add(methodMM);
 			annotationsStack.push(new AnnotationsList());
 			return true;
@@ -183,7 +183,7 @@ public class JavadocExtractor extends ASTVisitor
 				{
 					VariableDeclarationFragment varDecl = (VariableDeclarationFragment)o;
 					FieldMetaModel fieldMM = new FieldMetaModel(typesStack.peek().getName().getQualifiedName(), node, varDecl);
-					typesStack.peek().put(fieldMM.getIndexSignature(), fieldMM);
+					typesStack.peek().addMember(fieldMM.getIndexSignature(), fieldMM);
 					currentMembers.add(fieldMM);
 				}
 			}
@@ -256,12 +256,12 @@ public class JavadocExtractor extends ASTVisitor
 							Object valObj = mvPair.getValue().resolveConstantExpressionValue();
 							if (valObj != null)
 							{
-								annotationMM.put(key, valObj.toString());
+								annotationMM.addAttribute(key, valObj.toString());
 							}
 							else
 							{
 								warning(WarningType.Other, "Cannot retrieve value for attribute '" + key + "' of annotation: " + node.toString());
-								annotationMM.put(key, mvPair.getValue().toString());
+								annotationMM.addAttribute(key, mvPair.getValue().toString());
 							}
 						}
 					}
@@ -272,16 +272,16 @@ public class JavadocExtractor extends ASTVisitor
 					Object value = sma.getValue().resolveConstantExpressionValue();
 					if (value != null)
 					{
-						annotationMM.put("value", value.toString());
+						annotationMM.addAttribute("value", value.toString());
 					}
 					else
 					{
 						warning(WarningType.Other, "Cannot retrieve value from single member annotation: " + node.toString());
-						annotationMM.put("value", sma.getValue().toString());
+						annotationMM.addAttribute("value", sma.getValue().toString());
 					}
 				}
 			}
-			annotationsStack.peek().put(annotationMM.getName(), annotationMM);
+			annotationsStack.peek().add(annotationMM.getName(), annotationMM);
 		}
 	}
 
@@ -307,7 +307,7 @@ public class JavadocExtractor extends ASTVisitor
 			{
 				String key = attr.getName();
 				Object val = extractAnnotationValue(attr.getValue());
-				annot.put(key, val);
+				annot.addAttribute(key, val);
 			}
 			return annot;
 		}

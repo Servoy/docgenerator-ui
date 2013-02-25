@@ -18,33 +18,52 @@
 package com.servoy.eclipse.docgenerator.metamodel;
 
 import java.util.LinkedHashMap;
-
+import java.util.Map;
 
 /**
  * @author gerzse
  */
-@SuppressWarnings("nls")
-public class AnnotationsList extends LinkedHashMap<String, AnnotationMetaModel>
+public class AnnotationsList
 {
-	@Override
-	public String toString()
+	private final Map<String, AnnotationMetaModel> annotations = new LinkedHashMap<String, AnnotationMetaModel>();
+
+	public AnnotationsList()
 	{
-		StringBuffer sb = new StringBuffer();
-		for (AnnotationMetaModel ad : values())
+		this(null);
+	}
+
+	public AnnotationsList(AnnotationsList anns)
+	{
+		if (anns != null)
 		{
-			if (sb.length() > 0) sb.append("\n");
-			sb.append(ad.toString());
+			annotations.putAll(anns.annotations);
 		}
-		return sb.toString();
+	}
+
+	public void add(String name, AnnotationMetaModel annotationMM)
+	{
+		annotations.put(name, annotationMM);
 	}
 
 	public boolean hasAnnotation(String name)
 	{
-		String searchKey = name;
-		if (searchKey.startsWith("@"))
+		return annotations.containsKey(name);
+	}
+
+	public AnnotationMetaModel getAnnotation(String name)
+	{
+		return annotations.get(name);
+	}
+
+	@Override
+	public String toString()
+	{
+		StringBuilder sb = new StringBuilder();
+		for (AnnotationMetaModel ad : annotations.values())
 		{
-			searchKey = searchKey.substring(1);
+			if (sb.length() > 0) sb.append('\n');
+			sb.append(ad.toString());
 		}
-		return containsKey(name);
+		return sb.toString();
 	}
 }

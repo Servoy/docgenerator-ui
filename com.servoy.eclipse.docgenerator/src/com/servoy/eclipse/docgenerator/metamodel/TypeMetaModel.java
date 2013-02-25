@@ -18,6 +18,7 @@
 package com.servoy.eclipse.docgenerator.metamodel;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -45,18 +46,16 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
  * @author gerzse
  */
 @SuppressWarnings("nls")
-public class TypeMetaModel extends TreeMap<String, IMemberMetaModel> implements Comparable<TypeMetaModel>, IPublicStore
+public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 {
+	Map<String, IMemberMetaModel> members = new TreeMap<String, IMemberMetaModel>();
+
 	/**
 	 * Default category to use when the "category" attribute is not explicitly given in the @ServoyDocumented annotation.
 	 * 
 	 * @see com.servoy.j2db.documentation.ServoyDocumented.PLUGINS
 	 */
 	private static final String DEFAULT_CATEGORY = "plugins";
-
-	public static final String ANNOTATION_SERVOY_DOCUMENTED = "ServoyDocumented";
-	private static final String ANNOTATION_SERVOY_MOBILE = "ServoyMobile"; //$NON-NLS-1$
-	private static final String ANNOTATION_SERVOY_MOBILE_FILTER_OUT = "ServoyMobileFilterOut"; //$NON-NLS-1$
 
 	private static final String ATTR_PUBLIC_NAME = "publicName";
 	private static final String ATTR_SCRIPTING_NAME = "scriptingName";
@@ -137,7 +136,7 @@ public class TypeMetaModel extends TreeMap<String, IMemberMetaModel> implements 
 
 	public boolean isDeprecated()
 	{
-		return ann.hasAnnotation(MemberMetaModel.ANNOTATION_DEPRECATED);
+		return ann.hasAnnotation(IPublicStore.ANNOTATION_DEPRECATED);
 	}
 
 	public String getExtendsComponent()
@@ -147,23 +146,20 @@ public class TypeMetaModel extends TreeMap<String, IMemberMetaModel> implements 
 
 	private String getAttribute(String key, String def)
 	{
-		AnnotationMetaModel amm = ann.get(ANNOTATION_SERVOY_DOCUMENTED);
+		AnnotationMetaModel amm = ann.getAnnotation(ANNOTATION_SERVOY_DOCUMENTED);
 		String result = null;
 		if (amm != null)
 		{
-			if (amm.containsKey(key))
+			if (amm.hasAttribute(key))
 			{
-				result = amm.get(key).toString();
+				result = amm.getAttribute(key).toString();
 			}
 		}
 		if (result != null && result.trim().length() > 0)
 		{
 			return result;
 		}
-		else
-		{
-			return def;
-		}
+		return def;
 	}
 
 	public JavadocMetaModel getJavadoc()
@@ -191,37 +187,41 @@ public class TypeMetaModel extends TreeMap<String, IMemberMetaModel> implements 
 		return ann.hasAnnotation(ANNOTATION_SERVOY_DOCUMENTED);
 	}
 
-	private boolean hasServoyMobileAnnotation(TypeMetaModel tmm, MetaModelHolder holder)
+	private ClientSupport getServoyClientSupport(TypeMetaModel tmm, MetaModelHolder holder)
 	{
-		if (tmm == null) return false;
+		if (tmm == null) return null;
 
-		if (tmm.getAnnotations() != null && tmm.getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE_FILTER_OUT))
+		if (tmm.getAnnotations() != null)
 		{
-			return false;
-		}
+			AnnotationMetaModel csp = tmm.getAnnotations().getAnnotation(ANNOTATION_SERVOY_CLIENT_SUPPORT);
+			if (csp != null) return ClientSupport.fromAnnotation(csp);
 
-		if (tmm.getAnnotations() != null && tmm.getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE))
-		{
-			return true;
-		}
-		else
-		{
-			TypeName aux = null;
-			Iterator<TypeName> it = tmm.getInterfaces().iterator();
-			for (aux = tmm.getSupertype();; aux = it.next())
+			if (tmm.getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE_FILTER_OUT))
 			{
-				if (aux != null)
-				{
-					TypeMetaModel src = holder.get(aux.getQualifiedName());
-					if (src != null && hasServoyMobileAnnotation(src, holder))
-					{
-						return true;
-					}
-				}
-				if (!it.hasNext()) break;
+				return ClientSupport.wc_sc;
+			}
+
+			if (tmm.getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE))
+			{
+				return ClientSupport.mc_wc_sc;
 			}
 		}
-		return false;
+
+		TypeName aux = null;
+		Iterator<TypeName> it = tmm.getInterfaces().iterator();
+		for (aux = tmm.getSupertype();; aux = it.next())
+		{
+			if (aux != null)
+			{
+				ClientSupport scp = getServoyClientSupport(holder.getType(aux.getQualifiedName()), holder);
+				if (scp != null)
+				{
+					return scp;
+				}
+			}
+			if (!it.hasNext()) break;
+		}
+		return null;
 	}
 
 	private boolean hasServoyMobileFilterOutAnnotation(TypeMetaModel tmm, MetaModelHolder holder)
@@ -232,22 +232,20 @@ public class TypeMetaModel extends TreeMap<String, IMemberMetaModel> implements 
 		{
 			return true;
 		}
-		else
+
+		TypeName aux = null;
+		Iterator<TypeName> it = tmm.getInterfaces().iterator();
+		for (aux = tmm.getSupertype();; aux = it.next())
 		{
-			TypeName aux = null;
-			Iterator<TypeName> it = tmm.getInterfaces().iterator();
-			for (aux = tmm.getSupertype();; aux = it.next())
+			if (aux != null)
 			{
-				if (aux != null)
+				TypeMetaModel src = holder.getType(aux.getQualifiedName());
+				if (src != null && hasServoyMobileFilterOutAnnotation(src, holder))
 				{
-					TypeMetaModel src = holder.get(aux.getQualifiedName());
-					if (src != null && hasServoyMobileFilterOutAnnotation(src, holder))
-					{
-						return true;
-					}
+					return true;
 				}
-				if (!it.hasNext()) break;
 			}
+			if (!it.hasNext()) break;
 		}
 		return false;
 	}
@@ -257,9 +255,9 @@ public class TypeMetaModel extends TreeMap<String, IMemberMetaModel> implements 
 		return hasServoyMobileFilterOutAnnotation(this, holder);
 	}
 
-	public boolean hasServoyMobileAnnotation(MetaModelHolder holder)
+	public ClientSupport getServoyClientSupport(MetaModelHolder holder)
 	{
-		return hasServoyMobileAnnotation(this, holder);
+		return getServoyClientSupport(this, holder);
 	}
 
 	public TypeName getSupertype()
@@ -286,10 +284,32 @@ public class TypeMetaModel extends TreeMap<String, IMemberMetaModel> implements 
 			// if the public names are equal compare the qualified names
 			return this.name.getQualifiedName().compareTo(o.name.getQualifiedName());
 		}
-		else
-		{
-			return publicNames;
-		}
+		return publicNames;
+	}
+
+	public Collection<IMemberMetaModel> getMembers()
+	{
+		return members.values();
+	}
+
+	public boolean hasMember(String memberName)
+	{
+		return members.containsKey(memberName);
+	}
+
+	public IMemberMetaModel getMember(String memberName)
+	{
+		return members.get(memberName);
+	}
+
+	public void addMember(String memberName, IMemberMetaModel member)
+	{
+		members.put(memberName, member);
+	}
+
+	public void removeMember(String memberName)
+	{
+		members.remove(memberName);
 	}
 
 }

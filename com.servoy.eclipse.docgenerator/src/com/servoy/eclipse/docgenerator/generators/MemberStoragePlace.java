@@ -20,6 +20,7 @@ package com.servoy.eclipse.docgenerator.generators;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.servoy.eclipse.docgenerator.metamodel.ClientSupport;
 import com.servoy.eclipse.docgenerator.metamodel.IMemberMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.MemberMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.MetaModelHolder;
@@ -52,7 +53,6 @@ public abstract class MemberStoragePlace
 	private static final String ATTR_STATICCALL = "staticCall";
 	protected static final String ATTR_NAME = "name";
 	private static final String TAG_RETURN = "return";
-	protected static final String ATTR_SERVOY_MOBILE = DefaultDocumentationGenerator.ATTR_SERVOY_MOBILE;
 
 	private DocumentationDataDistilled docData;
 	private TypeName type;
@@ -127,13 +127,13 @@ public abstract class MemberStoragePlace
 		return memberMM.getIndexSignature();
 	}
 
-	public boolean hasServoyMobileAnnotation(MetaModelHolder holder)
+	public ClientSupport getServoyClientSupport(MetaModelHolder holder)
 	{
 		if (memberMM instanceof MemberMetaModel)
 		{
-			return ((MemberMetaModel)memberMM).hasServoyMobileAnnotation(typeMM, holder);
+			return ((MemberMetaModel)memberMM).getServoyClientSupport(typeMM, holder);
 		}
-		return false;
+		return null;
 	}
 
 	protected Element toXML(Document domDoc, boolean includeSample, MetaModelHolder holder, boolean docMobile)
@@ -156,9 +156,13 @@ public abstract class MemberStoragePlace
 			}
 			root.appendChild(retType);
 		}
-		if (docMobile && hasServoyMobileAnnotation(holder))
+		if (docMobile)
 		{
-			root.setAttribute(ATTR_SERVOY_MOBILE, Boolean.TRUE.toString());
+			ClientSupport scp = getServoyClientSupport(holder);
+			if (scp != null && scp != ClientSupport.Default)
+			{
+				root.setAttribute(DefaultDocumentationGenerator.ATTR_CLIENT_SUPPORT, scp.toAttribute());
+			}
 		}
 		if (ddr != null && ddr.hasDocumentation())
 		{

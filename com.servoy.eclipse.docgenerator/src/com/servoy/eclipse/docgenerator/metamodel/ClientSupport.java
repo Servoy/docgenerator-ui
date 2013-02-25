@@ -27,7 +27,6 @@ public enum ClientSupport
 	mc(1), wc(2), sc(4), mc_wc(mc.bits | wc.bits), mc_sc(mc.bits | sc.bits), wc_sc(wc.bits | sc.bits), mc_wc_sc(mc.bits | wc.bits | sc.bits);
 
 	private final int bits;
-	public static ClientSupport Default = wc_sc;
 
 	private ClientSupport(int bits)
 	{

@@ -159,7 +159,7 @@ public abstract class MemberStoragePlace
 		if (docMobile)
 		{
 			ClientSupport scp = getServoyClientSupport(holder);
-			if (scp != null && scp != ClientSupport.Default)
+			if (scp != null)
 			{
 				root.setAttribute(DefaultDocumentationGenerator.ATTR_CLIENT_SUPPORT, scp.toAttribute());
 			}

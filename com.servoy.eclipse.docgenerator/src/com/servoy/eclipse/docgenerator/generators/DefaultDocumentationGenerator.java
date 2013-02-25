@@ -632,7 +632,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 		if (docMobile)
 		{
 			ClientSupport scp = typeMM.getServoyClientSupport(holder);
-			if (scp != null && scp != ClientSupport.Default)
+			if (scp != null)
 			{
 				objElement.setAttribute(ATTR_CLIENT_SUPPORT, scp.toAttribute());
 			}

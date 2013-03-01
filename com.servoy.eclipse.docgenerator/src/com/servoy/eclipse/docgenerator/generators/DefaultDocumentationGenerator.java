@@ -661,7 +661,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 		for (IMemberMetaModel memberMM : typeMM.getMembers())
 		{
 			MemberStoragePlace memberData = (MemberStoragePlace)memberMM.getStore().get(STORE_KEY);
-			if (memberData.getKind() == kind && memberData.shouldShow(typeMM, docMobile) && (!memberMM.isDeprecated() || !hideDeprecated))
+			if (kind.equals(memberData.getKind()) && memberData.shouldShow(typeMM, docMobile) && (!memberMM.isDeprecated() || !hideDeprecated))
 			{
 				Element child = memberData.toXML(doc, includeSample(), holder, docMobile);
 				String sig = memberData.getOfficialSignature();

@@ -17,10 +17,13 @@
 
 package com.servoy.eclipse.docgenerator.metamodel;
 
+
 /**
  * Enum for tagging which clients are supported for the property.
+ * 
  * @author rgansevles
  *
+ *	NOTE: this class is a copy of the one in servoy_shared - please keep them in sync
  */
 public enum ClientSupport
 {
@@ -80,4 +83,8 @@ public enum ClientSupport
 		return sb;
 	}
 
+	public boolean supports(ClientSupport csp)
+	{
+		return csp != null && (bits & csp.bits) == csp.bits;
+	}
 }

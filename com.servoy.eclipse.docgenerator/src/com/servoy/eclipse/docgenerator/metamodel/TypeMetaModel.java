@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
@@ -61,6 +62,9 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 	private static final String ATTR_SCRIPTING_NAME = "scriptingName";
 	private static final String ATTR_CATEGORY_NAME = "category";
 	private static final String ATTR_EXTENDS_COMPONENT = "extendsComponent";
+	private static final String ATTRIBUTE_IS_BUTTON = "isButton";
+	private static final String ATTRIBUTE_DISPLAY_TYPE = "displayType";
+	private static final String ATTRIBUTE_REAL_CLASS = "realClass";
 
 	private final TypeName name;
 
@@ -121,17 +125,17 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 
 	public String getPublicName()
 	{
-		return getAttribute(ATTR_PUBLIC_NAME, getName().getShortName());
+		return getStringAttribute(ATTR_PUBLIC_NAME, getName().getShortName());
 	}
 
 	public String getScriptingName()
 	{
-		return getAttribute(ATTR_SCRIPTING_NAME, null);
+		return getStringAttribute(ATTR_SCRIPTING_NAME, null);
 	}
 
 	public String getCategory()
 	{
-		return getAttribute(ATTR_CATEGORY_NAME, DEFAULT_CATEGORY);
+		return getStringAttribute(ATTR_CATEGORY_NAME, DEFAULT_CATEGORY);
 	}
 
 	public boolean isDeprecated()
@@ -141,25 +145,67 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 
 	public String getExtendsComponent()
 	{
-		return getAttribute(ATTR_EXTENDS_COMPONENT, null);
+		return getStringAttribute(ATTR_EXTENDS_COMPONENT, null);
 	}
 
-	private String getAttribute(String key, String def)
+	public boolean isButton()
 	{
-		AnnotationMetaModel amm = ann.getAnnotation(ANNOTATION_SERVOY_DOCUMENTED);
-		String result = null;
-		if (amm != null)
+		return Boolean.TRUE.equals(getAttribute(ATTRIBUTE_IS_BUTTON));
+	}
+
+	public int getDisplayType()
+	{
+		return getIntAttribute(ATTRIBUTE_DISPLAY_TYPE, 0);
+	}
+
+	public String getRealClassName()
+	{
+		ITypeBinding val = (ITypeBinding)getAttribute(ATTRIBUTE_REAL_CLASS);
+		if (val != null)
 		{
-			if (amm.hasAttribute(key))
+			String className = val.getBinaryName();
+			if (className != null && !"java.lang.Object".equals(className))
 			{
-				result = amm.getAttribute(key).toString();
+				return className;
 			}
 		}
-		if (result != null && result.trim().length() > 0)
+		return null;
+	}
+
+	private String getStringAttribute(String key, String def)
+	{
+		Object val = getAttribute(key);
+		if (val != null)
 		{
-			return result;
+			String result = val.toString();
+			if (result.trim().length() > 0)
+			{
+				return result;
+			}
 		}
+
 		return def;
+	}
+
+	private int getIntAttribute(String key, int def)
+	{
+		Object val = getAttribute(key);
+		if (val instanceof Integer)
+		{
+			return ((Integer)val).intValue();
+		}
+
+		return def;
+	}
+
+	private Object getAttribute(String key)
+	{
+		AnnotationMetaModel amm = ann.getAnnotation(ANNOTATION_SERVOY_DOCUMENTED);
+		if (amm != null && amm.hasAttribute(key))
+		{
+			return amm.getAttribute(key);
+		}
+		return null;
 	}
 
 	public JavadocMetaModel getJavadoc()

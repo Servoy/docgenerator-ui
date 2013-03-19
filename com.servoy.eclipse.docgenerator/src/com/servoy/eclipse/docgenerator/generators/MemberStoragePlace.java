@@ -22,6 +22,7 @@ import org.w3c.dom.Element;
 
 import com.servoy.eclipse.docgenerator.metamodel.ClientSupport;
 import com.servoy.eclipse.docgenerator.metamodel.IMemberMetaModel;
+import com.servoy.eclipse.docgenerator.metamodel.JavadocMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.MemberMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.MetaModelHolder;
 import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
@@ -59,17 +60,20 @@ public abstract class MemberStoragePlace
 	private boolean deprecated;
 	protected final TypeMetaModel typeMM;
 	protected final IMemberMetaModel memberMM;
+	protected final MetaModelHolder holder;
 
-	public MemberStoragePlace(IMemberMetaModel memberMM, TypeMetaModel typeMM)
+	public MemberStoragePlace(IMemberMetaModel memberMM, TypeMetaModel typeMM, MetaModelHolder holder)
 	{
 		this.memberMM = memberMM;
 		this.typeMM = typeMM;
+		this.holder = holder;
 		type = memberMM.getType();
 		deprecated = memberMM.isDeprecated();
 
-		if (memberMM.getJavadoc() != null)
+		JavadocMetaModel jdoc = memberMM.getJavadoc(holder);
+		if (jdoc != null)
 		{
-			docData = new DocumentationDataDistilled(memberMM, typeMM);
+			docData = new DocumentationDataDistilled(memberMM, typeMM, jdoc);
 		}
 	}
 
@@ -90,6 +94,60 @@ public abstract class MemberStoragePlace
 	{
 		return docData;
 	}
+
+	public DocumentationDataDistilled getDocDataRecursively()
+	{
+		if (docData != null)
+		{
+			return docData;
+		}
+
+		return getDocDataRecursively(typeMM);
+	}
+
+	private DocumentationDataDistilled getDocDataRecursively(TypeMetaModel tmm)
+	{
+		for (TypeName intfName : tmm.getInterfaces())
+		{
+			TypeMetaModel intf = holder.getType(intfName);
+			if (intf != null)
+			{
+				IMemberMetaModel member = intf.getMember(memberMM.getIndexSignature(), null);
+				if (member != null)
+				{
+					MemberStoragePlace data = (MemberStoragePlace)member.getStore().get(DefaultDocumentationGenerator.STORE_KEY);
+					if (data != null && data.getDocData() != null)
+					{
+						return data.getDocData();
+					}
+				}
+			}
+		}
+
+		if (tmm.getSupertype() == null)
+		{
+			return null;
+		}
+
+		TypeMetaModel sup = holder.getType(tmm.getSupertype());
+		if (sup == null)
+		{
+			return null;
+		}
+
+		IMemberMetaModel member = sup.getMember(memberMM.getIndexSignature(), null);
+		if (member != null)
+		{
+			MemberStoragePlace data = (MemberStoragePlace)member.getStore().get(DefaultDocumentationGenerator.STORE_KEY);
+			if (data != null && data.getDocData() != null)
+			{
+				return data.getDocData();
+			}
+		}
+
+		return getDocDataRecursively(sup);
+	}
+
 
 	/**
 	 * The documentation data may change due to @sameas, @clonedesc, @sampleas tags
@@ -127,7 +185,7 @@ public abstract class MemberStoragePlace
 		return memberMM.getIndexSignature();
 	}
 
-	public ClientSupport getServoyClientSupport(MetaModelHolder holder)
+	public ClientSupport getServoyClientSupport()
 	{
 		if (memberMM instanceof MemberMetaModel)
 		{
@@ -136,7 +194,7 @@ public abstract class MemberStoragePlace
 		return null;
 	}
 
-	protected Element toXML(Document domDoc, boolean includeSample, MetaModelHolder holder, boolean docMobile)
+	protected Element toXML(Document domDoc, boolean includeSample, boolean docMobile, ClientSupport typeScp)
 	{
 		Element root = domDoc.createElement(getKind());
 		root.setAttribute(ATTR_NAME, getOfficialName());
@@ -144,7 +202,7 @@ public abstract class MemberStoragePlace
 		{
 			root.setAttribute(DefaultDocumentationGenerator.ATTR_DEPRECATED, Boolean.TRUE.toString());
 		}
-		DocumentationDataDistilled ddr = getDocData();
+		DocumentationDataDistilled ddr = getDocDataRecursively();
 		if (!hideReturnType() && getType() != null)
 		{
 			Element retType = domDoc.createElement(TAG_RETURN);
@@ -158,9 +216,14 @@ public abstract class MemberStoragePlace
 		}
 		if (docMobile)
 		{
-			ClientSupport scp = getServoyClientSupport(holder);
-			if (scp != null)
+			ClientSupport scp = getServoyClientSupport();
+			if (scp != null && scp != typeScp)
 			{
+				// when type is not mobile, do not mark element as mobile
+				if (typeScp != null && !typeScp.supports(ClientSupport.mc) && scp.supports(ClientSupport.mc))
+				{
+					scp = ClientSupport.create(false, scp.supports(ClientSupport.wc), scp.supports(ClientSupport.sc));
+				}
 				root.setAttribute(DefaultDocumentationGenerator.ATTR_CLIENT_SUPPORT, scp.toAttribute());
 			}
 		}
@@ -234,10 +297,9 @@ public abstract class MemberStoragePlace
 		return root;
 	}
 
-	public void mapTypes(MetaModelHolder holder, TypeMapper proc)
+	public void mapTypes(TypeMapper proc)
 	{
-		TypeName newTN = proc.mapType(holder, getType(), false, new boolean[1]);
-		setType(newTN);
+		setType(proc.mapType(holder, getType(), false, new boolean[1]));
 	}
 
 	abstract public boolean shouldShow(TypeMetaModel realTypeMM, boolean docMobile);

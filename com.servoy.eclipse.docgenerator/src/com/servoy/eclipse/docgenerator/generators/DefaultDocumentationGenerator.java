@@ -21,7 +21,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +50,6 @@ import com.servoy.eclipse.docgenerator.metamodel.DocumentationWarning.WarningTyp
 import com.servoy.eclipse.docgenerator.metamodel.IMemberMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.MetaModelHolder;
 import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
-import com.servoy.eclipse.docgenerator.metamodel.TypeName;
 import com.servoy.eclipse.docgenerator.service.DocumentationGenerationRequest;
 import com.servoy.eclipse.docgenerator.service.LogUtil;
 
@@ -96,7 +94,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 	public InputStream generate(DocumentationGenerationRequest req, MetaModelHolder holder, Set<DocumentationWarning> allWarnings, IPath outputPath)
 	{
 		TypeMapper typeMapper = new TypeMapper(req.tryToMapUndocumentedTypes());
-		IStoragePlaceFactory storageFactory = getDataFactory(holder, typeMapper);
+		IStoragePlaceFactory storageFactory = getDataFactory(typeMapper);
 		MemberKindIndex availableMemberKinds = getMemberKindIndex();
 
 		createStoragePlaceForAll(holder, storageFactory);
@@ -113,7 +111,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 	}
 
 	@SuppressWarnings("unused")
-	protected IStoragePlaceFactory getDataFactory(MetaModelHolder holder, TypeMapper typeMapper)
+	protected IStoragePlaceFactory getDataFactory(TypeMapper typeMapper)
 	{
 		return new DefaultStoragePlaceFactory();
 	}
@@ -142,7 +140,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 			{
 				if (!memberMM.getStore().containsKey(STORE_KEY))
 				{
-					MemberStoragePlace memberData = mdFactory.getData(typeMM, memberMM);
+					MemberStoragePlace memberData = mdFactory.getData(holder, typeMM, memberMM);
 					memberMM.getStore().put(STORE_KEY, memberData);
 				}
 			}
@@ -174,58 +172,11 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 				}
 			}
 
-			// copy any missing documentation from superclass or interfaces
-			copyMissingDocsFromAbove(holder, typeMM, typeMM);
-
 			// solve @sameas, @sampleas and @clonedesc references
 			for (IMemberMetaModel member : typeMM.getMembers())
 			{
 				solveDependenciesForMember(member, holder, new Stack<String>());
 			}
-		}
-	}
-
-	/**
-	 * Copies recursively from the superclass and interfaces any method that is not defined
-	 * in this class, or that is defined but does not have any Javadoc.
-	 */
-	private void copyMissingDocsFromAbove(MetaModelHolder holder, TypeMetaModel current, TypeMetaModel target)
-	{
-		List<TypeMetaModel> sources = new ArrayList<TypeMetaModel>();
-		if (current.getSupertype() != null)
-		{
-			TypeMetaModel sup = holder.getType(current.getSupertype().getQualifiedName());
-			if (sup != null)
-			{
-				copyMissingDocsFromAbove(holder, sup, sup);
-				sources.add(sup);
-			}
-		}
-		for (TypeName interf : current.getInterfaces())
-		{
-			TypeMetaModel src = holder.getType(interf.getQualifiedName());
-			if (src != null)
-			{
-				copyMissingDocsFromAbove(holder, src, src);
-				sources.add(src);
-			}
-		}
-		for (TypeMetaModel typeMM : sources)
-		{
-			for (IMemberMetaModel memberMM : typeMM.getMembers())
-			{
-				IMemberMetaModel mine = target.getMember(memberMM.getIndexSignature());
-				MemberStoragePlace myData = (MemberStoragePlace)mine.getStore().get(STORE_KEY);
-				MemberStoragePlace theirData = (MemberStoragePlace)memberMM.getStore().get(STORE_KEY);
-				if (myData.getDocData() == null && theirData.getDocData() != null)
-				{
-					myData.setDocData(theirData.getDocData());
-				}
-			}
-		}
-		for (TypeMetaModel src : sources)
-		{
-			copyMissingDocsFromAbove(holder, src, target);
 		}
 	}
 
@@ -347,40 +298,27 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 		TypeMetaModel typeMM = holder.getType(redirect.getClassName());
 		if (typeMM != null)
 		{
-			IMemberMetaModel memberMM = null;
 			for (IMemberMetaModel candidate : typeMM.getMembers())
 			{
 				if (candidate.matchesSignature(redirect.getMemberSignature()))
 				{
-					memberMM = candidate;
-					break;
+					return candidate;
 				}
 			}
-			if (memberMM != null)
-			{
-				return memberMM;
-			}
-			else
-			{
-				if (reportMissing)
-				{
-					target.getWarnings().add(
-						new DocumentationWarning(WarningType.RedirectionProblem, target.getFullSignature(), "Cannot find target member of redirection: " +
-							redirect.toString()));
-				}
-				return null;
-			}
-		}
-		else
-		{
 			if (reportMissing)
 			{
 				target.getWarnings().add(
-					new DocumentationWarning(WarningType.RedirectionProblem, target.getFullSignature(), "Cannot find target class of redirection: " +
+					new DocumentationWarning(WarningType.RedirectionProblem, target.getFullSignature(), "Cannot find target member of redirection: " +
 						redirect.toString()));
 			}
-			return null;
 		}
+		else if (reportMissing)
+		{
+			target.getWarnings().add(
+				new DocumentationWarning(WarningType.RedirectionProblem, target.getFullSignature(), "Cannot find target class of redirection: " +
+					redirect.toString()));
+		}
+		return null;
 	}
 
 
@@ -404,7 +342,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 						}
 					}
 				}
-				memberData.mapTypes(holder, typeMapper);
+				memberData.mapTypes(typeMapper);
 			}
 		}
 	}
@@ -552,8 +490,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 				{
 					if (typeMM.isServoyDocumented() && category.equals(typeMM.getCategory()))
 					{
-						Element el = toXML(typeMM, doc, false, availableMemberKinds, holder, docMobile);
-						catRoot.appendChild(el);
+						catRoot.appendChild(toXML(typeMM, doc, false, availableMemberKinds, docMobile, holder));
 					}
 				}
 			}
@@ -567,52 +504,19 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 			transformer.transform(source, new StreamResult(new OutputStreamWriter(baos, "utf-8")));
 			baos.close();
 
-			ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-
-//			holder.finalTouch();
-//			for (String category : categories)
-//			{
-//				for (TypeMetaModel typeMM : holder.getSortedTypes())
-//				{
-//					if (typeMM.isServoyDocumented() && category.equals(typeMM.getCategory()))
-//					{
-//						writer.write("\n-----------------API for:  " + typeMM.getPublicName() + "-----------------\n\n");
-//						for (IMemberMetaModel memberMM : typeMM.values())
-//						{
-//							MemberStoragePlace memberData = (MemberStoragePlace)memberMM.getStore().get(STORE_KEY);
-//							if (memberData != null && memberData.shouldShow(typeMM))
-//							{
-//								writer.write(memberMM.getIndexSignature() + "\n");
-//							}
-//						}
-//					}
-//				}
-//			}
-
-			return bais;
+			return new ByteArrayInputStream(baos.toByteArray());
 		}
 		catch (Exception e)
 		{
 			LogUtil.logger().log(Level.SEVERE, "Exception while generating documentation.", e);
 			return null;
 		}
-		finally
-		{
-//			if (writer != null) try
-//			{
-//				writer.close();
-//			}
-//			catch (IOException e)
-//			{
-//				e.printStackTrace();
-//			}
-		}
 	}
 
 	/**
 	 * Returns an XML element that corresponds to this class.
 	 */
-	private Element toXML(TypeMetaModel typeMM, Document doc, boolean hideDeprecated, MemberKindIndex mk, MetaModelHolder holder, boolean docMobile)
+	private Element toXML(TypeMetaModel typeMM, Document doc, boolean hideDeprecated, MemberKindIndex mk, boolean docMobile, MetaModelHolder holder)
 	{
 		Element objElement = doc.createElement(TAG_OBJECT);
 		TypeStoragePlace typeData = (TypeStoragePlace)typeMM.getStore().get(STORE_KEY);
@@ -629,9 +533,10 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 		{
 			objElement.setAttribute(ATTR_DEPRECATED, Boolean.TRUE.toString());
 		}
+		ClientSupport scp = null;
 		if (docMobile)
 		{
-			ClientSupport scp = typeMM.getServoyClientSupport(holder);
+			scp = typeMM.getServoyClientSupport(holder);
 			if (scp != null)
 			{
 				objElement.setAttribute(ATTR_CLIENT_SUPPORT, scp.toAttribute());
@@ -645,7 +550,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 		List<String> kinds = mk.getKinds();
 		for (String kind : kinds)
 		{
-			putMembersByType(typeMM, kind, doc, objElement, mk.getWrapperTag(kind), hideDeprecated, holder, docMobile);
+			putMembersByType(typeMM, kind, doc, objElement, mk.getWrapperTag(kind), hideDeprecated, docMobile, holder, scp);
 		}
 
 		return objElement;
@@ -655,15 +560,15 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 	 * Add to the generated XML all members of a certain type (constructor, constants, properties, functions).
 	 */
 	private void putMembersByType(TypeMetaModel typeMM, String kind, Document doc, Element objElement, String holderName, boolean hideDeprecated,
-		MetaModelHolder holder, boolean docMobile)
+		boolean docMobile, MetaModelHolder holder, ClientSupport typeScp)
 	{
 		Map<String, Element> children = new TreeMap<String, Element>();
-		for (IMemberMetaModel memberMM : typeMM.getMembers())
+		for (IMemberMetaModel memberMM : typeMM.getMembers(holder))
 		{
 			MemberStoragePlace memberData = (MemberStoragePlace)memberMM.getStore().get(STORE_KEY);
 			if (kind.equals(memberData.getKind()) && memberData.shouldShow(typeMM, docMobile) && (!memberMM.isDeprecated() || !hideDeprecated))
 			{
-				Element child = memberData.toXML(doc, includeSample(), holder, docMobile);
+				Element child = memberData.toXML(doc, includeSample(), docMobile, typeScp);
 				String sig = memberData.getOfficialSignature();
 				children.put(sig, child);
 			}

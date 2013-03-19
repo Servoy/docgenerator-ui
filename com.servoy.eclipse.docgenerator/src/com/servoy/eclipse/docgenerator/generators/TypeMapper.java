@@ -158,99 +158,97 @@ public class TypeMapper
 			wasFound[0] = false;
 			return null;
 		}
-		else
-		{
-			wasFound[0] = true;
-			// If the type is already public, then keep it.
-			String baseName = originalType.getBaseName();
-			if (docs.hasType(baseName))
-			{
-				TypeMetaModel existing = docs.getType(baseName);
-				if (existing.isServoyDocumented())
-				{
-					return originalType;
-				}
-			}
 
-			// special case for byte[]
-			if (originalType.getQualifiedName().equals(byte[].class.getSimpleName()))
+		wasFound[0] = true;
+		// If the type is already public, then keep it.
+		String baseName = originalType.getBaseName();
+		if (docs.hasType(baseName))
+		{
+			TypeMetaModel existing = docs.getType(baseName);
+			if (existing.isServoyDocumented())
 			{
 				return originalType;
 			}
+		}
 
-			// if the custom mapping table contains our type, then use it
-			// to do the mapping
-			if (typesMapping.containsKey(baseName))
-			{
-				TypeName ref = typesMapping.get(baseName);
-				return originalType.changeBaseTo(ref);
-			}
-
-			if (partialMatch)
-			{
-				// Try a search based on short names.
-				for (TypeMetaModel typeMM : docs.getTypes())
-				{
-					String typeShortName = typeMM.getName().getShortName().replaceAll("\\[\\]", "");
-					if (typeShortName.equals(originalType.getShortName()))
-					{
-						return typeMM.getName();
-					}
-				}
-
-				// Try a search based on public names
-				for (TypeMetaModel typeMM : docs.getTypes())
-				{
-					if (typeMM.getPublicName().equals(originalType.getShortName()))
-					{
-						return typeMM.getName();
-					}
-				}
-			}
-
-			if (mapUndocumentedTypes)
-			{
-				// if nothing succeeded so far, try to find a class
-				// that implements our type
-				TypeName equiv = null;
-				for (TypeMetaModel cdr : docs.getTypes())
-				{
-					if (cdr.isServoyDocumented())
-					{
-						if (cdr.getSupertype() != null && originalType.isSameType(cdr.getSupertype()))
-						{
-							equiv = cdr.getName();
-							break;
-						}
-						boolean found = false;
-						if (cdr.getInterfaces() != null)
-						{
-							for (TypeName i : cdr.getInterfaces())
-							{
-								if (originalType.isSameType(i))
-								{
-									found = true;
-									equiv = cdr.getName();
-									break;
-								}
-							}
-						}
-						if (found)
-						{
-							break;
-						}
-					}
-				}
-				if (equiv != null)
-				{
-					typesMapping.put(originalType.getBaseName(), equiv);
-					return originalType.changeBaseTo(equiv);
-				}
-			}
-
-			// if still nothing was found, just return the original
-			wasFound[0] = false;
+		// special case for byte[]
+		if (originalType.getQualifiedName().equals(byte[].class.getSimpleName()))
+		{
 			return originalType;
 		}
+
+		// if the custom mapping table contains our type, then use it
+		// to do the mapping
+		if (typesMapping.containsKey(baseName))
+		{
+			TypeName ref = typesMapping.get(baseName);
+			return originalType.changeBaseTo(ref);
+		}
+
+		if (partialMatch)
+		{
+			// Try a search based on short names.
+			for (TypeMetaModel typeMM : docs.getTypes())
+			{
+				String typeShortName = typeMM.getName().getShortName().replaceAll("\\[\\]", "");
+				if (typeShortName.equals(originalType.getShortName()))
+				{
+					return typeMM.getName();
+				}
+			}
+
+			// Try a search based on public names
+			for (TypeMetaModel typeMM : docs.getTypes())
+			{
+				if (typeMM.getPublicName().equals(originalType.getShortName()))
+				{
+					return typeMM.getName();
+				}
+			}
+		}
+
+		if (mapUndocumentedTypes)
+		{
+			// if nothing succeeded so far, try to find a class
+			// that implements our type
+			TypeName equiv = null;
+			for (TypeMetaModel cdr : docs.getTypes())
+			{
+				if (cdr.isServoyDocumented())
+				{
+					if (cdr.getSupertype() != null && originalType.isSameType(cdr.getSupertype()))
+					{
+						equiv = cdr.getName();
+						break;
+					}
+					boolean found = false;
+					if (cdr.getInterfaces() != null)
+					{
+						for (TypeName i : cdr.getInterfaces())
+						{
+							if (originalType.isSameType(i))
+							{
+								found = true;
+								equiv = cdr.getName();
+								break;
+							}
+						}
+					}
+					if (found)
+					{
+						break;
+					}
+				}
+			}
+			if (equiv != null)
+			{
+				typesMapping.put(originalType.getBaseName(), equiv);
+				return originalType.changeBaseTo(equiv);
+			}
+		}
+
+		// if still nothing was found, just return the original
+		wasFound[0] = false;
+		return originalType;
 	}
 }

@@ -58,8 +58,8 @@ public class MethodMetaModel extends MemberMetaModel
 			returnType = null;
 		}
 
-		StringBuffer indexSig = new StringBuffer();
-		StringBuffer fullSig = new StringBuffer();
+		StringBuilder indexSig = new StringBuilder();
+		StringBuilder fullSig = new StringBuilder();
 		if (returnType != null)
 		{
 			fullSig.append(returnType.getQualifiedName()).append(" ");
@@ -217,5 +217,41 @@ public class MethodMetaModel extends MemberMetaModel
 				returnType = new TypeName((ITypeBinding)returns, false);
 			}
 		}
+	}
+
+	@Override
+	public ClientSupport getServoyClientSupport(TypeMetaModel tmm, MetaModelHolder holder)
+	{
+		return ClientSupport.fromAnnotation(holder.getAnnotationManager().getAnnotation(this, tmm, ANNOTATION_SERVOY_CLIENT_SUPPORT));
+	}
+
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((className == null) ? 0 : className.hashCode());
+		result = prime * result + ((indexSignature == null) ? 0 : indexSignature.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		MethodMetaModel other = (MethodMetaModel)obj;
+		if (className == null)
+		{
+			if (other.className != null) return false;
+		}
+		else if (!className.equals(other.className)) return false;
+		if (indexSignature == null)
+		{
+			if (other.indexSignature != null) return false;
+		}
+		else if (!indexSignature.equals(other.indexSignature)) return false;
+		return true;
 	}
 }

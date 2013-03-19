@@ -17,7 +17,6 @@
 
 package com.servoy.eclipse.docgenerator.generators;
 
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import org.w3c.dom.Document;
@@ -25,6 +24,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import com.servoy.eclipse.docgenerator.metamodel.ClientSupport;
 import com.servoy.eclipse.docgenerator.metamodel.IMemberMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.MemberMetaModel.Visibility;
 import com.servoy.eclipse.docgenerator.metamodel.MetaModelHolder;
@@ -60,9 +60,9 @@ public class MethodStoragePlace extends MemberStoragePlace
 
 	private final LinkedHashMap<String, TypeName> parameters = new LinkedHashMap<String, TypeName>();
 
-	public MethodStoragePlace(MethodMetaModel methodMM, TypeMetaModel typeMM)
+	public MethodStoragePlace(MethodMetaModel methodMM, TypeMetaModel typeMM, MetaModelHolder holder)
 	{
-		super(methodMM, typeMM);
+		super(methodMM, typeMM, holder);
 		this.methodMM = methodMM;
 		officialName = buildOfficialName();
 	}
@@ -87,62 +87,47 @@ public class MethodStoragePlace extends MemberStoragePlace
 		{
 			return DefaultDocumentationGenerator.TAG_CONSTRUCTOR;
 		}
+
+		boolean isProperty = false;
+		if (holder.getAnnotationManager().hasAnnotation(methodMM, typeMM, ANNOTATION_JS_READONLY_PROPERTY) ||
+			holder.getAnnotationManager().hasAnnotation(methodMM, typeMM, ANNOTATION_JS_GETTER))
+		{
+			isProperty = true;
+		}
+		else if (holder.getAnnotationManager().hasAnnotation(methodMM, typeMM, ANNOTATION_JS_FUNCTION))
+		{
+			isProperty = false;
+		}
 		else
 		{
-			boolean isProperty = false;
-			if (methodMM.getAnnotations().hasAnnotation(ANNOTATION_JS_READONLY_PROPERTY) || methodMM.getAnnotations().hasAnnotation(ANNOTATION_JS_GETTER))
+			String shortName = methodMM.getName();
+			boolean wasPrefixed = false;
+			if (shortName.startsWith(JS_PREFIX))
 			{
-				isProperty = true;
+				wasPrefixed = true;
+				shortName = shortName.substring(JS_PREFIX.length());
 			}
-			else if (methodMM.getAnnotations().hasAnnotation(ANNOTATION_JS_FUNCTION))
+			String goodPref = null;
+			if (shortName.startsWith("get"))
 			{
-				isProperty = false;
+				goodPref = "get";
 			}
-			else
+			else if (shortName.startsWith("is"))
 			{
-				String shortName = methodMM.getName();
-				boolean wasPrefixed = false;
-				if (shortName.startsWith(JS_PREFIX))
-				{
-					wasPrefixed = true;
-					shortName = shortName.substring(JS_PREFIX.length());
-				}
-				String goodPref = null;
-				if (shortName.startsWith("get"))
-				{
-					goodPref = "get";
-				}
-				else if (shortName.startsWith("is"))
-				{
-					goodPref = "is";
-				}
-				if (goodPref != null && methodMM.getType() != null)
-				{
-					String propName = shortName.substring(goodPref.length());
-					if (hasSetter(propName, methodMM.getType(), wasPrefixed))
-					{
-						isProperty = true;
-					}
-					else
-					{
-						TypeName objRetType = new TypeName(Object.class);
-						// special case when the setter has an Object parameter				
-						if (hasSetter(propName, objRetType, wasPrefixed))
-						{
-							isProperty = true;
-						}
-					}
-				}
+				goodPref = "is";
 			}
-			if (isProperty)
+			if (goodPref != null && methodMM.getType() != null)
 			{
-				return DefaultDocumentationGenerator.TAG_PROPERTY;
-			}
-			else
-			{
-				return DefaultDocumentationGenerator.TAG_FUNCTION;
+				String propName = shortName.substring(goodPref.length());
+				if (hasSetter(propName, methodMM.getType(), wasPrefixed) || //
+					hasSetter(propName, new TypeName(Object.class), wasPrefixed) // special case when the setter has an Object parameter		
+				)
+				{
+					isProperty = true;
+				}
 			}
 		}
+		return isProperty ? DefaultDocumentationGenerator.TAG_PROPERTY : DefaultDocumentationGenerator.TAG_FUNCTION;
 	}
 
 	public LinkedHashMap<String, TypeName> getParameters()
@@ -151,18 +136,14 @@ public class MethodStoragePlace extends MemberStoragePlace
 	}
 
 	@Override
-	public Element toXML(Document doc, boolean includeSample, MetaModelHolder holder, boolean docMobile)
+	public Element toXML(Document doc, boolean includeSample, boolean docMobile, ClientSupport typeScp)
 	{
-		Element root = super.toXML(doc, includeSample, holder, docMobile);
+		Element root = super.toXML(doc, includeSample, docMobile, typeScp);
 		if (methodMM.isVarargs())
 		{
 			root.setAttribute(ATTR_VARARGS, Boolean.TRUE.toString());
 		}
-//		if (docMobile && methodMM.hasServoyMobileAnnotation(typeMM, holder))
-//		{
-//			root.setAttribute(ATTR_SERVOY_MOBILE, Boolean.TRUE.toString());
-//		}
-		DocumentationDataDistilled ddr = getDocData();
+		DocumentationDataDistilled ddr = getDocDataRecursively();
 		if (!hideParameters())
 		{
 			Element argTypes = doc.createElement(TAG_ARGUMENTS_TYPES);
@@ -255,9 +236,9 @@ public class MethodStoragePlace extends MemberStoragePlace
 	}
 
 	@Override
-	public void mapTypes(MetaModelHolder holder, TypeMapper proc)
+	public void mapTypes(TypeMapper proc)
 	{
-		super.mapTypes(holder, proc);
+		super.mapTypes(proc);
 		for (String parName : methodMM.getParameters().keySet())
 		{
 			TypeName parData = methodMM.getParameters().get(parName);
@@ -289,8 +270,9 @@ public class MethodStoragePlace extends MemberStoragePlace
 		}
 
 		// if it's annotated properly, then it should show
-		if (methodMM.getAnnotations().hasAnnotation(ANNOTATION_JS_FUNCTION) || methodMM.getAnnotations().hasAnnotation(ANNOTATION_JS_READONLY_PROPERTY) ||
-			methodMM.getAnnotations().hasAnnotation(ANNOTATION_JS_GETTER))
+		if (holder.getAnnotationManager().hasAnnotation(methodMM, typeMM, ANNOTATION_JS_FUNCTION) ||
+			holder.getAnnotationManager().hasAnnotation(methodMM, typeMM, ANNOTATION_JS_READONLY_PROPERTY) ||
+			holder.getAnnotationManager().hasAnnotation(methodMM, typeMM, ANNOTATION_JS_GETTER))
 		{
 			return true;
 		}
@@ -303,36 +285,23 @@ public class MethodStoragePlace extends MemberStoragePlace
 			{
 				if (methodMM.getParameters().size() == 1)
 				{
-					String pair = JS_PREFIX + "get" + shortName.substring("set".length()) + "()";
-					IMemberMetaModel getter = null;
-					if (realTypeMM.hasMember(pair))
+					IMemberMetaModel getter = realTypeMM.getMember(JS_PREFIX + "get" + shortName.substring("set".length()) + "()", holder);
+					if (getter == null)
 					{
-						getter = realTypeMM.getMember(pair);
+						getter = realTypeMM.getMember(JS_PREFIX + "is" + shortName.substring("set".length()) + "()", holder);
 					}
-					else
+					if (getter instanceof MethodMetaModel)
 					{
-						pair = JS_PREFIX + "is" + shortName.substring("set".length()) + "()";
-						if (realTypeMM.hasMember(pair))
+						TypeName par = methodMM.getParameters().values().iterator().next();
+						MethodMetaModel getterMeth = (MethodMetaModel)getter;
+						if (getterMeth.getType() != null && getterMeth.getType().getQualifiedName().equals(par.getQualifiedName()))
 						{
-							getter = realTypeMM.getMember(pair);
+							return false;
 						}
-					}
-					if (getter != null)
-					{
-						if (getter instanceof MethodMetaModel)
+						// special case when the setter has an Object parameter
+						if (par.getQualifiedName().endsWith("." + Object.class.getSimpleName()))
 						{
-							Iterator<TypeName> it = methodMM.getParameters().values().iterator();
-							TypeName par = it.next();
-							MethodMetaModel getterMeth = (MethodMetaModel)getter;
-							if (getterMeth.getType() != null && getterMeth.getType().getQualifiedName().equals(par.getQualifiedName()))
-							{
-								return false;
-							}
-							// special case when the setter has an Object parameter
-							if (par.getQualifiedName().endsWith("." + Object.class.getSimpleName()))
-							{
-								return false;
-							}
+							return false;
 						}
 					}
 				}
@@ -460,16 +429,13 @@ public class MethodStoragePlace extends MemberStoragePlace
 		{
 			setterSignature = JS_PREFIX + setterSignature;
 		}
-		if (typeMM.hasMember(setterSignature))
+		IMemberMetaModel setterRaw = typeMM.getMember(setterSignature, holder);
+		if (setterRaw instanceof MethodMetaModel)
 		{
-			IMemberMetaModel setterRaw = typeMM.getMember(setterSignature);
-			if (setterRaw instanceof MethodMetaModel)
+			MethodMetaModel setter = (MethodMetaModel)setterRaw;
+			if (setter.getType() != null && setter.getType().getQualifiedName().equals(void.class.getSimpleName()))
 			{
-				MethodMetaModel setter = (MethodMetaModel)setterRaw;
-				if (setter.getType() != null && setter.getType().getQualifiedName().equals(void.class.getSimpleName()))
-				{
-					return true;
-				}
+				return true;
 			}
 		}
 		return false;

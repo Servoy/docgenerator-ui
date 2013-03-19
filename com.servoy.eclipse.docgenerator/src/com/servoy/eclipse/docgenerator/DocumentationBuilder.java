@@ -470,7 +470,6 @@ public class DocumentationBuilder
 		{
 			// Generate the documentation XML and the warnings file.
 			MetaModelHolder holder = javadocExtractorVisitor.getRawDataHolder();
-			holder.finalTouch();
 
 			Set<DocumentationWarning> allWarnings = new TreeSet<DocumentationWarning>();
 

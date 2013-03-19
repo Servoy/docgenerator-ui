@@ -17,13 +17,13 @@
 
 package com.servoy.eclipse.docgenerator.metamodel;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+import com.servoy.eclipse.docgenerator.annotations.AnnotationManagerJdt;
 
 
 /**
@@ -34,11 +34,21 @@ import java.util.TreeSet;
  */
 public class MetaModelHolder
 {
+	private final AnnotationManagerJdt annotationManager = new AnnotationManagerJdt(this);
+
 	private final Map<String, TypeMetaModel> types = new TreeMap<String, TypeMetaModel>();
 
 	// In the XML the classes used to be written in alphabetic order of their public name,
 	// so we also keep them in a sorted set to respect this order.
 	private final SortedSet<TypeMetaModel> sortedTypes = new TreeSet<TypeMetaModel>();
+
+	/**
+	 * @return the annotationManager
+	 */
+	public AnnotationManagerJdt getAnnotationManager()
+	{
+		return annotationManager;
+	}
 
 	public void addType(String key, TypeMetaModel value)
 	{
@@ -51,56 +61,13 @@ public class MetaModelHolder
 		return sortedTypes;
 	}
 
-	/**
-	 * Performs any final steps needed to ensure that the registry is consistent.
-	 */
-	public void finalTouch()
+	public TypeMetaModel getType(TypeName name)
 	{
-		for (TypeMetaModel typeMM : types.values())
+		if (name == null)
 		{
-			copyMissingMembersFromAbove(typeMM, typeMM);
+			return null;
 		}
-	}
-
-	/**
-	 * For the "target" class, copies recursively from super class and interfaces
-	 * any missing member.
-	 */
-	private void copyMissingMembersFromAbove(TypeMetaModel current, TypeMetaModel target)
-	{
-		List<TypeMetaModel> sources = new ArrayList<TypeMetaModel>();
-		if (current.getSupertype() != null)
-		{
-			TypeMetaModel sup = getType(current.getSupertype().getQualifiedName());
-			if (sup != null)
-			{
-				copyMissingMembersFromAbove(sup, sup);
-				sources.add(sup);
-			}
-		}
-		for (TypeName interf : current.getInterfaces())
-		{
-			TypeMetaModel src = getType(interf.getQualifiedName());
-			if (src != null)
-			{
-				copyMissingMembersFromAbove(src, src);
-				sources.add(src);
-			}
-		}
-		for (TypeMetaModel typeMM : sources)
-		{
-			for (IMemberMetaModel memberMM : typeMM.getMembers())
-			{
-				if (!target.hasMember(memberMM.getIndexSignature()))
-				{
-					target.addMember(memberMM.getIndexSignature(), memberMM.duplicate());
-				}
-			}
-		}
-		for (TypeMetaModel src : sources)
-		{
-			copyMissingMembersFromAbove(src, target);
-		}
+		return getType(name.getQualifiedName());
 	}
 
 	public TypeMetaModel getType(String name)

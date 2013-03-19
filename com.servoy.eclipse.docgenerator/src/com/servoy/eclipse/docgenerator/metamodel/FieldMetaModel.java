@@ -83,6 +83,12 @@ public class FieldMetaModel extends MemberMetaModel
 		return indexSignature.equals(signature);
 	}
 
+	@Override
+	public ClientSupport getServoyClientSupport(TypeMetaModel tmm, MetaModelHolder holder)
+	{
+		return ClientSupport.fromAnnotation(holder.getAnnotationManager().getAnnotation(this, ANNOTATION_SERVOY_CLIENT_SUPPORT));
+	}
+
 	public FieldMetaModel duplicate()
 	{
 		return new FieldMetaModel(this);

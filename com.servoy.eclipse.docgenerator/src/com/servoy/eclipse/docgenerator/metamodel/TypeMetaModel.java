@@ -20,13 +20,14 @@ package com.servoy.eclipse.docgenerator.metamodel;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
@@ -48,6 +49,8 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 @SuppressWarnings("nls")
 public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 {
+	private final boolean isInterface;
+
 	Map<String, IMemberMetaModel> members = new TreeMap<String, IMemberMetaModel>();
 
 	/**
@@ -61,6 +64,9 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 	private static final String ATTR_SCRIPTING_NAME = "scriptingName";
 	private static final String ATTR_CATEGORY_NAME = "category";
 	private static final String ATTR_EXTENDS_COMPONENT = "extendsComponent";
+	private static final String ATTRIBUTE_IS_BUTTON = "isButton";
+	private static final String ATTRIBUTE_DISPLAY_TYPE = "displayType";
+	private static final String ATTRIBUTE_REAL_CLASS = "realClass";
 
 	private final TypeName name;
 
@@ -81,8 +87,9 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 	 */
 	private final Set<DocumentationWarning> warnings = new TreeSet<DocumentationWarning>();
 
-	public TypeMetaModel(String packageName, List<String> ancestorClassNames, TypeDeclaration astNode)
+	public TypeMetaModel(String packageName, List<String> ancestorClassNames, TypeDeclaration astNode, boolean isInterface)
 	{
+		this.isInterface = isInterface;
 		String parentName = packageName + ".";
 		for (String s : ancestorClassNames)
 		{
@@ -101,9 +108,7 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 			{
 				if (o instanceof Type)
 				{
-					Type interf = (Type)o;
-					TypeName tni = new TypeName(interf, false, name.getQualifiedName(), "interface", warnings);
-					interfaceNames.add(tni);
+					interfaceNames.add(new TypeName((Type)o, false, name.getQualifiedName(), "interface", warnings));
 				}
 			}
 		}
@@ -121,17 +126,17 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 
 	public String getPublicName()
 	{
-		return getAttribute(ATTR_PUBLIC_NAME, getName().getShortName());
+		return getStringAttribute(ATTR_PUBLIC_NAME, getName().getShortName());
 	}
 
 	public String getScriptingName()
 	{
-		return getAttribute(ATTR_SCRIPTING_NAME, null);
+		return getStringAttribute(ATTR_SCRIPTING_NAME, null);
 	}
 
 	public String getCategory()
 	{
-		return getAttribute(ATTR_CATEGORY_NAME, DEFAULT_CATEGORY);
+		return getStringAttribute(ATTR_CATEGORY_NAME, DEFAULT_CATEGORY);
 	}
 
 	public boolean isDeprecated()
@@ -141,25 +146,67 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 
 	public String getExtendsComponent()
 	{
-		return getAttribute(ATTR_EXTENDS_COMPONENT, null);
+		return getStringAttribute(ATTR_EXTENDS_COMPONENT, null);
 	}
 
-	private String getAttribute(String key, String def)
+	public boolean isButton()
 	{
-		AnnotationMetaModel amm = ann.getAnnotation(ANNOTATION_SERVOY_DOCUMENTED);
-		String result = null;
-		if (amm != null)
+		return Boolean.TRUE.equals(getAttribute(ATTRIBUTE_IS_BUTTON));
+	}
+
+	public int getDisplayType()
+	{
+		return getIntAttribute(ATTRIBUTE_DISPLAY_TYPE, 0);
+	}
+
+	public String getRealClassName()
+	{
+		ITypeBinding val = (ITypeBinding)getAttribute(ATTRIBUTE_REAL_CLASS);
+		if (val != null)
 		{
-			if (amm.hasAttribute(key))
+			String className = val.getBinaryName();
+			if (className != null && !"java.lang.Object".equals(className))
 			{
-				result = amm.getAttribute(key).toString();
+				return className;
 			}
 		}
-		if (result != null && result.trim().length() > 0)
+		return null;
+	}
+
+	private String getStringAttribute(String key, String def)
+	{
+		Object val = getAttribute(key);
+		if (val != null)
 		{
-			return result;
+			String result = val.toString();
+			if (result.trim().length() > 0)
+			{
+				return result;
+			}
 		}
+
 		return def;
+	}
+
+	private int getIntAttribute(String key, int def)
+	{
+		Object val = getAttribute(key);
+		if (val instanceof Integer)
+		{
+			return ((Integer)val).intValue();
+		}
+
+		return def;
+	}
+
+	private Object getAttribute(String key)
+	{
+		AnnotationMetaModel amm = ann.getAnnotation(ANNOTATION_SERVOY_DOCUMENTED);
+		if (amm != null && amm.hasAttribute(key))
+		{
+			return amm.getAttribute(key);
+		}
+		return null;
 	}
 
 	public JavadocMetaModel getJavadoc()
@@ -187,77 +234,9 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 		return ann.hasAnnotation(ANNOTATION_SERVOY_DOCUMENTED);
 	}
 
-	private ClientSupport getServoyClientSupport(TypeMetaModel tmm, MetaModelHolder holder)
-	{
-		if (tmm == null) return null;
-
-		if (tmm.getAnnotations() != null)
-		{
-			AnnotationMetaModel csp = tmm.getAnnotations().getAnnotation(ANNOTATION_SERVOY_CLIENT_SUPPORT);
-			if (csp != null) return ClientSupport.fromAnnotation(csp);
-
-			if (tmm.getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE_FILTER_OUT))
-			{
-				return ClientSupport.wc_sc;
-			}
-
-			if (tmm.getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE))
-			{
-				return ClientSupport.mc_wc_sc;
-			}
-		}
-
-		TypeName aux = null;
-		Iterator<TypeName> it = tmm.getInterfaces().iterator();
-		for (aux = tmm.getSupertype();; aux = it.next())
-		{
-			if (aux != null)
-			{
-				ClientSupport scp = getServoyClientSupport(holder.getType(aux.getQualifiedName()), holder);
-				if (scp != null)
-				{
-					return scp;
-				}
-			}
-			if (!it.hasNext()) break;
-		}
-		return null;
-	}
-
-	private boolean hasServoyMobileFilterOutAnnotation(TypeMetaModel tmm, MetaModelHolder holder)
-	{
-		if (tmm == null) return false;
-
-		if (tmm.getAnnotations() != null && tmm.getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE_FILTER_OUT))
-		{
-			return true;
-		}
-
-		TypeName aux = null;
-		Iterator<TypeName> it = tmm.getInterfaces().iterator();
-		for (aux = tmm.getSupertype();; aux = it.next())
-		{
-			if (aux != null)
-			{
-				TypeMetaModel src = holder.getType(aux.getQualifiedName());
-				if (src != null && hasServoyMobileFilterOutAnnotation(src, holder))
-				{
-					return true;
-				}
-			}
-			if (!it.hasNext()) break;
-		}
-		return false;
-	}
-
-	public boolean hasServoyMobileFilterOutAnnotation(MetaModelHolder holder)
-	{
-		return hasServoyMobileFilterOutAnnotation(this, holder);
-	}
-
 	public ClientSupport getServoyClientSupport(MetaModelHolder holder)
 	{
-		return getServoyClientSupport(this, holder);
+		return ClientSupport.fromAnnotation(holder.getAnnotationManager().getAnnotation(this, ANNOTATION_SERVOY_CLIENT_SUPPORT));
 	}
 
 	public TypeName getSupertype()
@@ -273,6 +252,14 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 	public Set<DocumentationWarning> getWarnings()
 	{
 		return warnings;
+	}
+
+	/**
+	 * @return the isInterface
+	 */
+	public boolean isInterface()
+	{
+		return isInterface;
 	}
 
 	public int compareTo(TypeMetaModel o)
@@ -292,14 +279,71 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 		return members.values();
 	}
 
-	public boolean hasMember(String memberName)
+	public Collection<IMemberMetaModel> getMembers(MetaModelHolder holder)
 	{
-		return members.containsKey(memberName);
+		if (holder == null)
+		{
+			return members.values();
+		}
+		return getAllMembers(this, holder, new TreeMap<String, IMemberMetaModel>()).values();
 	}
 
-	public IMemberMetaModel getMember(String memberName)
+	private static Map<String, IMemberMetaModel> getAllMembers(TypeMetaModel tmm, MetaModelHolder holder, Map<String, IMemberMetaModel> allMembers)
 	{
-		return members.get(memberName);
+		if (tmm != null)
+		{
+			for (TypeName intf : tmm.getInterfaces())
+			{
+				getAllMembers(holder.getType(intf), holder, allMembers);
+			}
+
+			TypeMetaModel superType = holder.getType(tmm.getSupertype());
+			if (superType != null)
+			{
+				getAllMembers(superType, holder, allMembers);
+			}
+
+			for (Entry<String, IMemberMetaModel> entry : tmm.members.entrySet())
+			{
+				allMembers.put(entry.getKey(), entry.getValue());
+			}
+		}
+		return allMembers;
+	}
+
+	public IMemberMetaModel getMember(String memberName, MetaModelHolder holder)
+	{
+		IMemberMetaModel member = members.get(memberName);
+		if (holder == null || member != null)
+		{
+			return member;
+		}
+
+		TypeMetaModel superType = holder.getType(getSupertype());
+		if (superType != null)
+		{
+			member = superType.getMember(memberName, holder);
+		}
+
+		if (member != null)
+		{
+			return member;
+		}
+
+		for (TypeName i : getInterfaces())
+		{
+			TypeMetaModel intf = holder.getType(i);
+			if (intf != null)
+			{
+				member = intf.getMember(memberName, null);
+				if (member != null)
+				{
+					return member;
+				}
+			}
+		}
+
+		return null;
 	}
 
 	public void addMember(String memberName, IMemberMetaModel member)
@@ -311,5 +355,30 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 	{
 		members.remove(memberName);
 	}
+
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		TypeMetaModel other = (TypeMetaModel)obj;
+		if (name == null)
+		{
+			if (other.name != null) return false;
+		}
+		else if (!name.equals(other.name)) return false;
+		return true;
+	}
+
 
 }

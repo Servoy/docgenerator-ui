@@ -18,6 +18,7 @@
 package com.servoy.eclipse.docgenerator.generators;
 
 import com.servoy.eclipse.docgenerator.metamodel.IMemberMetaModel;
+import com.servoy.eclipse.docgenerator.metamodel.MetaModelHolder;
 import com.servoy.eclipse.docgenerator.metamodel.MethodMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
 
@@ -26,16 +27,13 @@ import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
  */
 public class DefaultStoragePlaceFactory implements IStoragePlaceFactory
 {
-	public MemberStoragePlace getData(TypeMetaModel typeMM, IMemberMetaModel memberMM)
+	public MemberStoragePlace getData(MetaModelHolder holder, TypeMetaModel typeMM, IMemberMetaModel memberMM)
 	{
 		// Split in two: methods or fields.
 		if (memberMM instanceof MethodMetaModel)
 		{
-			return new MethodStoragePlace((MethodMetaModel)memberMM, typeMM);
+			return new MethodStoragePlace((MethodMetaModel)memberMM, typeMM, holder);
 		}
-		else
-		{
-			return new FieldStoragePlace(memberMM, typeMM);
-		}
+		return new FieldStoragePlace(memberMM, typeMM, holder);
 	}
 }

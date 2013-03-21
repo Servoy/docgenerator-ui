@@ -18,6 +18,7 @@
 package com.servoy.eclipse.docgenerator.generators;
 
 import com.servoy.eclipse.docgenerator.metamodel.IMemberMetaModel;
+import com.servoy.eclipse.docgenerator.metamodel.MetaModelHolder;
 import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
 
 /**
@@ -27,5 +28,5 @@ import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
  */
 public interface IStoragePlaceFactory
 {
-	MemberStoragePlace getData(TypeMetaModel typeMM, IMemberMetaModel memberMM);
+	MemberStoragePlace getData(MetaModelHolder holder, TypeMetaModel typeMM, IMemberMetaModel memberMM);
 }

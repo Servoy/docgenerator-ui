@@ -77,9 +77,8 @@ public class DocumentationDataDistilled
 	private boolean staticCall = false;
 	private String deprecatedText;
 
-	public DocumentationDataDistilled(IMemberMetaModel memberMM, TypeMetaModel typeMM)
+	public DocumentationDataDistilled(IMemberMetaModel memberMM, TypeMetaModel typeMM, JavadocMetaModel jdoc)
 	{
-		JavadocMetaModel jdoc = memberMM.getJavadoc();
 		Set<DocumentationWarning> warnings = memberMM.getWarnings();
 		String location = memberMM.getFullSignature();
 

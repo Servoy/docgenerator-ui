@@ -126,7 +126,7 @@ public class JavadocExtractor extends ASTVisitor
 		{
 			ancestorNames.add(ancestorType.getName().getShortName());
 		}
-		TypeMetaModel typeData = new TypeMetaModel(packageName, ancestorNames, node);
+		TypeMetaModel typeData = new TypeMetaModel(packageName, ancestorNames, node, node.isInterface());
 		typesStack.push(typeData);
 		annotationsStack.push(new AnnotationsList());
 		return true;
@@ -144,18 +144,16 @@ public class JavadocExtractor extends ASTVisitor
 	@Override
 	public boolean visit(MethodDeclaration node)
 	{
-		if (!typesStack.isEmpty())
-		{
-			MethodMetaModel methodMM = new MethodMetaModel(typesStack.peek().getName().getQualifiedName(), node);
-			typesStack.peek().addMember(methodMM.getIndexSignature(), methodMM);
-			currentMembers.add(methodMM);
-			annotationsStack.push(new AnnotationsList());
-			return true;
-		}
-		else
+		if (typesStack.isEmpty())
 		{
 			return false;
 		}
+
+		MethodMetaModel methodMM = new MethodMetaModel(typesStack.peek().getName().getQualifiedName(), node);
+		typesStack.peek().addMember(methodMM.getIndexSignature(), methodMM);
+		currentMembers.add(methodMM);
+		annotationsStack.push(new AnnotationsList());
+		return true;
 	}
 
 	@Override
@@ -175,25 +173,23 @@ public class JavadocExtractor extends ASTVisitor
 	@Override
 	public boolean visit(FieldDeclaration node)
 	{
-		if (!typesStack.isEmpty())
-		{
-			for (Object o : node.fragments())
-			{
-				if (o instanceof VariableDeclarationFragment)
-				{
-					VariableDeclarationFragment varDecl = (VariableDeclarationFragment)o;
-					FieldMetaModel fieldMM = new FieldMetaModel(typesStack.peek().getName().getQualifiedName(), node, varDecl);
-					typesStack.peek().addMember(fieldMM.getIndexSignature(), fieldMM);
-					currentMembers.add(fieldMM);
-				}
-			}
-			annotationsStack.push(new AnnotationsList());
-			return true;
-		}
-		else
+		if (typesStack.isEmpty())
 		{
 			return false;
 		}
+
+		for (Object o : node.fragments())
+		{
+			if (o instanceof VariableDeclarationFragment)
+			{
+				VariableDeclarationFragment varDecl = (VariableDeclarationFragment)o;
+				FieldMetaModel fieldMM = new FieldMetaModel(typesStack.peek().getName().getQualifiedName(), node, varDecl);
+				typesStack.peek().addMember(fieldMM.getIndexSignature(), fieldMM);
+				currentMembers.add(fieldMM);
+			}
+		}
+		annotationsStack.push(new AnnotationsList());
+		return true;
 	}
 
 	@Override

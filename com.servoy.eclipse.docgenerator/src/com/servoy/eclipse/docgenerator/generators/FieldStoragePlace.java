@@ -19,6 +19,7 @@ package com.servoy.eclipse.docgenerator.generators;
 
 import com.servoy.eclipse.docgenerator.metamodel.IMemberMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.MemberMetaModel.Visibility;
+import com.servoy.eclipse.docgenerator.metamodel.MetaModelHolder;
 import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
 
 /**
@@ -26,9 +27,9 @@ import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
  */
 public class FieldStoragePlace extends MemberStoragePlace
 {
-	public FieldStoragePlace(IMemberMetaModel memberMM, TypeMetaModel typeMM)
+	public FieldStoragePlace(IMemberMetaModel memberMM, TypeMetaModel typeMM, MetaModelHolder holder)
 	{
-		super(memberMM, typeMM);
+		super(memberMM, typeMM, holder);
 	}
 
 	@Override

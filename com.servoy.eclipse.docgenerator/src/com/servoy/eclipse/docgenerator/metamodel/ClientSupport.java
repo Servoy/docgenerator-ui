@@ -87,4 +87,9 @@ public enum ClientSupport
 	{
 		return csp != null && (bits & csp.bits) == csp.bits;
 	}
+
+	public static ClientSupport create(boolean support_mc, boolean support_wc, boolean support_sc)
+	{
+		return fromBits((support_mc ? mc.bits : 0) | (support_wc ? wc.bits : 0) | (support_sc ? sc.bits : 0));
+	}
 }

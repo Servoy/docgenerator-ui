@@ -17,8 +17,6 @@
 
 package com.servoy.eclipse.docgenerator.metamodel;
 
-import java.util.Iterator;
-
 import org.eclipse.jdt.core.dom.BodyDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 
@@ -41,7 +39,7 @@ public abstract class MemberMetaModel extends GenericMemberMetaModel
 	}
 
 
-	private final String className;
+	protected final String className;
 	private final String name;
 	private final Visibility visibility;
 	private final boolean statc;
@@ -113,10 +111,41 @@ public abstract class MemberMetaModel extends GenericMemberMetaModel
 		return annotations.hasAnnotation(ANNOTATION_DEPRECATED);
 	}
 
-	public JavadocMetaModel getJavadoc()
+	public JavadocMetaModel getJavadoc(MetaModelHolder holder)
 	{
-		return javadoc;
+		if (javadoc != null || holder == null)
+		{
+			return javadoc;
+		}
+
+		return getJavadoc(holder.getType(className), holder);
 	}
+
+	private JavadocMetaModel getJavadoc(TypeMetaModel tmm, MetaModelHolder holder)
+	{
+		if (tmm == null)
+		{
+			return null;
+		}
+
+		IMemberMetaModel member = tmm.getMember(getIndexSignature(), null);
+		if (member != null && member.getJavadoc(null) != null)
+		{
+			return member.getJavadoc(null);
+		}
+
+		for (TypeName intf : tmm.getInterfaces())
+		{
+			JavadocMetaModel jdoc = getJavadoc(holder.getType(intf), holder);
+			if (jdoc != null)
+			{
+				return jdoc;
+			}
+		}
+
+		return getJavadoc(holder.getType(tmm.getSupertype()), holder);
+	}
+
 
 	public void setJavadoc(JavadocMetaModel jd)
 	{
@@ -155,51 +184,35 @@ public abstract class MemberMetaModel extends GenericMemberMetaModel
 
 	abstract public TypeName getType();
 
-	public ClientSupport getServoyClientSupport(TypeMetaModel tmm, MetaModelHolder holder)
+	abstract public ClientSupport getServoyClientSupport(TypeMetaModel tmm, MetaModelHolder holder);
+
+	@Override
+	public int hashCode()
 	{
-		AnnotationMetaModel csp = getAnnotations().getAnnotation(ANNOTATION_SERVOY_CLIENT_SUPPORT);
-		if (csp != null)
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((className == null) ? 0 : className.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj) return true;
+		if (obj == null) return false;
+		if (getClass() != obj.getClass()) return false;
+		MemberMetaModel other = (MemberMetaModel)obj;
+		if (className == null)
 		{
-			return ClientSupport.fromAnnotation(csp);
+			if (other.className != null) return false;
 		}
-
-		if (tmm == null) return null;
-		csp = tmm.getAnnotations().getAnnotation(ANNOTATION_SERVOY_CLIENT_SUPPORT);
-		if (csp != null)
+		else if (!className.equals(other.className)) return false;
+		if (name == null)
 		{
-			return ClientSupport.fromAnnotation(csp);
+			if (other.name != null) return false;
 		}
-
-		// if the member's type is filtered out of mobile we do not allow the member
-		if (tmm.hasServoyMobileFilterOutAnnotation(holder)) return ClientSupport.wc_sc;
-
-		// if the member has the annotation or if it is part of an interface which has the annotation
-		if (getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE) ||
-			(tmm.getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE) && !getAnnotations().hasAnnotation(ANNOTATION_SERVOY_MOBILE_FILTER_OUT))) return ClientSupport.mc_wc_sc;
-
-		if (holder == null) return null;
-
-		// if the member was defined in an interface or overrides a superclass member which has the ServoyMobile annotation
-		TypeName aux = null;
-		Iterator<TypeName> it = tmm.getInterfaces().iterator();
-		for (aux = tmm.getSupertype();; aux = it.next())
-		{
-			if (aux != null)
-			{
-				TypeMetaModel src = holder.getType(aux.getQualifiedName());
-				if (src != null)
-				{
-					IMemberMetaModel imm = src.getMember(getIndexSignature());
-					if (imm instanceof MemberMetaModel)
-					{
-						ClientSupport mcsp = ((MemberMetaModel)imm).getServoyClientSupport(src, holder);
-						if (mcsp != null) return mcsp;
-					}
-				}
-			}
-			if (!it.hasNext()) break;
-		}
-
-		return null;
+		else if (!name.equals(other.name)) return false;
+		return true;
 	}
 }

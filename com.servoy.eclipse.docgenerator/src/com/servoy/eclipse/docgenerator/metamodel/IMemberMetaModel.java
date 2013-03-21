@@ -30,7 +30,7 @@ public interface IMemberMetaModel extends IPublicStore
 
 	TypeName getType();
 
-	JavadocMetaModel getJavadoc();
+	JavadocMetaModel getJavadoc(MetaModelHolder holder);
 
 	Set<DocumentationWarning> getWarnings();
 

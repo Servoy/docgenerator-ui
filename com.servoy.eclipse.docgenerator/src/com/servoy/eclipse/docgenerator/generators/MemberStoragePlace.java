@@ -194,7 +194,7 @@ public abstract class MemberStoragePlace
 		return null;
 	}
 
-	protected Element toXML(Document domDoc, boolean includeSample, boolean docMobile, ClientSupport typeScp)
+	protected Element toXML(Document domDoc, boolean includeSample, boolean docMobile, ClientSupport scp)
 	{
 		Element root = domDoc.createElement(getKind());
 		root.setAttribute(ATTR_NAME, getOfficialName());
@@ -214,18 +214,9 @@ public abstract class MemberStoragePlace
 			}
 			root.appendChild(retType);
 		}
-		if (docMobile)
+		if (docMobile && scp != null)
 		{
-			ClientSupport scp = getServoyClientSupport();
-			if (scp != null && scp != typeScp)
-			{
-				// when type is not mobile, do not mark element as mobile
-				if (typeScp != null && !typeScp.supports(ClientSupport.mc) && scp.supports(ClientSupport.mc))
-				{
-					scp = ClientSupport.create(false, scp.supports(ClientSupport.wc), scp.supports(ClientSupport.sc));
-				}
-				root.setAttribute(DefaultDocumentationGenerator.ATTR_CLIENT_SUPPORT, scp.toAttribute());
-			}
+			root.setAttribute(DefaultDocumentationGenerator.ATTR_CLIENT_SUPPORT, scp.toAttribute());
 		}
 		if (ddr != null && ddr.hasDocumentation())
 		{

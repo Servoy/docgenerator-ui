@@ -31,6 +31,8 @@ public enum ClientSupport
 
 	private final int bits;
 
+	public static final ClientSupport Default = wc_sc;
+
 	private ClientSupport(int bits)
 	{
 		this.bits = bits;
@@ -86,6 +88,11 @@ public enum ClientSupport
 	public boolean supports(ClientSupport csp)
 	{
 		return csp != null && (bits & csp.bits) == csp.bits;
+	}
+
+	public ClientSupport union(ClientSupport scp)
+	{
+		return scp == null ? this : fromBits(bits | scp.bits);
 	}
 
 	public static ClientSupport create(boolean support_mc, boolean support_wc, boolean support_sc)

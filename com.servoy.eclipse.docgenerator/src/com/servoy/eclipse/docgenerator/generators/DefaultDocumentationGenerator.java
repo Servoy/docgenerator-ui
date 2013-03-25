@@ -22,7 +22,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
@@ -533,24 +532,21 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 		{
 			objElement.setAttribute(ATTR_DEPRECATED, Boolean.TRUE.toString());
 		}
-		ClientSupport scp = null;
-		if (docMobile)
-		{
-			scp = typeMM.getServoyClientSupport(holder);
-			if (scp != null)
-			{
-				objElement.setAttribute(ATTR_CLIENT_SUPPORT, scp.toAttribute());
-			}
-		}
+
 		if (typeData.getExtendsComponent() != null && typeData.getExtendsComponent().trim().length() > 0)
 		{
 			objElement.setAttribute(ATTR_EXTENDSCOMPONENT, typeData.getExtendsComponent());
 		}
 
-		List<String> kinds = mk.getKinds();
-		for (String kind : kinds)
+		ClientSupport scp = typeMM.getServoyClientSupport(holder);
+		for (String kind : mk.getKinds())
 		{
-			putMembersByType(typeMM, kind, doc, objElement, mk.getWrapperTag(kind), hideDeprecated, docMobile, holder, scp);
+			scp = putMembersByType(typeMM, kind, doc, objElement, mk.getWrapperTag(kind), hideDeprecated, docMobile, holder, scp);
+		}
+
+		if (docMobile)
+		{
+			objElement.setAttribute(ATTR_CLIENT_SUPPORT, (scp == null ? ClientSupport.Default : scp).toAttribute());
 		}
 
 		return objElement;
@@ -558,28 +554,46 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 
 	/**
 	 * Add to the generated XML all members of a certain type (constructor, constants, properties, functions).
+	 * @return unioned ClientSupport from type and members.
 	 */
-	private void putMembersByType(TypeMetaModel typeMM, String kind, Document doc, Element objElement, String holderName, boolean hideDeprecated,
+	private ClientSupport putMembersByType(TypeMetaModel typeMM, String kind, Document doc, Element objElement, String holderName, boolean hideDeprecated,
 		boolean docMobile, MetaModelHolder holder, ClientSupport typeScp)
 	{
+		ClientSupport unionedScp = typeScp;
 		Map<String, Element> children = new TreeMap<String, Element>();
 		for (IMemberMetaModel memberMM : typeMM.getMembers(holder))
 		{
 			MemberStoragePlace memberData = (MemberStoragePlace)memberMM.getStore().get(STORE_KEY);
 			if (kind.equals(memberData.getKind()) && memberData.shouldShow(typeMM, docMobile) && (!memberMM.isDeprecated() || !hideDeprecated))
 			{
-				Element child = memberData.toXML(doc, includeSample(), docMobile, typeScp);
-				String sig = memberData.getOfficialSignature();
-				children.put(sig, child);
+				ClientSupport memberScp = memberData.getServoyClientSupport();
+				if (memberScp != null)
+				{
+					if (typeScp != null && memberScp != typeScp && !typeScp.supports(ClientSupport.mc) && memberScp.supports(ClientSupport.mc))
+					{
+						// when type is not mobile, do not mark element as mobile
+						memberScp = ClientSupport.create(false, memberScp.supports(ClientSupport.wc), memberScp.supports(ClientSupport.sc));
+					}
+					unionedScp = memberScp.union(unionedScp);
+				}
+
+				Element child = memberData.toXML(doc, includeSample(), docMobile, memberScp == null ? ClientSupport.Default : memberScp);
+
+				children.put(memberData.getOfficialSignature(), child);
 			}
 		}
+
 		if (children.size() > 0)
 		{
 			Element propertiesElement = doc.createElement(holderName);
 			objElement.appendChild(propertiesElement);
 			for (Element el : children.values())
+			{
 				propertiesElement.appendChild(el);
+			}
 		}
+
+		return unionedScp;
 	}
 
 	private void collectAllWarnings(MetaModelHolder holder, Set<DocumentationWarning> allWarnings)

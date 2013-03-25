@@ -136,9 +136,9 @@ public class MethodStoragePlace extends MemberStoragePlace
 	}
 
 	@Override
-	public Element toXML(Document doc, boolean includeSample, boolean docMobile, ClientSupport typeScp)
+	public Element toXML(Document doc, boolean includeSample, boolean docMobile, ClientSupport scp)
 	{
-		Element root = super.toXML(doc, includeSample, docMobile, typeScp);
+		Element root = super.toXML(doc, includeSample, docMobile, scp);
 		if (methodMM.isVarargs())
 		{
 			root.setAttribute(ATTR_VARARGS, Boolean.TRUE.toString());

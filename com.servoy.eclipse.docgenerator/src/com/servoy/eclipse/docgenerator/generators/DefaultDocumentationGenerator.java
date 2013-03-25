@@ -539,14 +539,16 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 		}
 
 		ClientSupport scp = typeMM.getServoyClientSupport(holder);
+		ClientSupport unionedScp = scp;
 		for (String kind : mk.getKinds())
 		{
-			scp = putMembersByType(typeMM, kind, doc, objElement, mk.getWrapperTag(kind), hideDeprecated, docMobile, holder, scp);
+			ClientSupport membersUnionedScp = putMembersByType(typeMM, kind, doc, objElement, mk.getWrapperTag(kind), hideDeprecated, docMobile, holder, scp);
+			unionedScp = unionedScp == null ? membersUnionedScp : unionedScp.union(membersUnionedScp);
 		}
 
 		if (docMobile)
 		{
-			objElement.setAttribute(ATTR_CLIENT_SUPPORT, (scp == null ? ClientSupport.Default : scp).toAttribute());
+			objElement.setAttribute(ATTR_CLIENT_SUPPORT, (unionedScp == null ? ClientSupport.Default : unionedScp).toAttribute());
 		}
 
 		return objElement;

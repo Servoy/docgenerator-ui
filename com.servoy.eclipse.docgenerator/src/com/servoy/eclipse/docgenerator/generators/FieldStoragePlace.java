@@ -39,7 +39,7 @@ public class FieldStoragePlace extends MemberStoragePlace
 	}
 
 	@Override
-	public boolean shouldShow(TypeMetaModel realTypeMM, boolean docMobile)
+	public boolean shouldShow(TypeMetaModel realTypeMM)
 	{
 		return memberMM.getVisibility() == Visibility.Public && memberMM.isStatic();
 	}

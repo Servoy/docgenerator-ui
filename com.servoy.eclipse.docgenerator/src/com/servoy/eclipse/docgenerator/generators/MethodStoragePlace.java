@@ -136,9 +136,9 @@ public class MethodStoragePlace extends MemberStoragePlace
 	}
 
 	@Override
-	public Element toXML(Document doc, boolean includeSample, boolean docMobile, ClientSupport scp)
+	public Element toXML(Document doc, boolean includeSample, ClientSupport scp)
 	{
-		Element root = super.toXML(doc, includeSample, docMobile, scp);
+		Element root = super.toXML(doc, includeSample, scp);
 		if (methodMM.isVarargs())
 		{
 			root.setAttribute(ATTR_VARARGS, Boolean.TRUE.toString());
@@ -256,7 +256,7 @@ public class MethodStoragePlace extends MemberStoragePlace
 	}
 
 	@Override
-	public boolean shouldShow(TypeMetaModel realTypeMM, boolean docMobile)
+	public boolean shouldShow(TypeMetaModel realTypeMM)
 	{
 		// if it's private, don't show
 		if (methodMM.getVisibility() == Visibility.Private)

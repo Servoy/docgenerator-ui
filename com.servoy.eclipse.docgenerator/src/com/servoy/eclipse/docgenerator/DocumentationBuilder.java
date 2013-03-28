@@ -199,21 +199,19 @@ public class DocumentationBuilder
 											}
 											else
 											{
-												// for mobile, when documenting plugins, we take non-plugin packages as well (may contain needed interfaces)
+												// when documenting plugins with mobile client support, we take non-plugin packages 
+												// as well (may contain needed interfaces)
 												// currently this is hardcoded to take in only servoy_base plugin's project
 												// comment the check below to allow all projects/packages 
-												if (req.docmobile())
+												if (thisPackageName.contains("base.plugins") && prj.getName().contains("servoy_base"))
 												{
-													if (thisPackageName.contains("base.plugins") && prj.getName().contains("servoy_base"))
-													{
-														extraToProcessProjectNames.add(prj.getName());
-														extraToProcessPackageNames.add(thisPackageName);
-													}
-
+													extraToProcessProjectNames.add(prj.getName());
+													extraToProcessPackageNames.add(thisPackageName);
 													LogUtil.logger().fine(
 														"Will process package '" + thisPackageName + "' in project '" + prj.getName() +
-															"' needed to document plugins for mobile.");
+															"' needed to document plugins with mobile client support.");
 												}
+
 												else
 												{
 													LogUtil.logger().fine(
@@ -264,8 +262,8 @@ public class DocumentationBuilder
 						int startPercent = i * delta;
 						int endPercent = startPercent + delta - 1;
 
-						// this is to include any extra projects/packages that may be needed when documenting for mobile 
-						if (req.docmobile() && extraToProcessProjectNames.size() > 0)
+						// this is to include any extra projects/packages that may be needed when documenting plugins with mobile client support 
+						if (extraToProcessProjectNames.size() > 0)
 						{
 							for (int x = 0; x < extraToProcessProjectNames.size() && !req.cancelRequested(); x++)
 							{

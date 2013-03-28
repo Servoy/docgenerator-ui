@@ -94,11 +94,6 @@ public abstract class DocumentationGenerationRequestFromUI implements Documentat
 		return autopilot;
 	}
 
-	public boolean docmobile()
-	{
-		return false;
-	}
-
 	public boolean tryToMapUndocumentedTypes()
 	{
 		// no mapping of types when running from the UI

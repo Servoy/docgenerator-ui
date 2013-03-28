@@ -194,7 +194,7 @@ public abstract class MemberStoragePlace
 		return null;
 	}
 
-	protected Element toXML(Document domDoc, boolean includeSample, boolean docMobile, ClientSupport scp)
+	protected Element toXML(Document domDoc, boolean includeSample, ClientSupport scp)
 	{
 		Element root = domDoc.createElement(getKind());
 		root.setAttribute(ATTR_NAME, getOfficialName());
@@ -214,7 +214,7 @@ public abstract class MemberStoragePlace
 			}
 			root.appendChild(retType);
 		}
-		if (docMobile && scp != null)
+		if (scp != null)
 		{
 			root.setAttribute(DefaultDocumentationGenerator.ATTR_CLIENT_SUPPORT, scp.toAttribute());
 		}
@@ -293,7 +293,7 @@ public abstract class MemberStoragePlace
 		setType(proc.mapType(holder, getType(), false, new boolean[1]));
 	}
 
-	abstract public boolean shouldShow(TypeMetaModel realTypeMM, boolean docMobile);
+	abstract public boolean shouldShow(TypeMetaModel realTypeMM);
 
 	protected boolean hideReturnType()
 	{

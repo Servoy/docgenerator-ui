@@ -106,7 +106,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 
 		collectAllWarnings(holder, allWarnings);
 
-		return writeToXML(holder, req.getCategoryFilter(), req.autopilot(), availableMemberKinds, req.docmobile());
+		return writeToXML(holder, req.getCategoryFilter(), req.autopilot(), availableMemberKinds);
 	}
 
 	@SuppressWarnings("unused")
@@ -444,8 +444,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 	 * is fed to the Eclipse resources API when generating the file on disk.
 	 */
 	// TODO: If the XML is large, this memory based approach is not the best choice. Keep an eye on this.
-	private InputStream writeToXML(MetaModelHolder holder, Set<String> categories, boolean autopilotMode, MemberKindIndex availableMemberKinds,
-		boolean docMobile)
+	private InputStream writeToXML(MetaModelHolder holder, Set<String> categories, boolean autopilotMode, MemberKindIndex availableMemberKinds)
 	{
 		//Writer writer = null;
 		try
@@ -489,7 +488,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 				{
 					if (typeMM.isServoyDocumented() && category.equals(typeMM.getCategory()))
 					{
-						catRoot.appendChild(toXML(typeMM, doc, false, availableMemberKinds, docMobile, holder));
+						catRoot.appendChild(toXML(typeMM, doc, false, availableMemberKinds, holder));
 					}
 				}
 			}
@@ -515,7 +514,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 	/**
 	 * Returns an XML element that corresponds to this class.
 	 */
-	private Element toXML(TypeMetaModel typeMM, Document doc, boolean hideDeprecated, MemberKindIndex mk, boolean docMobile, MetaModelHolder holder)
+	private Element toXML(TypeMetaModel typeMM, Document doc, boolean hideDeprecated, MemberKindIndex mk, MetaModelHolder holder)
 	{
 		Element objElement = doc.createElement(TAG_OBJECT);
 		TypeStoragePlace typeData = (TypeStoragePlace)typeMM.getStore().get(STORE_KEY);
@@ -542,14 +541,11 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 		ClientSupport unionedScp = scp;
 		for (String kind : mk.getKinds())
 		{
-			ClientSupport membersUnionedScp = putMembersByType(typeMM, kind, doc, objElement, mk.getWrapperTag(kind), hideDeprecated, docMobile, holder, scp);
+			ClientSupport membersUnionedScp = putMembersByType(typeMM, kind, doc, objElement, mk.getWrapperTag(kind), hideDeprecated, holder, scp);
 			unionedScp = unionedScp == null ? membersUnionedScp : unionedScp.union(membersUnionedScp);
 		}
 
-		if (docMobile)
-		{
-			objElement.setAttribute(ATTR_CLIENT_SUPPORT, (unionedScp == null ? ClientSupport.Default : unionedScp).toAttribute());
-		}
+		objElement.setAttribute(ATTR_CLIENT_SUPPORT, (unionedScp == null ? ClientSupport.Default : unionedScp).toAttribute());
 
 		return objElement;
 	}
@@ -559,14 +555,14 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 	 * @return unioned ClientSupport from type and members.
 	 */
 	private ClientSupport putMembersByType(TypeMetaModel typeMM, String kind, Document doc, Element objElement, String holderName, boolean hideDeprecated,
-		boolean docMobile, MetaModelHolder holder, ClientSupport typeScp)
+		MetaModelHolder holder, ClientSupport typeScp)
 	{
 		ClientSupport unionedScp = typeScp;
 		Map<String, Element> children = new TreeMap<String, Element>();
 		for (IMemberMetaModel memberMM : typeMM.getMembers(holder))
 		{
 			MemberStoragePlace memberData = (MemberStoragePlace)memberMM.getStore().get(STORE_KEY);
-			if (kind.equals(memberData.getKind()) && memberData.shouldShow(typeMM, docMobile) && (!memberMM.isDeprecated() || !hideDeprecated))
+			if (kind.equals(memberData.getKind()) && memberData.shouldShow(typeMM) && (!memberMM.isDeprecated() || !hideDeprecated))
 			{
 				ClientSupport memberScp = memberData.getServoyClientSupport();
 				if (memberScp != null)
@@ -579,7 +575,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 					unionedScp = memberScp.union(unionedScp);
 				}
 
-				Element child = memberData.toXML(doc, includeSample(), docMobile, memberScp == null ? ClientSupport.Default : memberScp);
+				Element child = memberData.toXML(doc, includeSample(), memberScp == null ? ClientSupport.Default : memberScp);
 
 				children.put(memberData.getOfficialSignature(), child);
 			}

@@ -134,6 +134,13 @@ public abstract class MemberMetaModel extends GenericMemberMetaModel
 			return member.getJavadoc(null);
 		}
 
+		// look in super class first, see for example QBFunctions.getParent
+		JavadocMetaModel superClassJavaDoc = getJavadoc(holder.getType(tmm.getSupertype()), holder);
+		if (superClassJavaDoc != null)
+		{
+			return superClassJavaDoc;
+		}
+
 		for (TypeName intf : tmm.getInterfaces())
 		{
 			JavadocMetaModel jdoc = getJavadoc(holder.getType(intf), holder);
@@ -143,7 +150,7 @@ public abstract class MemberMetaModel extends GenericMemberMetaModel
 			}
 		}
 
-		return getJavadoc(holder.getType(tmm.getSupertype()), holder);
+		return null;
 	}
 
 

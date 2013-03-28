@@ -297,7 +297,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 		TypeMetaModel typeMM = holder.getType(redirect.getClassName());
 		if (typeMM != null)
 		{
-			for (IMemberMetaModel candidate : typeMM.getMembers())
+			for (IMemberMetaModel candidate : typeMM.getMembers(holder))
 			{
 				if (candidate.matchesSignature(redirect.getMemberSignature()))
 				{

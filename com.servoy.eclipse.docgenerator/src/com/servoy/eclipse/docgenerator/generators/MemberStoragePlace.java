@@ -27,6 +27,7 @@ import com.servoy.eclipse.docgenerator.metamodel.MemberMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.MetaModelHolder;
 import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.TypeName;
+import com.servoy.eclipse.docgenerator.util.Pair;
 
 /**
  * Class that holds relevant information for a member of a class. 
@@ -45,6 +46,7 @@ public abstract class MemberStoragePlace
 	private static final String TAG_LINK = "link";
 	private static final String TAG_LINKS = "links";
 	private static final String TAG_SAMPLE = "sample";
+	private static final String TAG_SAMPLES = "samples";
 	private static final String TAG_SUMMARY = "summary";
 	private static final String TAG_DESCRIPTION = "description";
 	private static final String ATTR_SINCE = "since";
@@ -252,12 +254,26 @@ public abstract class MemberStoragePlace
 			}
 			if (includeSample)
 			{
-				Element sample = domDoc.createElement(TAG_SAMPLE);
-				root.appendChild(sample);
-				if (ddr.getSample() != null && ddr.getSample().trim().length() > 0)
+				Element samples = domDoc.createElement(TAG_SAMPLES);
+				boolean hasMobileSample = hasMobileSample(ddr);
+				for (Pair<String, String> sample : ddr.getSamples())
 				{
-					sample.appendChild(domDoc.createCDATASection(ddr.getSample().trim()));
+					if (sample == null || "".equals(sample.getRight())) continue;
+					Element sampleElem = domDoc.createElement(TAG_SAMPLE);
+					if (DocumentationDataDistilled.TAG_MOBILESAMPLE.equals(sample.getLeft()))
+					{
+						sampleElem.setAttribute(DefaultDocumentationGenerator.ATTR_CLIENT_SUPPORT, ClientSupport.mc.toAttribute());
+					}
+					else
+					{
+						// if we have more samples then we have a mobile specific sample and only that will have client support for mobile in xml
+						if (hasMobileSample) sampleElem.setAttribute(DefaultDocumentationGenerator.ATTR_CLIENT_SUPPORT, ClientSupport.Default.toAttribute());
+						else sampleElem.setAttribute(DefaultDocumentationGenerator.ATTR_CLIENT_SUPPORT, scp.toAttribute());
+					}
+					sampleElem.appendChild(domDoc.createCDATASection(sample.getRight().trim()));
+					samples.appendChild(sampleElem);
 				}
+				root.appendChild(samples);
 			}
 			if (ddr.getLinks() != null && ddr.getLinks().size() > 0)
 			{
@@ -286,6 +302,15 @@ public abstract class MemberStoragePlace
 			root.setAttribute(ATTR_UNDOCUMENTED, Boolean.TRUE.toString());
 		}
 		return root;
+	}
+
+	private boolean hasMobileSample(DocumentationDataDistilled ddr)
+	{
+		for (Pair<String, String> smpl : ddr.getSamples())
+		{
+			if (DocumentationDataDistilled.TAG_MOBILESAMPLE.equals(smpl.getLeft())) return true;
+		}
+		return false;
 	}
 
 	public void mapTypes(TypeMapper proc)

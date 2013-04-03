@@ -31,11 +31,12 @@ import com.servoy.eclipse.docgenerator.metamodel.IMemberMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.JavadocMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.JavadocTagPart;
 import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
+import com.servoy.eclipse.docgenerator.util.Pair;
 
 /**
  * Holds information extracted from one Javadoc:
  * - description
- * - sample code
+ * - sample (normal and mobilesample) code
  * - list of @param tags
  * - @return tag
  * - list of @link tags
@@ -51,6 +52,7 @@ import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
 public class DocumentationDataDistilled
 {
 	public static final String TAG_SAMPLE = "@sample";
+	public static final String TAG_MOBILESAMPLE = "@mobilesample";
 	public static final String TAG_SAMEAS = "@sameas";
 	public static final String TAG_SAMPLE_AS = "@sampleas";
 	public static final String TAG_CLONEDESC = "@clonedesc";
@@ -63,7 +65,7 @@ public class DocumentationDataDistilled
 
 	private String text;
 	private String summary;
-	private String sample;
+	private final List<Pair<String, String>> samples = new ArrayList<Pair<String, String>>();
 	private final List<DocumentedParameterData> parameters = new ArrayList<DocumentedParameterData>();
 	private String ret;
 	private final List<String> links = new ArrayList<String>();
@@ -86,12 +88,10 @@ public class DocumentationDataDistilled
 
 		String txt = ExtractorUtil.grabExactlyOne(JavadocMetaModel.TEXT_TAG, clean, jdoc, warnings, location);
 		setText(txt);
-		sample = ExtractorUtil.grabExactlyOne(TAG_SAMPLE, clean, jdoc, warnings, location);
-		if (sample != null)
-		{
-			// add back the "*/"
-			sample = Pattern.compile("\\*&#47;").matcher(sample).replaceAll("*/");
-		}
+
+		addSampleCodeWithTag(TAG_SAMPLE, ExtractorUtil.grabExactlyOne(TAG_SAMPLE, clean, jdoc, warnings, location));
+		addSampleCodeWithTag(TAG_MOBILESAMPLE, ExtractorUtil.grabExactlyOne(TAG_MOBILESAMPLE, clean, jdoc, warnings, location));
+
 		deprecatedText = ExtractorUtil.grabExactlyOne(TagElement.TAG_DEPRECATED, clean, jdoc, warnings, location);
 		ret = ExtractorUtil.grabExactlyOne(TagElement.TAG_RETURN, clean, jdoc, warnings, location);
 		since = ExtractorUtil.grabExactlyOne(TagElement.TAG_SINCE, clean, jdoc, warnings, location);
@@ -184,10 +184,33 @@ public class DocumentationDataDistilled
 		}
 	}
 
+	private void addSampleCodeWithTag(String sampleTagType, String sample)
+	{
+		if (sample != null)
+		{
+			boolean found = false;
+			for (Pair<String, String> smpl : samples)
+			{
+				if (smpl.getRight().equals(sample))
+				{
+					found = true;
+					// add back the "*/"
+					smpl.setRight(Pattern.compile("\\*&#47;").matcher(sample).replaceAll("*/"));
+					break;
+				}
+			}
+
+			if (!found)
+			{
+				samples.add(new Pair<String, String>(sampleTagType, sample));
+			}
+		}
+	}
+
 	public boolean hasDocumentation()
 	{
 		if (text != null && text.trim().length() > 0) return true;
-		if (sample != null && sample.trim().length() > 0) return true;
+		if (samples.size() > 0) return true;
 		if (sameAs != null) return true;
 		if (cloneSample != null) return true;
 		if (cloneDescription != null) return true;
@@ -226,14 +249,14 @@ public class DocumentationDataDistilled
 		this.summary = summary;
 	}
 
-	public String getSample()
+	public List<Pair<String, String>> getSamples()
 	{
-		return sample;
+		return samples;
 	}
 
-	public void setSample(String sample)
+	public void setSamples(List<Pair<String, String>> samples)
 	{
-		this.sample = sample;
+		this.samples.addAll(samples);
 	}
 
 	public void addParameter(DocumentedParameterData param)

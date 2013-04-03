@@ -257,7 +257,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 								}
 								else
 								{
-									docData.setSample(targetData.getDocData().getSample());
+									docData.setSamples(targetData.getDocData().getSamples());
 								}
 							}
 						}

@@ -51,6 +51,7 @@ import com.servoy.eclipse.docgenerator.metamodel.MetaModelHolder;
 import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
 import com.servoy.eclipse.docgenerator.service.DocumentationGenerationRequest;
 import com.servoy.eclipse.docgenerator.service.LogUtil;
+import com.servoy.eclipse.docgenerator.util.Pair;
 
 /**
  * @author gerzse
@@ -276,7 +277,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 								}
 								else
 								{
-									docData.setText(targetData.getDocData().getText());
+									docData.setTexts(targetData.getDocData().getTexts());
 								}
 							}
 						}
@@ -366,10 +367,16 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 			doc.setDeprecatedText(newTextContent);
 		}
 		//
-		if (doc.getText() != null)
+		if (doc.getTexts() != null)
 		{
-			String newTextContent = resolvePublicLinks(holder, typeMM, doc.getText());
-			doc.setText(newTextContent);
+			for (Pair<ClientSupport, String> docText : doc.getTexts())
+			{
+				if (docText.getRight() != null)
+				{
+					String newTextContent = resolvePublicLinks(holder, typeMM, docText.getRight());
+					docText.setRight(newTextContent);
+				}
+			}
 		}
 	}
 

@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.jdt.core.dom.TagElement;
 
+import com.servoy.eclipse.docgenerator.metamodel.ClientSupport;
 import com.servoy.eclipse.docgenerator.metamodel.DocumentationWarning;
 import com.servoy.eclipse.docgenerator.metamodel.DocumentationWarning.WarningType;
 import com.servoy.eclipse.docgenerator.metamodel.IMemberMetaModel;
@@ -51,6 +52,7 @@ import com.servoy.eclipse.docgenerator.util.Pair;
 @SuppressWarnings("nls")
 public class DocumentationDataDistilled
 {
+	public static final String TAG_MOBILEDESCRIPTION = "@mobiledescription";
 	public static final String TAG_SAMPLE = "@sample";
 	public static final String TAG_MOBILESAMPLE = "@mobilesample";
 	public static final String TAG_SAMEAS = "@sameas";
@@ -63,8 +65,8 @@ public class DocumentationDataDistilled
 
 	public static final String FLAG_OPTIONAL = "optional"; //$NON-NLS-1$
 
-	private String text;
-	private String summary;
+	private final List<Pair<ClientSupport, String>> texts;
+	private final List<Pair<ClientSupport, String>> summaries;
 	private final List<Pair<String, String>> samples = new ArrayList<Pair<String, String>>();
 	private final List<DocumentedParameterData> parameters = new ArrayList<DocumentedParameterData>();
 	private String ret;
@@ -86,8 +88,16 @@ public class DocumentationDataDistilled
 
 		boolean clean = true;
 
-		String txt = ExtractorUtil.grabExactlyOne(JavadocMetaModel.TEXT_TAG, clean, jdoc, warnings, location);
-		setText(txt);
+		texts = new ArrayList<Pair<ClientSupport, String>>();
+		summaries = new ArrayList<Pair<ClientSupport, String>>();
+
+		String descriptionText = ExtractorUtil.grabExactlyOne(JavadocMetaModel.TEXT_TAG, clean, jdoc, warnings, location);
+		String mobileDescriptionText = ExtractorUtil.grabExactlyOne(TAG_MOBILEDESCRIPTION, clean, jdoc, warnings, location);
+		List<Pair<ClientSupport, String>> txts = new ArrayList<Pair<ClientSupport, String>>();
+		txts.add(new Pair<ClientSupport, String>(ClientSupport.Default, descriptionText));
+		if (mobileDescriptionText != null && mobileDescriptionText.trim().length() > 0) txts.add(new Pair<ClientSupport, String>(ClientSupport.mc,
+			mobileDescriptionText.trim()));
+		setTexts(txts);
 
 		addSampleCodeWithTag(TAG_SAMPLE, ExtractorUtil.grabExactlyOne(TAG_SAMPLE, clean, jdoc, warnings, location));
 		addSampleCodeWithTag(TAG_MOBILESAMPLE, ExtractorUtil.grabExactlyOne(TAG_MOBILESAMPLE, clean, jdoc, warnings, location));
@@ -209,7 +219,7 @@ public class DocumentationDataDistilled
 
 	public boolean hasDocumentation()
 	{
-		if (text != null && text.trim().length() > 0) return true;
+		if (texts.size() > 0) return true;
 		if (samples.size() > 0) return true;
 		if (sameAs != null) return true;
 		if (cloneSample != null) return true;
@@ -221,32 +231,49 @@ public class DocumentationDataDistilled
 		return false;
 	}
 
-	public String getText()
+	public List<Pair<ClientSupport, String>> getTexts()
 	{
-		return text;
+		return texts;
 	}
 
-	public void setText(String text)
+	public List<Pair<ClientSupport, String>> getSummaries()
 	{
-		this.text = text;
+		return summaries;
+	}
 
-		if (text != null)
+	public void setTexts(List<Pair<ClientSupport, String>> texts)
+	{
+		this.texts.clear();
+		this.texts.addAll(texts);
+
+		for (Pair<ClientSupport, String> text : texts)
 		{
-			// also set summary here
-			int idx = text.indexOf('.');
-			if (idx >= 0) summary = text.substring(0, idx + 1);
-			else summary = text;
+			if (text.getRight() != null)
+			{
+				//also set summary here
+				String txt = text.getRight();
+				String summary = "";
+				int idx = txt.indexOf('.');
+				if (idx >= 0) summary = txt.substring(0, idx + 1);
+				else summary = txt;
+				summaries.add(new Pair<ClientSupport, String>(text.getLeft(), summary));
+			}
 		}
 	}
 
-	public String getSummary()
+	public String getSummary(ClientSupport csp)
 	{
-		return summary;
+		for (Pair<ClientSupport, String> summary : summaries)
+		{
+			if (summary.getLeft().supports(csp)) return summary.getRight();
+		}
+		return null;
 	}
 
-	public void setSummary(String summary)
+	public void setSummaries(List<Pair<ClientSupport, String>> summaries)
 	{
-		this.summary = summary;
+		this.summaries.clear();
+		this.summaries.addAll(summaries);
 	}
 
 	public List<Pair<String, String>> getSamples()

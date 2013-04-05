@@ -77,7 +77,7 @@ public abstract class MemberStoragePlace
 		JavadocMetaModel jdoc = memberMM.getJavadoc(holder);
 		if (jdoc != null)
 		{
-			docData = new DocumentationDataDistilled(memberMM, typeMM, jdoc);
+			docData = new DocumentationDataDistilled(memberMM, typeMM, jdoc, holder);
 		}
 	}
 
@@ -240,28 +240,14 @@ public abstract class MemberStoragePlace
 			{
 				Element descriptionsEl = domDoc.createElement(TAG_DESCRIPTIONS);
 				Element summariesEl = domDoc.createElement(TAG_SUMMARIES);
-				boolean hasMobileDescription = hasMobileDescription(ddr);
 				for (Pair<ClientSupport, String> text : ddr.getTexts())
 				{
 					if (text != null && text.getRight() != null)
 					{
+						ClientSupport cs = (ddr.getSamples().size() > 1 ? text.getLeft() : scp);
+
 						Element descr = domDoc.createElement(TAG_DESCRIPTION);
-						if (text.getLeft().equals(ClientSupport.mc))
-						{
-							descr.setAttribute(DefaultDocumentationGenerator.ATTR_CLIENT_SUPPORT, ClientSupport.mc.toAttribute());
-						}
-						else
-						{
-							// if we have more samples then we have a mobile specific sample and only that will have client support for mobile in xml
-							if (hasMobileDescription)
-							{
-								descr.setAttribute(DefaultDocumentationGenerator.ATTR_CLIENT_SUPPORT, ClientSupport.Default.toAttribute());
-							}
-							else
-							{
-								descr.setAttribute(DefaultDocumentationGenerator.ATTR_CLIENT_SUPPORT, scp.toAttribute());
-							}
-						}
+						descr.setAttribute(DefaultDocumentationGenerator.ATTR_CLIENT_SUPPORT, cs.toAttribute());
 						descr.appendChild(domDoc.createCDATASection(text.getRight().trim()));
 						descriptionsEl.appendChild(descr);
 
@@ -269,8 +255,7 @@ public abstract class MemberStoragePlace
 						if (summary != null && summary.trim().length() > 0)
 						{
 							Element summaryEl = domDoc.createElement(TAG_SUMMARY);
-							summaryEl.setAttribute(DefaultDocumentationGenerator.ATTR_CLIENT_SUPPORT,
-								descr.getAttribute(DefaultDocumentationGenerator.ATTR_CLIENT_SUPPORT));
+							summaryEl.setAttribute(DefaultDocumentationGenerator.ATTR_CLIENT_SUPPORT, cs.toAttribute());
 							summaryEl.appendChild(domDoc.createCDATASection(summary.trim()));
 							summariesEl.appendChild(summaryEl);
 						}
@@ -288,29 +273,17 @@ public abstract class MemberStoragePlace
 			if (includeSample && ddr.getSamples() != null && ddr.getSamples().size() > 0)
 			{
 				Element samples = domDoc.createElement(TAG_SAMPLES);
-				boolean hasMobileSample = hasMobileSample(ddr);
-				for (Pair<String, String> sample : ddr.getSamples())
+				for (Pair<ClientSupport, String> sample : ddr.getSamples())
 				{
-					if (sample == null || "".equals(sample.getRight())) continue;
-					Element sampleElem = domDoc.createElement(TAG_SAMPLE);
-					if (DocumentationDataDistilled.TAG_MOBILESAMPLE.equals(sample.getLeft()))
+					if (sample != null && sample.getLeft() != null)
 					{
-						sampleElem.setAttribute(DefaultDocumentationGenerator.ATTR_CLIENT_SUPPORT, ClientSupport.mc.toAttribute());
+						ClientSupport cs = (ddr.getSamples().size() > 1 ? sample.getLeft() : scp);
+
+						Element sampleElem = domDoc.createElement(TAG_SAMPLE);
+						sampleElem.setAttribute(DefaultDocumentationGenerator.ATTR_CLIENT_SUPPORT, cs.toAttribute());
+						sampleElem.appendChild(domDoc.createCDATASection(sample.getRight().trim()));
+						samples.appendChild(sampleElem);
 					}
-					else
-					{
-						// if we have more samples then we have a mobile specific sample and only that will have client support for mobile in xml
-						if (hasMobileSample)
-						{
-							sampleElem.setAttribute(DefaultDocumentationGenerator.ATTR_CLIENT_SUPPORT, ClientSupport.Default.toAttribute());
-						}
-						else
-						{
-							sampleElem.setAttribute(DefaultDocumentationGenerator.ATTR_CLIENT_SUPPORT, scp.toAttribute());
-						}
-					}
-					sampleElem.appendChild(domDoc.createCDATASection(sample.getRight().trim()));
-					samples.appendChild(sampleElem);
 				}
 				root.appendChild(samples);
 			}
@@ -341,24 +314,6 @@ public abstract class MemberStoragePlace
 			root.setAttribute(ATTR_UNDOCUMENTED, Boolean.TRUE.toString());
 		}
 		return root;
-	}
-
-	private boolean hasMobileSample(DocumentationDataDistilled ddr)
-	{
-		for (Pair<String, String> smpl : ddr.getSamples())
-		{
-			if (DocumentationDataDistilled.TAG_MOBILESAMPLE.equals(smpl.getLeft()) && smpl.getRight() != null) return true;
-		}
-		return false;
-	}
-
-	private boolean hasMobileDescription(DocumentationDataDistilled ddr)
-	{
-		for (Pair<ClientSupport, String> descr : ddr.getTexts())
-		{
-			if (ClientSupport.mc.equals(descr.getLeft()) && descr.getRight() != null) return true;
-		}
-		return false;
 	}
 
 	public void mapTypes(TypeMapper proc)

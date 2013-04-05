@@ -31,6 +31,7 @@ import com.servoy.eclipse.docgenerator.metamodel.DocumentationWarning.WarningTyp
 import com.servoy.eclipse.docgenerator.metamodel.IMemberMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.JavadocMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.JavadocTagPart;
+import com.servoy.eclipse.docgenerator.metamodel.MetaModelHolder;
 import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
 import com.servoy.eclipse.docgenerator.util.Pair;
 
@@ -67,7 +68,7 @@ public class DocumentationDataDistilled
 
 	private final List<Pair<ClientSupport, String>> texts;
 	private final List<Pair<ClientSupport, String>> summaries;
-	private final List<Pair<String, String>> samples = new ArrayList<Pair<String, String>>();
+	private final List<Pair<ClientSupport, String>> samples = new ArrayList<Pair<ClientSupport, String>>();
 	private final List<DocumentedParameterData> parameters = new ArrayList<DocumentedParameterData>();
 	private String ret;
 	private final List<String> links = new ArrayList<String>();
@@ -81,26 +82,46 @@ public class DocumentationDataDistilled
 	private boolean staticCall = false;
 	private String deprecatedText;
 
-	public DocumentationDataDistilled(IMemberMetaModel memberMM, TypeMetaModel typeMM, JavadocMetaModel jdoc)
+	public DocumentationDataDistilled(IMemberMetaModel memberMM, TypeMetaModel typeMM, JavadocMetaModel jdoc, MetaModelHolder holder)
 	{
 		Set<DocumentationWarning> warnings = memberMM.getWarnings();
 		String location = memberMM.getFullSignature();
 
 		boolean clean = true;
 
+		ClientSupport typeCsp = typeMM.getServoyClientSupport(holder);
+		ClientSupport csp = typeCsp == null ? ClientSupport.Default : typeCsp;
+
 		texts = new ArrayList<Pair<ClientSupport, String>>();
 		summaries = new ArrayList<Pair<ClientSupport, String>>();
 
 		String descriptionText = ExtractorUtil.grabExactlyOne(JavadocMetaModel.TEXT_TAG, clean, jdoc, warnings, location);
 		String mobileDescriptionText = ExtractorUtil.grabExactlyOne(TAG_MOBILEDESCRIPTION, clean, jdoc, warnings, location);
+
 		List<Pair<ClientSupport, String>> txts = new ArrayList<Pair<ClientSupport, String>>();
-		txts.add(new Pair<ClientSupport, String>(ClientSupport.Default, descriptionText));
-		if (mobileDescriptionText != null && mobileDescriptionText.trim().length() > 0) txts.add(new Pair<ClientSupport, String>(ClientSupport.mc,
-			mobileDescriptionText.trim()));
+		if (mobileDescriptionText != null && mobileDescriptionText.trim().length() > 0)
+		{
+			txts.add(new Pair<ClientSupport, String>(ClientSupport.mc, mobileDescriptionText.trim()));
+			csp = csp.remove(ClientSupport.mc);
+		}
+		if (descriptionText != null && descriptionText.trim().length() > 0)
+		{
+			txts.add(new Pair<ClientSupport, String>(csp, descriptionText));
+		}
 		setTexts(txts);
 
-		addSampleCodeWithTag(TAG_SAMPLE, ExtractorUtil.grabExactlyOne(TAG_SAMPLE, clean, jdoc, warnings, location));
-		addSampleCodeWithTag(TAG_MOBILESAMPLE, ExtractorUtil.grabExactlyOne(TAG_MOBILESAMPLE, clean, jdoc, warnings, location));
+		String sample = ExtractorUtil.grabExactlyOne(TAG_SAMPLE, clean, jdoc, warnings, location);
+		String mSample = ExtractorUtil.grabExactlyOne(TAG_MOBILESAMPLE, clean, jdoc, warnings, location);
+		ClientSupport aux = typeCsp == null ? ClientSupport.Default : typeCsp;
+		if (mSample != null && mSample.trim().length() > 0)
+		{
+			addSample(ClientSupport.mc, mSample);
+			aux = aux.remove(ClientSupport.mc);
+		}
+		if (sample != null && sample.trim().length() > 0)
+		{
+			addSample(aux, sample);
+		}
 
 		deprecatedText = ExtractorUtil.grabExactlyOne(TagElement.TAG_DEPRECATED, clean, jdoc, warnings, location);
 		ret = ExtractorUtil.grabExactlyOne(TagElement.TAG_RETURN, clean, jdoc, warnings, location);
@@ -194,12 +215,12 @@ public class DocumentationDataDistilled
 		}
 	}
 
-	private void addSampleCodeWithTag(String sampleTagType, String sample)
+	private void addSample(ClientSupport cs, String sample)
 	{
 		if (sample != null)
 		{
 			boolean found = false;
-			for (Pair<String, String> smpl : samples)
+			for (Pair<ClientSupport, String> smpl : samples)
 			{
 				if (smpl.getRight().equals(sample))
 				{
@@ -212,7 +233,7 @@ public class DocumentationDataDistilled
 
 			if (!found)
 			{
-				samples.add(new Pair<String, String>(sampleTagType, sample));
+				samples.add(new Pair<ClientSupport, String>(cs, sample));
 			}
 		}
 	}
@@ -265,6 +286,7 @@ public class DocumentationDataDistilled
 	{
 		for (Pair<ClientSupport, String> summary : summaries)
 		{
+			if (summary == null || (summary != null && summary.getLeft() == null)) continue;
 			if (summary.getLeft().supports(csp)) return summary.getRight();
 		}
 		return null;
@@ -276,12 +298,12 @@ public class DocumentationDataDistilled
 		this.summaries.addAll(summaries);
 	}
 
-	public List<Pair<String, String>> getSamples()
+	public List<Pair<ClientSupport, String>> getSamples()
 	{
 		return samples;
 	}
 
-	public void setSamples(List<Pair<String, String>> samples)
+	public void setSamples(List<Pair<ClientSupport, String>> samples)
 	{
 		this.samples.addAll(samples);
 	}

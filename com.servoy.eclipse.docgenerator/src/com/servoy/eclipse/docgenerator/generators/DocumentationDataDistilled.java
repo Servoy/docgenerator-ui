@@ -38,7 +38,7 @@ import com.servoy.eclipse.docgenerator.util.Pair;
 /**
  * Holds information extracted from one Javadoc:
  * - description
- * - sample (normal and mobilesample) code
+ * - sample (normal and sample-mc) code
  * - list of @param tags
  * - @return tag
  * - list of @link tags
@@ -53,9 +53,9 @@ import com.servoy.eclipse.docgenerator.util.Pair;
 @SuppressWarnings("nls")
 public class DocumentationDataDistilled
 {
-	public static final String TAG_MOBILEDESCRIPTION = "@mobiledescription";
+	public static final String TAG_MOBILEDESCRIPTION = "@description-mc";
 	public static final String TAG_SAMPLE = "@sample";
-	public static final String TAG_MOBILESAMPLE = "@mobilesample";
+	public static final String TAG_MOBILESAMPLE = "@sample-mc";
 	public static final String TAG_SAMEAS = "@sameas";
 	public static final String TAG_SAMPLE_AS = "@sampleas";
 	public static final String TAG_CLONEDESC = "@clonedesc";

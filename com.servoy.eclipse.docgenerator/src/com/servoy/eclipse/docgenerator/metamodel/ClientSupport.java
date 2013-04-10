@@ -38,7 +38,7 @@ public enum ClientSupport
 		this.bits = bits;
 	}
 
-	static ClientSupport fromString(String s)
+	public static ClientSupport fromString(String s)
 	{
 		if (s == null || s.length() == 0) return null;
 		return fromBits(bits(s, mc) | bits(s, wc) | bits(s, sc));
@@ -49,12 +49,14 @@ public enum ClientSupport
 		return s.indexOf(supp.name()) >= 0 ? supp.bits : 0;
 	}
 
+	/* this method is not in the original class in servoy_shared */
 	public static ClientSupport fromAnnotation(AnnotationMetaModel csp)
 	{
 		if (csp == null) return null;
 		return fromBits(bits(csp, mc) | bits(csp, wc) | bits(csp, sc));
 	}
 
+	/* this method is not in the original class in servoy_shared */
 	private static int bits(AnnotationMetaModel csp, ClientSupport supp)
 	{
 		return Boolean.TRUE.equals(csp.getAttribute(supp.name())) ? supp.bits : 0;

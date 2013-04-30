@@ -115,11 +115,15 @@ public class DocumentationDataDistilled
 		ClientSupport aux = typeCsp == null ? ClientSupport.Default : typeCsp;
 		if (mSample != null && mSample.trim().length() > 0)
 		{
+			// add back the "*/"
+			mSample = Pattern.compile("\\*&#47;").matcher(mSample).replaceAll("*/");
 			addSample(ClientSupport.mc, mSample);
 			aux = aux.remove(ClientSupport.mc);
 		}
 		if (sample != null && sample.trim().length() > 0)
 		{
+			// add back the "*/"
+			sample = Pattern.compile("\\*&#47;").matcher(sample).replaceAll("*/");
 			addSample(aux, sample);
 		}
 
@@ -226,7 +230,6 @@ public class DocumentationDataDistilled
 				{
 					found = true;
 					// add back the "*/"
-					smpl.setRight(Pattern.compile("\\*&#47;").matcher(sample).replaceAll("*/"));
 					break;
 				}
 			}

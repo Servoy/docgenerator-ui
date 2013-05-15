@@ -156,7 +156,7 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 
 	public int getDisplayType()
 	{
-		return getIntAttribute(ATTRIBUTE_DISPLAY_TYPE, 0);
+		return getIntAttribute(ATTRIBUTE_DISPLAY_TYPE, -1);
 	}
 
 	public String getRealClassName()

@@ -402,8 +402,8 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 	private String resolvePublicLinks(MetaModelHolder holder, TypeMetaModel currentTypeMM, String linkContent)
 	{
 		//pattern mathcing xxx.yy.zzz#tttt or xxx.yy.zzz#tttt  or xxx.yy.zzz#tttt(aa, aa[])
-		String packagePattern = "(([a-zA-Z\\$][\\w\\d\\$]*\\.)+)([a-zA-Z\\$][\\w\\$])*";
-		String functionSignaturePattern = "(#\\w*\\s*(\\([\\w\\s,\\[\\]<>\\.]*\\))?)?"; //function name is optional , also '(params)' is optional
+		String packagePattern = "(([a-zA-Z\\$][\\w\\d\\$]*\\.)+)([a-zA-Z\\$][\\w\\$])*.*[#]";
+		String functionSignaturePattern = "(\\w*\\s*(\\([\\w\\s,\\[\\]<>\\.]*\\))?)?"; //function name is optional , also '(params)' is optional
 		Pattern pattern = Pattern.compile("(" + packagePattern + functionSignaturePattern + ")");
 
 		Matcher matcher = pattern.matcher(linkContent);
@@ -418,9 +418,23 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 			TypeMetaModel mm = holder.getType(qName);
 			if (mm != null)
 			{
+				String realTypePublicName = mm.getPublicName();
+				if (mm.isInterface())
+				{
+					for (TypeMetaModel tt : holder.getTypes())
+					{
+						// find first - and probably only (currently) - implementing class of the interface
+						if (tt.getInterfaces().indexOf(mm.getName()) != -1 && !tt.isInterface() && tt.getPublicName() != null)
+						{
+							realTypePublicName = tt.getPublicName();
+							break;
+						}
+					}
+				}
+
 				//replace oldpackage name with new public name and if method was not present(only full qName was given ) do not append '#'
 				currentMatch = currentMatch.replaceAll(packagePattern + functionSignaturePattern,/* "$1" */
-					mm.getPublicName() + (parts.length > 1 ? "#" + parts[1] : ""));
+					realTypePublicName + (parts.length > 1 ? "#" + parts[1] : ""));
 
 			}
 			matcher.appendReplacement(finalString, currentMatch);

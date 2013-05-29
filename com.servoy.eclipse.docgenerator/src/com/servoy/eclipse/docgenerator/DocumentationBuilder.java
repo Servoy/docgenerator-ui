@@ -173,7 +173,7 @@ public class DocumentationBuilder
 												boolean hasVisitedParent = false;
 												for (String parent : visitedPackages)
 												{
-													if (thisPackageName.startsWith(parent))
+													if (thisPackageName.startsWith(parent + "."))
 													{
 														hasVisitedParent = true;
 														break;

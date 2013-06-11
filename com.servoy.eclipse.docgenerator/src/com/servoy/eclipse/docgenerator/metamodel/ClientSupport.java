@@ -18,6 +18,7 @@
 package com.servoy.eclipse.docgenerator.metamodel;
 
 
+
 /**
  * Enum for tagging which clients are supported for the property.
  * 
@@ -32,6 +33,7 @@ public enum ClientSupport
 	private final int bits;
 
 	public static final ClientSupport Default = wc_sc;
+	public static final ClientSupport All = mc_wc_sc;
 
 	private ClientSupport(int bits)
 	{

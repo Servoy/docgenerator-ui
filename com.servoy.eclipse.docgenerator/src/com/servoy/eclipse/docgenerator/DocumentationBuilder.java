@@ -138,7 +138,7 @@ public class DocumentationBuilder
 									boolean process = false;
 									for (String prefix : packages)
 									{
-										if (thisPackageName.startsWith(prefix))
+										if (matchesPackage(thisPackageName, prefix))
 										{
 											process = true;
 											break;
@@ -378,7 +378,8 @@ public class DocumentationBuilder
 							boolean process = false;
 							for (String prefix : packages)
 							{
-								if (thisPackageName.startsWith(prefix))
+
+								if (matchesPackage(thisPackageName, prefix))
 								{
 									process = true;
 									usedPrefix = prefix;
@@ -538,6 +539,16 @@ public class DocumentationBuilder
 				}
 			}
 		}
+	}
+
+	/**
+	 * @param thisPackageName
+	 * @param prefix
+	 * @return
+	 */
+	private boolean matchesPackage(String packageName, String prefix)
+	{
+		return packageName.equals(prefix) || packageName.startsWith(prefix + '.');
 	}
 
 	private boolean writeFile(IWorkspaceRoot root, IPath path, InputStream content) throws CoreException

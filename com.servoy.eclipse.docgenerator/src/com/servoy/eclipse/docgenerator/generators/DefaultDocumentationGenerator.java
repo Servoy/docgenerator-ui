@@ -566,7 +566,9 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 			unionedScp = unionedScp == null ? membersUnionedScp : unionedScp.union(membersUnionedScp);
 		}
 
-		objElement.setAttribute(ATTR_CLIENT_SUPPORT, (unionedScp == null ? ClientSupport.Default : unionedScp).toAttribute());
+		// if type has a specific annotation defined, we use that
+		if (scp != null) objElement.setAttribute(ATTR_CLIENT_SUPPORT, scp.toAttribute());
+		else objElement.setAttribute(ATTR_CLIENT_SUPPORT, (unionedScp == null ? ClientSupport.Default : unionedScp).toAttribute());
 
 		return objElement;
 	}

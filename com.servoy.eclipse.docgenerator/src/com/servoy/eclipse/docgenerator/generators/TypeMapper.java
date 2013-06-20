@@ -97,24 +97,48 @@ public class TypeMapper
 		store("com.servoy.j2db.dataprocessing.IFoundSetInternal", "com.servoy.j2db.dataprocessing.FoundSet");
 		store("com.servoy.j2db.dataprocessing.IFoundSet", "com.servoy.j2db.dataprocessing.FoundSet");
 		store("com.servoy.j2db.dataprocessing.RelatedFoundSet", "com.servoy.j2db.dataprocessing.FoundSet");
+		store("com.servoy.base.scripting.api.IJSFoundSet", "com.servoy.j2db.dataprocessing.FoundSet");
 
 		store("com.servoy.j2db.dataprocessing.IDataSet", "com.servoy.j2db.dataprocessing.JSDataSet");
+		store("com.servoy.base.scripting.api.IJSDataSet", "com.servoy.j2db.dataprocessing.JSDataSet");
+
 		store("com.servoy.j2db.dataprocessing.IRecordInternal", "com.servoy.j2db.dataprocessing.Record");
-		store("com.servoy.j2db.dataprocessing.IRecordInternal", "com.servoy.j2db.dataprocessing.Record");
+		store("com.servoy.base.scripting.api.IJSRecord", "com.servoy.j2db.dataprocessing.Record");
+		store("com.servoy.j2db.dataprocessing.IRecord", "com.servoy.j2db.dataprocessing.Record");
 
 		store("com.servoy.j2db.ui.IComponent", "IRuntimeComponent");
 
 		store("com.servoy.j2db.solutionmodel.ISMComponent", "com.servoy.j2db.scripting.solutionmodel.JSComponent");
-
 		store("com.servoy.j2db.solutionmodel.ISMMethod", "com.servoy.j2db.scripting.solutionmodel.JSMethod");
-
+		store("com.servoy.j2db.solutionmodel.ISMVariable", "com.servoy.j2db.scripting.solutionmodel.JSVariable");
 		store("com.servoy.j2db.solutionmodel.ISMForm", "com.servoy.j2db.scripting.solutionmodel.JSForm");
+		store("com.servoy.j2db.solutionmodel.ISMButton", "com.servoy.j2db.scripting.solutionmodel.JSButton");
+		store("com.servoy.j2db.solutionmodel.ISMLabel", "com.servoy.j2db.scripting.solutionmodel.JSLabel");
+		store("com.servoy.j2db.solutionmodel.ISMField", "com.servoy.j2db.scripting.solutionmodel.JSFieldWithConstants");
+		store("com.servoy.j2db.solutionmodel.ISMPart", "com.servoy.j2db.scripting.solutionmodel.JSPartWithConstants");
+
+		store("com.servoy.base.solutionmodel.IBaseSMComponent", "com.servoy.j2db.scripting.solutionmodel.JSComponent");
+		store("com.servoy.base.solutionmodel.IBaseSMMethod", "com.servoy.j2db.scripting.solutionmodel.JSMethod");
+		store("com.servoy.base.solutionmodel.IBaseSMVariable", "com.servoy.j2db.scripting.solutionmodel.JSVariable");
+		store("com.servoy.base.solutionmodel.IBaseSMForm", "com.servoy.j2db.scripting.solutionmodel.JSForm");
+		store("com.servoy.base.solutionmodel.IBaseSMButton", "com.servoy.j2db.scripting.solutionmodel.JSButton");
+		store("com.servoy.base.solutionmodel.IBaseSMLabel", "com.servoy.j2db.scripting.solutionmodel.JSLabel");
+		store("com.servoy.base.solutionmodel.IBaseSMField", "com.servoy.j2db.scripting.solutionmodel.JSFieldWithConstants");
+		store("com.servoy.base.solutionmodel.IBaseSMPart", "com.servoy.j2db.scripting.solutionmodel.JSPartWithConstants");
+
+		store("com.servoy.j2db.scripting.solutionmodel.JSPart", "com.servoy.j2db.scripting.solutionmodel.JSPartWithConstants");
+		store("com.servoy.j2db.scripting.solutionmodel.JSField", "com.servoy.j2db.scripting.solutionmodel.JSFieldWithConstants");
+
+		store("com.servoy.base.solutionmodel.mobile.IMobileSMForm", "com.servoy.j2db.scripting.solutionmodel.JSForm");
+		store("com.servoy.base.solutionmodel.mobile.IMobileSMLabel", "com.servoy.j2db.scripting.solutionmodel.JSLabel");
 
 		store("com.servoy.j2db.IForm", "Form");
 		store("com.servoy.j2db.scripting.FormScope", "Form");
+		store("com.servoy.base.scripting.api.IJSController", "Form");
 
 		store("com.servoy.j2db.querybuilder.IQueryBuilderCondition", "com.servoy.j2db.querybuilder.impl.QBCondition");
 		store("com.servoy.j2db.querybuilder.IQueryBuilderLogicalCondition", "com.servoy.j2db.querybuilder.impl.QBLogicalCondition");
+		store("com.servoy.j2db.querybuilder.IQueryBuilderWhereCondition", "com.servoy.j2db.querybuilder.impl.QBWhereCondition");
 
 		store("com.servoy.j2db.ui.IScriptRenderMethods", "com.servoy.j2db.ui.IScriptRenderMethodsWithFormat");
 

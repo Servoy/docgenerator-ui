@@ -269,21 +269,13 @@ public class MethodStoragePlace extends MemberStoragePlace
 			return false;
 		}
 
+		// if it's annotated properly, then it should show
 		if (holder.getAnnotationManager().hasAnnotation(methodMM, realTypeMM, ANNOTATION_JS_FUNCTION) ||
 			holder.getAnnotationManager().hasAnnotation(methodMM, realTypeMM, ANNOTATION_JS_READONLY_PROPERTY) ||
 			holder.getAnnotationManager().hasAnnotation(methodMM, realTypeMM, ANNOTATION_JS_GETTER))
 		{
 			return true;
 		}
-
-		// if it's annotated properly, then it should show
-		if (holder.getAnnotationManager().hasAnnotation(methodMM, typeMM, ANNOTATION_JS_FUNCTION) ||
-			holder.getAnnotationManager().hasAnnotation(methodMM, typeMM, ANNOTATION_JS_READONLY_PROPERTY) ||
-			holder.getAnnotationManager().hasAnnotation(methodMM, typeMM, ANNOTATION_JS_GETTER))
-		{
-			return true;
-		}
-
 
 		if (methodMM.getName().startsWith(JS_PREFIX))
 		{

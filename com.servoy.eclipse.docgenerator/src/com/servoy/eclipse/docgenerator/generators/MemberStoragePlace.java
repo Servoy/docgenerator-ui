@@ -189,11 +189,11 @@ public abstract class MemberStoragePlace
 		return memberMM.getIndexSignature();
 	}
 
-	public ClientSupport getServoyClientSupport()
+	public ClientSupport getServoyClientSupport(TypeMetaModel tmm)
 	{
 		if (memberMM instanceof MemberMetaModel)
 		{
-			return ((MemberMetaModel)memberMM).getServoyClientSupport(typeMM, holder);
+			return ((MemberMetaModel)memberMM).getServoyClientSupport(tmm, holder);
 		}
 		return null;
 	}
@@ -327,5 +327,4 @@ public abstract class MemberStoragePlace
 	{
 		return false;
 	}
-
 }

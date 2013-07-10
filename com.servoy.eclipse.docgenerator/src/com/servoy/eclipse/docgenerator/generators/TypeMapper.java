@@ -85,6 +85,7 @@ public class TypeMapper
 
 		store("org.mozilla.javascript.NativeArray", Array.class.getSimpleName());
 		store("org.mozilla.javascript.NativeJavaArray", Array.class.getSimpleName());
+		store("org.json.JSONArray", Array.class.getSimpleName());
 
 		store(Object.class, Object.class.getSimpleName());
 		store("org.mozilla.javascript.Scriptable", Object.class.getSimpleName());

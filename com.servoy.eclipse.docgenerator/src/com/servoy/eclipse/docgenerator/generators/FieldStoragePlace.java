@@ -17,10 +17,14 @@
 
 package com.servoy.eclipse.docgenerator.generators;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.servoy.eclipse.docgenerator.metamodel.IMemberMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.MemberMetaModel.Visibility;
 import com.servoy.eclipse.docgenerator.metamodel.MetaModelHolder;
 import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
+import com.servoy.eclipse.docgenerator.metamodel.TypeName;
 
 /**
  * @author gerzse
@@ -41,6 +45,37 @@ public class FieldStoragePlace extends MemberStoragePlace
 	@Override
 	public boolean shouldShow(TypeMetaModel realTypeMM)
 	{
-		return memberMM.getVisibility() == Visibility.Public && memberMM.isStatic();
+		boolean constantProvider = false;
+		final List<TypeMetaModel> ancestors = new ArrayList<TypeMetaModel>();
+		for (TypeMetaModel tmm : allAncestors(realTypeMM, ancestors))
+		{
+			if (tmm != null && tmm.isInterface() && tmm.getName() != null && tmm.getName().getQualifiedName() != null &&
+				tmm.getName().getQualifiedName().contains("IConstantsObject"))
+			{
+				constantProvider = true;
+				break;
+			}
+		}
+		return constantProvider && memberMM.getVisibility() == Visibility.Public && memberMM.isStatic();
+	}
+
+	private List<TypeMetaModel> allAncestors(TypeMetaModel tmm, List<TypeMetaModel> ancestors)
+	{
+		if (tmm != null)
+		{
+			TypeName parent = tmm.getSupertype();
+			if (parent != null)
+			{
+				ancestors.add(holder.getType(parent));
+				allAncestors(holder.getType(parent), ancestors);
+			}
+
+			for (TypeName interf : tmm.getInterfaces())
+			{
+				ancestors.add(holder.getType(interf));
+				allAncestors(holder.getType(interf), ancestors);
+			}
+		}
+		return ancestors;
 	}
 }

@@ -594,10 +594,11 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 					memberScp = memberData.getServoyClientSupport(typeMM);
 				}
 
+				if (memberScp == ClientSupport.None ||
+					(typeScp != null && typeScp.intersect(memberScp == null ? ClientSupport.Default : memberScp) == ClientSupport.None)) continue;
+
 				if (memberScp != null)
 				{
-					if (memberScp.equals(ClientSupport.None)) continue;
-
 					if (typeScp != null && memberScp != typeScp && !typeScp.supports(ClientSupport.mc) && memberScp.supports(ClientSupport.mc))
 					{
 						// when type is not mobile, do not mark element as mobile

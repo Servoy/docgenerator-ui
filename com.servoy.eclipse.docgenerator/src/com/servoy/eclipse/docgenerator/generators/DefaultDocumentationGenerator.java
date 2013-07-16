@@ -585,9 +585,15 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 		for (IMemberMetaModel memberMM : typeMM.getMembers(holder))
 		{
 			MemberStoragePlace memberData = (MemberStoragePlace)memberMM.getStore().get(STORE_KEY);
-			if (kind.equals(memberData.getKind()) && memberData.shouldShow(typeMM) && (!memberMM.isDeprecated() || !hideDeprecated))
+			Pair<Boolean, ClientSupport> cc = memberData.shouldShow(typeMM);
+			if (kind.equals(memberData.getKind()) && cc.getLeft().booleanValue() && (!memberMM.isDeprecated() || !hideDeprecated))
 			{
-				ClientSupport memberScp = memberData.getServoyClientSupport(typeMM);
+				ClientSupport memberScp = cc.getRight();
+				if (memberScp == null)
+				{
+					memberScp = memberData.getServoyClientSupport(typeMM);
+				}
+
 				if (memberScp != null)
 				{
 					if (memberScp.equals(ClientSupport.None)) continue;

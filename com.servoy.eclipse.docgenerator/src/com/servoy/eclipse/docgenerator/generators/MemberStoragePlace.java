@@ -321,7 +321,7 @@ public abstract class MemberStoragePlace
 		setType(proc.mapType(holder, getType(), false, new boolean[1]));
 	}
 
-	abstract public boolean shouldShow(TypeMetaModel realTypeMM);
+	abstract public Pair<Boolean, ClientSupport> shouldShow(TypeMetaModel realTypeMM);
 
 	protected boolean hideReturnType()
 	{

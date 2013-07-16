@@ -17,11 +17,13 @@
 
 package com.servoy.eclipse.docgenerator.generators;
 
+import com.servoy.eclipse.docgenerator.metamodel.ClientSupport;
 import com.servoy.eclipse.docgenerator.metamodel.IMemberMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.MemberMetaModel.Visibility;
 import com.servoy.eclipse.docgenerator.metamodel.MetaModelHolder;
 import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.TypeName;
+import com.servoy.eclipse.docgenerator.util.Pair;
 
 /**
  * @author gerzse
@@ -40,7 +42,7 @@ public class FieldStoragePlace extends MemberStoragePlace
 	}
 
 	@Override
-	public boolean shouldShow(TypeMetaModel realTypeMM)
+	public Pair<Boolean, ClientSupport> shouldShow(TypeMetaModel realTypeMM)
 	{
 		for (TypeMetaModel type = realTypeMM; type != null; type = holder.getType(type.getSupertype()))
 		{
@@ -49,10 +51,10 @@ public class FieldStoragePlace extends MemberStoragePlace
 				if ("com.servoy.j2db.scripting.IConstantsObject".equals(intf.getQualifiedName()) || //$NON-NLS-1$
 					"com.servoy.j2db.scripting.IPrefixedConstantsObject".equals(intf.getQualifiedName())) //$NON-NLS-1$
 				{
-					return memberMM.getVisibility() == Visibility.Public && memberMM.isStatic();
+					return new Pair<Boolean, ClientSupport>(Boolean.valueOf(memberMM.getVisibility() == Visibility.Public && memberMM.isStatic()), null);
 				}
 			}
 		}
-		return false;
+		return new Pair<Boolean, ClientSupport>(Boolean.FALSE, null);
 	}
 }

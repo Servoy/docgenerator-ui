@@ -189,11 +189,11 @@ public abstract class MemberStoragePlace
 		return memberMM.getIndexSignature();
 	}
 
-	public ClientSupport getServoyClientSupport()
+	public ClientSupport getServoyClientSupport(TypeMetaModel tmm)
 	{
 		if (memberMM instanceof MemberMetaModel)
 		{
-			return ((MemberMetaModel)memberMM).getServoyClientSupport(typeMM, holder);
+			return ((MemberMetaModel)memberMM).getServoyClientSupport(tmm, holder);
 		}
 		return null;
 	}
@@ -321,11 +321,10 @@ public abstract class MemberStoragePlace
 		setType(proc.mapType(holder, getType(), false, new boolean[1]));
 	}
 
-	abstract public boolean shouldShow(TypeMetaModel realTypeMM);
+	abstract public Pair<Boolean, ClientSupport> shouldShow(TypeMetaModel realTypeMM);
 
 	protected boolean hideReturnType()
 	{
 		return false;
 	}
-
 }

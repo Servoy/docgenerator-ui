@@ -15,4 +15,5 @@ Export-Package: com.servoy.eclipse.docgenerator,
  com.servoy.eclipse.docgenerator.generators,
  com.servoy.eclipse.docgenerator.metamodel,
  com.servoy.eclipse.docgenerator.parser,
- com.servoy.eclipse.docgenerator.service
+ com.servoy.eclipse.docgenerator.service,
+ com.servoy.eclipse.docgenerator.util

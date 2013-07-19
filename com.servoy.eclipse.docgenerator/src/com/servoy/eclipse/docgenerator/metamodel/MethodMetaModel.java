@@ -219,22 +219,10 @@ public class MethodMetaModel extends MemberMetaModel
 		}
 	}
 
-	// override annotation client support
-	private ClientSupport methodClientSupport = null;
-
 	@Override
 	public ClientSupport getServoyClientSupport(TypeMetaModel tmm, MetaModelHolder holder)
 	{
-		if (methodClientSupport != null)
-		{
-			return methodClientSupport;
-		}
 		return ClientSupport.fromAnnotation(holder.getAnnotationManager().getAnnotation(this, tmm, ANNOTATION_SERVOY_CLIENT_SUPPORT));
-	}
-
-	public void setClientSupport(ClientSupport clientSupport)
-	{
-		this.methodClientSupport = clientSupport;
 	}
 
 	@Override

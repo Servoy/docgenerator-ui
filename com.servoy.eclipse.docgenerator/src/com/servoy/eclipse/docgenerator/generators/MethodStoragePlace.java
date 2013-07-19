@@ -31,6 +31,7 @@ import com.servoy.eclipse.docgenerator.metamodel.MetaModelHolder;
 import com.servoy.eclipse.docgenerator.metamodel.MethodMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.TypeName;
+import com.servoy.eclipse.docgenerator.util.Pair;
 
 /**
  * @author gerzse
@@ -256,34 +257,26 @@ public class MethodStoragePlace extends MemberStoragePlace
 	}
 
 	@Override
-	public boolean shouldShow(TypeMetaModel realTypeMM)
+	public Pair<Boolean, ClientSupport> shouldShow(TypeMetaModel realTypeMM)
 	{
 		// if it's private, don't show
 		if (methodMM.getVisibility() == Visibility.Private)
 		{
-			return false;
+			return new Pair<Boolean, ClientSupport>(Boolean.FALSE, null);
 		}
 		// if it's static, don't show
 		if (methodMM.isStatic())
 		{
-			return false;
+			return new Pair<Boolean, ClientSupport>(Boolean.FALSE, null);
 		}
 
+		// if it's annotated properly, then it should show
 		if (holder.getAnnotationManager().hasAnnotation(methodMM, realTypeMM, ANNOTATION_JS_FUNCTION) ||
 			holder.getAnnotationManager().hasAnnotation(methodMM, realTypeMM, ANNOTATION_JS_READONLY_PROPERTY) ||
 			holder.getAnnotationManager().hasAnnotation(methodMM, realTypeMM, ANNOTATION_JS_GETTER))
 		{
-			return true;
+			return new Pair<Boolean, ClientSupport>(Boolean.TRUE, null);
 		}
-
-		// if it's annotated properly, then it should show
-		if (holder.getAnnotationManager().hasAnnotation(methodMM, typeMM, ANNOTATION_JS_FUNCTION) ||
-			holder.getAnnotationManager().hasAnnotation(methodMM, typeMM, ANNOTATION_JS_READONLY_PROPERTY) ||
-			holder.getAnnotationManager().hasAnnotation(methodMM, typeMM, ANNOTATION_JS_GETTER))
-		{
-			return true;
-		}
-
 
 		if (methodMM.getName().startsWith(JS_PREFIX))
 		{
@@ -304,20 +297,21 @@ public class MethodStoragePlace extends MemberStoragePlace
 						MethodMetaModel getterMeth = (MethodMetaModel)getter;
 						if (getterMeth.getType() != null && getterMeth.getType().getQualifiedName().equals(par.getQualifiedName()))
 						{
-							return false;
+							return new Pair<Boolean, ClientSupport>(Boolean.FALSE, null);
 						}
 						// special case when the setter has an Object parameter
 						if (par.getQualifiedName().endsWith("." + Object.class.getSimpleName()))
 						{
-							return false;
+							return new Pair<Boolean, ClientSupport>(Boolean.FALSE, null);
 						}
 					}
 				}
 			}
-			return true;
+			return new Pair<Boolean, ClientSupport>(Boolean.TRUE, null);
 		}
 
-		return methodMM.getName().startsWith(JS_FUNCTION_PREFIX) || methodMM.getName().startsWith(JS_CONSTRUCTOR_PREFIX);
+		return new Pair<Boolean, ClientSupport>(Boolean.valueOf(methodMM.getName().startsWith(JS_FUNCTION_PREFIX) ||
+			methodMM.getName().startsWith(JS_CONSTRUCTOR_PREFIX)), null);
 	}
 
 	private boolean hideParameters()

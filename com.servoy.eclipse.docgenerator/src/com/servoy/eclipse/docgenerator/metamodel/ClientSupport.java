@@ -27,7 +27,7 @@ package com.servoy.eclipse.docgenerator.metamodel;
  */
 public enum ClientSupport
 {
-	mc(1), wc(2), sc(4), mc_wc(mc.bits | wc.bits), mc_sc(mc.bits | sc.bits), wc_sc(wc.bits | sc.bits), mc_wc_sc(mc.bits | wc.bits | sc.bits);
+	None(0), mc(1), wc(2), sc(4), mc_wc(mc.bits | wc.bits), mc_sc(mc.bits | sc.bits), wc_sc(wc.bits | sc.bits), mc_wc_sc(mc.bits | wc.bits | sc.bits);
 
 	private final int bits;
 
@@ -41,7 +41,8 @@ public enum ClientSupport
 
 	public static ClientSupport fromString(String s)
 	{
-		if (s == null || s.length() == 0) return null;
+		if (s == null) return null;
+		if (s.length() == 0) return None;
 		return fromBits(bits(s, mc) | bits(s, wc) | bits(s, sc));
 	}
 

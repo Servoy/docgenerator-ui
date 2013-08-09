@@ -137,14 +137,14 @@ public class MethodStoragePlace extends MemberStoragePlace
 	}
 
 	@Override
-	public Element toXML(Document doc, boolean includeSample, ClientSupport scp)
+	public Element toXML(TypeMetaModel tmm, Document doc, boolean includeSample, ClientSupport scp)
 	{
-		Element root = super.toXML(doc, includeSample, scp);
+		Element root = super.toXML(tmm, doc, includeSample, scp);
 		if (methodMM.isVarargs())
 		{
 			root.setAttribute(ATTR_VARARGS, Boolean.TRUE.toString());
 		}
-		DocumentationDataDistilled ddr = getDocDataRecursively();
+		DocumentationDataDistilled ddr = getDocDataRecursively(tmm);
 		if (!hideParameters())
 		{
 			Element argTypes = doc.createElement(TAG_ARGUMENTS_TYPES);

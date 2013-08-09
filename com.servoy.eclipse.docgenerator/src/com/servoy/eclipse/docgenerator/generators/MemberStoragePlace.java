@@ -99,18 +99,13 @@ public abstract class MemberStoragePlace
 		return docData;
 	}
 
-	public DocumentationDataDistilled getDocDataRecursively()
+	public DocumentationDataDistilled getDocDataRecursively(TypeMetaModel tmm)
 	{
 		if (docData != null)
 		{
 			return docData;
 		}
 
-		return getDocDataRecursively(typeMM);
-	}
-
-	private DocumentationDataDistilled getDocDataRecursively(TypeMetaModel tmm)
-	{
 		for (TypeName intfName : tmm.getInterfaces())
 		{
 			TypeMetaModel intf = holder.getType(intfName);
@@ -198,7 +193,7 @@ public abstract class MemberStoragePlace
 		return null;
 	}
 
-	protected Element toXML(Document domDoc, boolean includeSample, ClientSupport scp)
+	protected Element toXML(TypeMetaModel tmm, Document domDoc, boolean includeSample, ClientSupport scp)
 	{
 		Element root = domDoc.createElement(getKind());
 		root.setAttribute(ATTR_NAME, getOfficialName());
@@ -206,7 +201,7 @@ public abstract class MemberStoragePlace
 		{
 			root.setAttribute(DefaultDocumentationGenerator.ATTR_DEPRECATED, Boolean.TRUE.toString());
 		}
-		DocumentationDataDistilled ddr = getDocDataRecursively();
+		DocumentationDataDistilled ddr = getDocDataRecursively(tmm);
 		if (!hideReturnType() && getType() != null)
 		{
 			Element retType = domDoc.createElement(TAG_RETURN);

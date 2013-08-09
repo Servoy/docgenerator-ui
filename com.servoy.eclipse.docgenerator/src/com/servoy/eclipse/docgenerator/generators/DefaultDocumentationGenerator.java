@@ -607,7 +607,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 					unionedScp = memberScp.union(unionedScp);
 				}
 
-				Element child = memberData.toXML(doc, includeSample(), memberScp == null ? ClientSupport.Default : memberScp);
+				Element child = memberData.toXML(typeMM, doc, includeSample(), memberScp == null ? ClientSupport.Default : memberScp);
 
 				children.put(memberData.getOfficialSignature(), child);
 			}

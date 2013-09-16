@@ -278,7 +278,16 @@ public class DocumentationDataDistilled
 				String txt = text.getRight();
 				String summary = "";
 				int idx = txt.indexOf('.');
-				if (idx >= 0) summary = txt.substring(0, idx + 1);
+				if (idx >= 0)
+				{
+					summary = txt.substring(0, idx + 1);
+					//check for situations of "digit dot digit", such as standards (HTTP/1.1)
+					if (txt.length() > idx + 1 && Character.isDigit(txt.charAt(idx - 1)) && Character.isDigit(txt.charAt(idx + 1)))
+					{
+						summary = txt;
+					}
+				}
+
 				else summary = txt;
 				summaries.add(new Pair<ClientSupport, String>(text.getLeft(), summary));
 			}

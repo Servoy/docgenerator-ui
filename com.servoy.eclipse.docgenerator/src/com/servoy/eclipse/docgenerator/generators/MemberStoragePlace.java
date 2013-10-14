@@ -239,7 +239,7 @@ public abstract class MemberStoragePlace
 				{
 					if (text != null && text.getRight() != null)
 					{
-						ClientSupport cs = (ddr.getSamples().size() > 1 ? text.getLeft() : scp);
+						ClientSupport cs = (ddr.getTexts().size() > 1 ? text.getLeft() : scp);
 
 						Element descr = domDoc.createElement(TAG_DESCRIPTION);
 						descr.setAttribute(DefaultDocumentationGenerator.ATTR_CLIENT_SUPPORT, cs.toAttribute());

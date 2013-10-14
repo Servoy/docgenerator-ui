@@ -91,6 +91,8 @@ public class TypeMapper
 		store("org.mozilla.javascript.Scriptable", Object.class.getSimpleName());
 		store("com.servoy.j2db.scripting.JSMap", Object.class.getSimpleName());
 
+		store(Map.class, Object.class.getSimpleName());
+
 		store("org.mozilla.javascript.Function", "Function");
 
 		store(Exception.class, "com.servoy.j2db.util.ServoyException");
@@ -126,6 +128,7 @@ public class TypeMapper
 		store("com.servoy.base.solutionmodel.IBaseSMLabel", "com.servoy.j2db.scripting.solutionmodel.JSLabel");
 		store("com.servoy.base.solutionmodel.IBaseSMField", "com.servoy.j2db.scripting.solutionmodel.JSFieldWithConstants");
 		store("com.servoy.base.solutionmodel.IBaseSMPart", "com.servoy.j2db.scripting.solutionmodel.JSPartWithConstants");
+		store("com.servoy.base.solutionmodel.IBaseSMValueList", "com.servoy.j2db.scripting.solutionmodel.JSValueList");
 
 		store("com.servoy.j2db.scripting.solutionmodel.JSPart", "com.servoy.j2db.scripting.solutionmodel.JSPartWithConstants");
 		store("com.servoy.j2db.scripting.solutionmodel.JSField", "com.servoy.j2db.scripting.solutionmodel.JSFieldWithConstants");

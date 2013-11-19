@@ -13,13 +13,13 @@
 	<target name="all.plugins" depends="init">
 		<ant antfile="build.xml" dir="../com.servoy.eclipse.docgenerator" target="${target}">
 			<property name="arch" value="x86"/>
-			<property name="ws" value="win32"/>
-			<property name="os" value="win32"/>
+			<property name="ws" value="gtk"/>
+			<property name="os" value="linux"/>
 		</ant>
 		<ant antfile="build.xml" dir="../com.servoy.eclipse.docgenerator.ui" target="${target}">
 			<property name="arch" value="x86"/>
-			<property name="ws" value="win32"/>
-			<property name="os" value="win32"/>
+			<property name="ws" value="gtk"/>
+			<property name="os" value="linux"/>
 		</ant>
 	</target>
 	<target name="all.features" depends="init">
@@ -108,10 +108,10 @@
 		<antcall target="${rootTarget}"/>
 	</target>
 
-	<target name="rootFileswin32_win32_x86">
+	<target name="rootFileslinux_gtk_x86">
 	</target>
 	<target name="rootFilesgroup_group_group">
-		<antcall target="rootFileswin32_win32_x86"/>
+		<antcall target="rootFileslinux_gtk_x86"/>
 	</target>
 
 	<target name="zip.distribution" depends="init" description="Create a zip containing all the plug-ins and features for the feature: com.servoy.eclipse.docgenerator.feature.">
@@ -169,7 +169,7 @@
 	</target>
 
 	<target name="refresh" depends="init" if="eclipse.running" description="Refresh this folder.">
-		<eclipse.convertPath fileSystemPath="C:/Users/Administrator/dev_trunk/com.servoy.eclipse.docgenerator.feature/" property="resourcePath"/>
+		<eclipse.convertPath fileSystemPath="/crypt/workspace/com.servoy.eclipse.docgenerator.feature/" property="resourcePath"/>
 		<eclipse.refreshLocal resource="${resourcePath}" depth="infinite"/>
 		<antcall target="all.children">
 			<param name="target" value="refresh"/>

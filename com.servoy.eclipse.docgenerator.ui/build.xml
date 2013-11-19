@@ -209,7 +209,9 @@
 			<pathelement path="../eclipse_target/compile_target/install/plugins/org.eclipse.help_3.6.0.v20130326-1254.jar"/>
 			<pathelement path="../eclipse_target/compile_target/install/plugins/org.eclipse.e4.ui.workbench.addons.swt_1.0.1.v20130823-1518.jar"/>
 			<pathelement path="../com.servoy.eclipse.docgenerator/bin/"/>
-			<pathelement path="../com.servoy.eclipse.docgenerator/@dot"/>
+			<pathelement path="${build.result.folder}/../com.servoy.eclipse.docgenerator_1.3.0.0/bin/"/>
+			<pathelement path="${build.result.folder}/../com.servoy.eclipse.docgenerator/@dot"/>
+			<pathelement path="${build.result.folder}/../com.servoy.eclipse.docgenerator_1.3.0.0/@dot"/>
 			<pathelement path="../eclipse_target/compile_target/install/plugins/org.eclipse.jdt.core_3.9.1.v20130905-0837.jar"/>
 			<pathelement path="../eclipse_target/compile_target/install/plugins/org.eclipse.jdt.compiler.tool_1.0.200.v20130530-1010.jar"/>
 			<pathelement path="../eclipse_target/compile_target/install/plugins/org.eclipse.jdt.compiler.apt_1.0.600.v20130530-1010.jar"/>
@@ -292,6 +294,7 @@
 		   metadataRepository="${p2.build.repo}"
 		   artifactRepository="${p2.build.repo}"
 		   buildResultFolder="${build.result.folder}"
+		   unpack="false"
 		   baseDirectory="${basedir}"
 		/>
 	</target>

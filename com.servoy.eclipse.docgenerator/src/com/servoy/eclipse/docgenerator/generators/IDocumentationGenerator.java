@@ -29,7 +29,6 @@ import com.servoy.eclipse.docgenerator.service.DocumentationGenerationRequest;
 /**
  * @author gerzse
  */
-@SuppressWarnings("nls")
 public interface IDocumentationGenerator
 {
 	final static String EXTENSION_ID = "com.servoy.eclipse.docgenerator.docgenerator";

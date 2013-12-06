@@ -36,7 +36,6 @@ import com.servoy.eclipse.docgenerator.metamodel.DocumentationWarning.WarningTyp
  *  
  * @author gerzse
  */
-@SuppressWarnings("nls")
 public class TypeName
 {
 	/**

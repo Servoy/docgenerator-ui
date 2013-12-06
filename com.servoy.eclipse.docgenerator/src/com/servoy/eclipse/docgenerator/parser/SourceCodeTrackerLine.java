@@ -24,7 +24,6 @@ package com.servoy.eclipse.docgenerator.parser;
  * 
  * @see com.servoy.eclipse.docgenerator.parser.SourceCodeTracker
  */
-@SuppressWarnings("nls")
 public class SourceCodeTrackerLine
 {
 	private final String text;

@@ -50,7 +50,6 @@ import com.servoy.eclipse.docgenerator.util.Pair;
  * 
  * @author gerzse
  */
-@SuppressWarnings("nls")
 public class DocumentationDataDistilled
 {
 	public static final String TAG_MOBILEDESCRIPTION = "@description-mc";

@@ -38,7 +38,6 @@ import com.servoy.eclipse.docgenerator.generators.IDocumentationGenerator;
 import com.servoy.eclipse.docgenerator.service.DocumentationGenerationRequest;
 import com.servoy.eclipse.docgenerator.service.LogUtil;
 
-@SuppressWarnings("nls")
 public class Activator extends Plugin
 {
 	public static final String PLUGIN_ID = "com.servoy.eclipse.docgenerator";

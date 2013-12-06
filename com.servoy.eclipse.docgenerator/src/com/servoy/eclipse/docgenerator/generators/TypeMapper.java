@@ -38,7 +38,6 @@ import com.servoy.eclipse.docgenerator.metamodel.TypeName;
  * 
  * @author gerzse
  */
-@SuppressWarnings("nls")
 public class TypeMapper
 {
 	public static final String DOCS_PACKAGE = "com.servoy.j2db.documentation.scripting.docs.";

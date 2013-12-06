@@ -36,7 +36,6 @@ import com.servoy.eclipse.docgenerator.service.LogUtil;
  * 
  * @author gerzse
  */
-@SuppressWarnings("nls")
 public class ServoyPluginDetector extends ASTVisitor
 {
 	private boolean pluginFound;

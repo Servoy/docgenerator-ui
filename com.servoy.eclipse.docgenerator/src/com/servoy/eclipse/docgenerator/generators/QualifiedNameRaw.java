@@ -25,7 +25,6 @@ import com.servoy.eclipse.docgenerator.metamodel.ReferenceMetaModel;
  * 
  * @author gerzse
  */
-@SuppressWarnings("nls")
 public class QualifiedNameRaw
 {
 	/**

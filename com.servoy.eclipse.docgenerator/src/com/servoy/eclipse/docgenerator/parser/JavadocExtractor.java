@@ -75,7 +75,6 @@ import com.servoy.eclipse.docgenerator.service.LogUtil;
  * 
  * @author gerzse
  */
-@SuppressWarnings("nls")
 public class JavadocExtractor extends ASTVisitor
 {
 	// registry with all parsed types

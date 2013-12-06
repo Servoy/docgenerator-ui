@@ -33,7 +33,6 @@ import org.eclipse.jdt.core.dom.Type;
  * 
  * @author gerzse
  */
-@SuppressWarnings("nls")
 public class MethodMetaModel extends MemberMetaModel
 {
 	private final String indexSignature;

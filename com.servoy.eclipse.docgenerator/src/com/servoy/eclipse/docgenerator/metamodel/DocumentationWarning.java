@@ -23,7 +23,6 @@ package com.servoy.eclipse.docgenerator.metamodel;
  * 
  * @author gerzse
  */
-@SuppressWarnings("nls")
 public class DocumentationWarning implements Comparable<DocumentationWarning>
 {
 	public static enum WarningType

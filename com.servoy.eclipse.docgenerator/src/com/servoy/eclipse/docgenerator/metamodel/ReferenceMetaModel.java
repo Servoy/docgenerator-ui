@@ -22,7 +22,6 @@ package com.servoy.eclipse.docgenerator.metamodel;
 /**
  * @author gerzse
  */
-@SuppressWarnings("nls")
 public class ReferenceMetaModel implements IJavadocPart
 {
 	public static enum QualifiedNameDisplayState

@@ -30,7 +30,6 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
  * 
  * @author gerzse
  */
-@SuppressWarnings("nls")
 public class FieldMetaModel extends MemberMetaModel
 {
 	private final TypeName type;

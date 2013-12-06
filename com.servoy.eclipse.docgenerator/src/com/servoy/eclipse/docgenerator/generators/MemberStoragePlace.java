@@ -36,7 +36,6 @@ import com.servoy.eclipse.docgenerator.util.Pair;
  * 
  * @author gerzse
  */
-@SuppressWarnings("nls")
 public abstract class MemberStoragePlace
 {
 	// for members

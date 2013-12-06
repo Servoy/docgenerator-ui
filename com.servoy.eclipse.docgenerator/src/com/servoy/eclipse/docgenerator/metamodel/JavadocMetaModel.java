@@ -21,7 +21,6 @@ package com.servoy.eclipse.docgenerator.metamodel;
 /**
  * @author gerzse
  */
-@SuppressWarnings("nls")
 public class JavadocMetaModel extends JavadocTagPart
 {
 	public static final String TEXT_TAG = "@@text";

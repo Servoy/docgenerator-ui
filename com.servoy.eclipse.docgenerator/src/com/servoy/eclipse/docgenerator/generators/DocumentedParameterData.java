@@ -30,7 +30,6 @@ import com.servoy.eclipse.docgenerator.metamodel.TypeName;
  * 
  * @author gerzse
  */
-@SuppressWarnings("nls")
 public class DocumentedParameterData
 {
 	private static final String TAG_PARAMETER = "parameter";

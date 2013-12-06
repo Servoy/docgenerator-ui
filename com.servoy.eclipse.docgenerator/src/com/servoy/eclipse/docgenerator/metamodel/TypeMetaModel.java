@@ -46,7 +46,6 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
  * 
  * @author gerzse
  */
-@SuppressWarnings("nls")
 public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 {
 	private final boolean isInterface;

@@ -25,7 +25,6 @@ import java.util.List;
 /**
  * @author gerzse
  */
-@SuppressWarnings("nls")
 public class JavadocTagPart implements IJavadocPart, IJavadocPartsHolder
 {
 	private final String tagName;

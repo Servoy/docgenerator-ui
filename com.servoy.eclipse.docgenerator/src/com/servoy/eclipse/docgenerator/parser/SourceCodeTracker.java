@@ -26,7 +26,6 @@ import java.util.ArrayList;
  * position of each token. We rebuild the whitespace manually by analyzing the 
  * source code in the compilation unit. 
  */
-@SuppressWarnings("nls")
 public class SourceCodeTracker
 {
 	private final ArrayList<SourceCodeTrackerLine> lines = new ArrayList<SourceCodeTrackerLine>();

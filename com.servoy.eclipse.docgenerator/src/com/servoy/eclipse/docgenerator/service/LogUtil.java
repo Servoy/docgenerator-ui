@@ -33,7 +33,6 @@ import com.servoy.eclipse.docgenerator.Activator;
  * 
  * @author gerzse
  */
-@SuppressWarnings("nls")
 public class LogUtil
 {
 	private static Logger theLogger = null;

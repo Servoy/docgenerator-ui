@@ -23,7 +23,6 @@ import java.util.Set;
 /**
  * @author gerzse
  */
-@SuppressWarnings("nls")
 public class ReservedWordsChecker
 {
 	// List of JS reserved keywords. When removing a "js_" or "jsFunction_" prefix, we don't want to hit one of these

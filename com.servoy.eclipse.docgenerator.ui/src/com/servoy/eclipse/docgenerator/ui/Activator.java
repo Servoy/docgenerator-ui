@@ -27,12 +27,12 @@ import org.osgi.framework.BundleContext;
 public class Activator extends AbstractUIPlugin
 {
 	// Preference key related to asking the user before overwriting a file.
-	public final static String ASK_FOR_FILE_OVERWRITE_PREFERENCE = "ask_for_file_overwrite"; //$NON-NLS-1$
+	public final static String ASK_FOR_FILE_OVERWRITE_PREFERENCE = "ask_for_file_overwrite";
 	// Preference key related to showing a final summary popup with how many files were created, etc.
-	public final static String SHOW_FINAL_SUMMARY = "show_final_summary"; //$NON-NLS-1$
+	public final static String SHOW_FINAL_SUMMARY = "show_final_summary";
 
 	// The plug-in ID
-	public static final String PLUGIN_ID = "com.servoy.eclipse.docgenerator.ui"; //$NON-NLS-1$
+	public static final String PLUGIN_ID = "com.servoy.eclipse.docgenerator.ui";
 
 	// The shared instance
 	private static Activator plugin;

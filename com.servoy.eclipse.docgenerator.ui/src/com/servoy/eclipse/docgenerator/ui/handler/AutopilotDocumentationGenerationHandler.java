@@ -98,7 +98,7 @@ public class AutopilotDocumentationGenerationHandler extends AbstractHandler
 						}
 						catch (JavaModelException e)
 						{
-							LogUtil.logger().log(Level.SEVERE, "Exception while searching for root package in project '" + javaPrj.getElementName() + "'.", e); //$NON-NLS-1$//$NON-NLS-2$
+							LogUtil.logger().log(Level.SEVERE, "Exception while searching for root package in project '" + javaPrj.getElementName() + "'.", e);
 							e.printStackTrace();
 						}
 					}

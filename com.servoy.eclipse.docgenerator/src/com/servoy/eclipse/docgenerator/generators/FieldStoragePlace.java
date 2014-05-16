@@ -48,8 +48,8 @@ public class FieldStoragePlace extends MemberStoragePlace
 		{
 			for (TypeName intf : type.getInterfaces())
 			{
-				if ("com.servoy.j2db.scripting.IConstantsObject".equals(intf.getQualifiedName()) || //$NON-NLS-1$
-					"com.servoy.j2db.scripting.IPrefixedConstantsObject".equals(intf.getQualifiedName())) //$NON-NLS-1$
+				if ("com.servoy.j2db.scripting.IConstantsObject".equals(intf.getQualifiedName()) ||
+					"com.servoy.j2db.scripting.IPrefixedConstantsObject".equals(intf.getQualifiedName()))
 				{
 					return new Pair<Boolean, ClientSupport>(Boolean.valueOf(memberMM.getVisibility() == Visibility.Public && memberMM.isStatic()), null);
 				}

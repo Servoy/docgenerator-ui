@@ -154,7 +154,7 @@ public abstract class DocumentationGenerationRequestFromUI implements Documentat
 
 	public void progressUpdate(int percentDone)
 	{
-		LogUtil.logger().fine("Progress update: " + percentDone + "%"); //$NON-NLS-1$//$NON-NLS-2$ 
+		LogUtil.logger().fine("Progress update: " + percentDone + "%");
 		if (percentDone > lastPercent)
 		{
 			int delta = percentDone - lastPercent;
@@ -170,7 +170,7 @@ public abstract class DocumentationGenerationRequestFromUI implements Documentat
 
 	public void requestHandled(List<IPath> xmlFiles, List<IPath> warningsFiles, List<Throwable> exceptions, boolean canceled)
 	{
-		LogUtil.logger().fine("Documentation generated."); //$NON-NLS-1$
+		LogUtil.logger().fine("Documentation generated.");
 		monitor.done();
 		final StringBuffer sb = new StringBuffer();
 		boolean showSummarry = Activator.getDefault().getPreferenceStore().getBoolean(Activator.SHOW_FINAL_SUMMARY);

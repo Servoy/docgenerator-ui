@@ -182,12 +182,12 @@ public class Activator extends Plugin
 			}
 			catch (Exception e)
 			{
-				LogUtil.logger().log(Level.SEVERE, "Exception while handling request.", e); //$NON-NLS-1$
+				LogUtil.logger().log(Level.SEVERE, "Exception while handling request.", e);
 			}
 		}
 		else
 		{
-			LogUtil.logger().log(Level.SEVERE, "Cannot retrieve service."); //$NON-NLS-1$
+			LogUtil.logger().log(Level.SEVERE, "Cannot retrieve service.");
 		}
 	}
 }

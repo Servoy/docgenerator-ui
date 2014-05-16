@@ -95,7 +95,7 @@ public class AnnotationManagerJdt
 		private JdtAnnotatedClass(MetaModelHolder holder, TypeMetaModel originalClass)
 		{
 			this.holder = holder;
-			if (originalClass == null) throw new NullPointerException("class"); //$NON-NLS-1$
+			if (originalClass == null) throw new NullPointerException("class");
 			this.originalClass = originalClass;
 		}
 

@@ -106,7 +106,7 @@ public class Pair<L, R> implements Comparable<Pair<L, R>>, Serializable
 		StringBuffer buffer = new StringBuffer();
 		buffer.append('[');
 		buffer.append(left);
-		buffer.append(", "); //$NON-NLS-1$
+		buffer.append(", ");
 		buffer.append(right);
 		buffer.append(']');
 		return buffer.toString();

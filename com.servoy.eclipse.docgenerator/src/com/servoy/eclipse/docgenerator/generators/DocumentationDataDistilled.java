@@ -63,7 +63,7 @@ public class DocumentationDataDistilled
 	public static final String TAG_SIMPLIFIEDSIGNATURE = "@simplifiedSignature";
 	public static final String TAG_STATICCALL = "@staticCall";
 
-	public static final String FLAG_OPTIONAL = "optional"; //$NON-NLS-1$
+	public static final String FLAG_OPTIONAL = "optional";
 
 	private final List<Pair<ClientSupport, String>> texts;
 	private final List<Pair<ClientSupport, String>> summaries;

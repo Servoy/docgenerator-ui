@@ -354,6 +354,8 @@ public class DocumentationBuilder
 					p.refreshLocal(IResource.DEPTH_INFINITE, null);
 				}
 			}
+
+			workspaceRoot.getWorkspace().build(IResource.DEPTH_INFINITE, null);
 		}
 		catch (CoreException e)
 		{

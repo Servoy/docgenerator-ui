@@ -38,8 +38,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -355,8 +355,6 @@ public class DocumentationBuilder
 					p.refreshLocal(IResource.DEPTH_INFINITE, null);
 				}
 			}
-
-			workspaceRoot.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, null);
 		}
 		catch (CoreException e)
 		{
@@ -621,6 +619,17 @@ public class DocumentationBuilder
 	private void importExistingAndOpenClosedProjects(File sourceFolder, IWorkspaceRoot workspaceRoot, List<IProject> importedProjects,
 		List<IProject> existingClosedProjects)
 	{
+		try
+		{
+			IWorkspaceDescription desc = workspaceRoot.getWorkspace().getDescription();
+			desc.setAutoBuilding(false);
+			workspaceRoot.getWorkspace().setDescription(desc);
+		}
+		catch (CoreException e)
+		{
+			LogUtil.logger().log(Level.SEVERE, "Cannot disable auto build: " + e.getMessage());
+		}
+
 		boolean useLinks = !workspaceRoot.getLocation().toFile().equals(sourceFolder);
 
 		for (File f : sourceFolder.listFiles())

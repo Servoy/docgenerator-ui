@@ -19,6 +19,7 @@ package com.servoy.eclipse.docgenerator;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import java.util.logging.Level;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -95,8 +97,15 @@ public class DocumentationBuilder
 		List<IPath> xmlFiles = new ArrayList<IPath>();
 		List<IPath> warningsFiles = new ArrayList<IPath>();
 		List<Throwable> exceptions = new ArrayList<Throwable>();
+		List<IProject> importedProjects = new ArrayList<IProject>();
+		List<IProject> existingClosedProjects = new ArrayList<IProject>();
 		try
 		{
+			IWorkspaceRoot workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+			File wr = workspaceRoot.getLocation().toFile();
+			System.out.println("Importing projects");
+			importExistingAndOpenClosedProjects(wr, workspaceRoot, importedProjects, existingClosedProjects);
+
 			// If autopilot is on, then scan all packages and find all topmost packages that
 			// contain a Servoy plugin (a class that implements IClientPlugin). Then generate
 			// separate documentation XMLs for each of these found packages.
@@ -317,6 +326,10 @@ public class DocumentationBuilder
 		{
 			LogUtil.logger().log(Level.SEVERE, "Exception while generating documentation.", e);
 			exceptions.add(e);
+		}
+		finally
+		{
+			restoreImportedAndClosedProjects(importedProjects, existingClosedProjects);
 		}
 		req.requestHandled(xmlFiles, warningsFiles, exceptions, req.cancelRequested());
 
@@ -569,5 +582,118 @@ public class DocumentationBuilder
 			f.create(content, true, null);
 		}
 		return true;
+	}
+
+	/**
+	 * Import existing projects into the workspace and open closed projects.
+	 * @param sourceFolder
+	 * @param workspaceRoot
+	 * @param importedProjects
+	 * @param existingClosedProjects
+	 */
+	private void importExistingAndOpenClosedProjects(File sourceFolder, IWorkspaceRoot workspaceRoot, List<IProject> importedProjects,
+		List<IProject> existingClosedProjects)
+	{
+		boolean useLinks = !workspaceRoot.getLocation().toFile().equals(sourceFolder);
+
+		for (File f : sourceFolder.listFiles())
+		{
+			// this assumes that the name defined in ".project" matches the name of the parent folder;
+			// if needed in the future, Workspace.loadProjectDescription(<.project>) can be used before we create the Project instance
+			IProject p = workspaceRoot.getProject(f.getName());
+			if (f.isDirectory() && new File(f, ".project").exists())
+			{
+				if (!p.exists() || !p.isOpen())
+				{
+					try
+					{
+						boolean existed = p.exists();
+						if (!existed)
+						{
+							if (useLinks)
+							{
+								// create a new project in this workspace linking to the real project location
+								IProjectDescription projectDescription = workspaceRoot.getWorkspace().newProjectDescription(p.getName());
+								projectDescription.setLocationURI(f.toURI());
+								p.create(projectDescription, null);
+							}
+							else
+							{
+								// real project location is default - directly inside workspace folder
+								p.create(null);
+							}
+							importedProjects.add(p);
+						}
+						if (!p.isOpen())
+						{
+							p.open(null);
+
+							if (existed)
+							{
+								if (!p.getLocation().toFile().equals(f))
+								{
+									LogUtil.logger().log(
+										Level.SEVERE,
+										"Cannot use project in alternate location '" + f.getAbsolutePath() +
+											"'. Another project with that name is already present in workspace from location '" +
+											p.getLocation().toFile().getAbsolutePath() + "'.");
+								}
+
+								// if a previous export operation managed to create the project but failed to open it, subsequent exports
+								// should try to temporarily open it again (useful for automatic build systems where it would be hard to know why the projects are not used anymore otherwise)
+								existingClosedProjects.add(p);
+							}
+
+						}
+					}
+					catch (CoreException e)
+					{
+						LogUtil.logger().log(Level.SEVERE, "Cannot import and open project '" + f.getName() + "' into workspace. Check workspace log.");
+					}
+				}
+				else if (useLinks && !p.getLocation().toFile().equals(f))
+				{
+					LogUtil.logger().log(
+						Level.SEVERE,
+						"Cannot use project in alternate location '" + f.getAbsolutePath() +
+							"'. Another project with that name is already present in workspace from location '" + p.getLocation().toFile().getAbsolutePath() +
+							"'.");
+				}
+			}
+		}
+	}
+
+	/**
+	 * Restore the workspace: remove imported projects and close projects opened by importExistingAndOpenClosedProjects.
+	 * @param importedProjects
+	 * @param existingClosedProjects
+	 */
+	private void restoreImportedAndClosedProjects(List<IProject> importedProjects, List<IProject> existingClosedProjects)
+	{
+		LogUtil.logger().log(Level.INFO, "Restoring closed projects if needed.");
+		for (IProject p : existingClosedProjects)
+		{
+			try
+			{
+				p.close(null);
+			}
+			catch (CoreException e)
+			{
+				LogUtil.logger().log(Level.WARNING, "Cannot restore project '" + p.getName() + "' to it's closed state after export. Check workspace log.");
+			}
+		}
+		LogUtil.logger().log(Level.INFO, "Removing imported projects from workspace (without removing content) if needed.");
+		for (IProject p : importedProjects)
+		{
+			try
+			{
+				p.delete(false, true, null);
+			}
+			catch (CoreException e)
+			{
+				LogUtil.logger().log(Level.WARNING,
+					"Cannot remove project (not content) '" + p.getName() + "' from workspace after export. Check workspace log.");
+			}
+		}
 	}
 }

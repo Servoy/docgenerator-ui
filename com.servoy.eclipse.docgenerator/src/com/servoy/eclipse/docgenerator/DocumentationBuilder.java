@@ -39,6 +39,7 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -355,7 +356,7 @@ public class DocumentationBuilder
 				}
 			}
 
-			workspaceRoot.getWorkspace().build(IResource.DEPTH_INFINITE, null);
+			workspaceRoot.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, null);
 		}
 		catch (CoreException e)
 		{

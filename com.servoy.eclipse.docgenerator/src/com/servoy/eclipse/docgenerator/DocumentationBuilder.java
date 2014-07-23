@@ -36,6 +36,7 @@ import java.util.logging.Level;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -105,6 +106,7 @@ public class DocumentationBuilder
 			File wr = workspaceRoot.getLocation().toFile();
 			System.out.println("Importing projects");
 			importExistingAndOpenClosedProjects(wr, workspaceRoot, importedProjects, existingClosedProjects);
+			refreshProjects(workspaceRoot);
 
 			// If autopilot is on, then scan all packages and find all topmost packages that
 			// contain a Servoy plugin (a class that implements IClientPlugin). Then generate
@@ -335,6 +337,28 @@ public class DocumentationBuilder
 
 		Date finalEnd = Calendar.getInstance().getTime();
 		LogUtil.logger().fine("Documentation post-processing ended at " + finalEnd.toString() + ".");
+	}
+
+	/**
+	 * @param workspaceRoot
+	 */
+	private void refreshProjects(IWorkspaceRoot workspaceRoot)
+	{
+		IProject[] prjs = workspaceRoot.getProjects();
+		try
+		{
+			for (IProject p : prjs)
+			{
+				if (p.isOpen() && p.exists())
+				{
+					p.refreshLocal(IResource.DEPTH_INFINITE, null);
+				}
+			}
+		}
+		catch (CoreException e)
+		{
+			LogUtil.logger().log(Level.WARNING, "Refresh project roots encountered a problem. Check workspace log.");
+		}
 	}
 
 	/**

@@ -18,6 +18,7 @@
 package com.servoy.eclipse.docgenerator.parser;
 
 import java.util.List;
+import java.util.TreeSet;
 
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
@@ -27,6 +28,7 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
+import com.servoy.eclipse.docgenerator.metamodel.DocumentationWarning;
 import com.servoy.eclipse.docgenerator.metamodel.TypeName;
 import com.servoy.eclipse.docgenerator.service.LogUtil;
 
@@ -87,7 +89,7 @@ public class ServoyPluginDetector extends ASTVisitor
 				if (o instanceof Type)
 				{
 					Type interf = (Type)o;
-					TypeName tni = new TypeName(interf, false, clz.getName().getFullyQualifiedName(), "interface", null);
+					TypeName tni = new TypeName(interf, false, clz.getName().getFullyQualifiedName(), "interface", new TreeSet<DocumentationWarning>());
 					if (tni.getQualifiedName() != null)
 					{
 						if (tni.getQualifiedName().equals("com.servoy.j2db.plugins.IClientPlugin"))

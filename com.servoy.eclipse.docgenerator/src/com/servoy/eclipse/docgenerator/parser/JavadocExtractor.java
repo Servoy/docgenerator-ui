@@ -301,8 +301,15 @@ public class JavadocExtractor extends ASTVisitor
 			for (IMemberValuePairBinding attr : annBinding.getAllMemberValuePairs())
 			{
 				String key = attr.getName();
-				Object val = extractAnnotationValue(attr.getValue());
-				annot.addAttribute(key, val);
+				if (attr.getValue() != null)
+				{
+					Object val = extractAnnotationValue(attr.getValue());
+					annot.addAttribute(key, val);
+				}
+				else
+				{
+					warning(WarningType.Other, "Attribute " + attr.getName() + " value is null (annotation binding " + annBinding.getName() + ")");
+				}
 			}
 			return annot;
 		}

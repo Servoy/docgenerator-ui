@@ -300,13 +300,13 @@ public class JavadocExtractor extends ASTVisitor
 			AnnotationMetaModel annot = new AnnotationMetaModel(annBinding.getName());
 			for (IMemberValuePairBinding attr : annBinding.getAllMemberValuePairs())
 			{
-				String key = attr.getName();
-				if (attr.getValue() != null)
+				try
 				{
+					String key = attr.getName();
 					Object val = extractAnnotationValue(attr.getValue());
 					annot.addAttribute(key, val);
 				}
-				else
+				catch (Exception e)
 				{
 					warning(WarningType.Other, "Attribute " + attr.getName() + " value is null (annotation binding " + annBinding.getName() + ")");
 				}

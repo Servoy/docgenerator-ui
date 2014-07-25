@@ -308,7 +308,7 @@ public class JavadocExtractor extends ASTVisitor
 				}
 				catch (Exception e)
 				{
-					warning(WarningType.Other, "Attribute " + attr.getName() + " value is null (annotation binding " + annBinding.getName() + ")");
+					System.err.println("Attribute " + attr.getName() + " value is null (annotation binding " + annBinding.getName() + ")");
 				}
 			}
 			return annot;

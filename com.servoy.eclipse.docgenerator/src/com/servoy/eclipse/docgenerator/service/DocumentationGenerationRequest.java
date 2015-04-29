@@ -29,7 +29,7 @@ import com.servoy.eclipse.docgenerator.metamodel.MetaModelHolder;
  * Clients that want some documentation to be generated should register an instance of this class
  * as a service in the OSGi framework. The documentation generator listens to such services and
  * handles them when they get registered into OSGi.
- * 
+ *
  * @author gerzse
  */
 public interface DocumentationGenerationRequest
@@ -43,8 +43,8 @@ public interface DocumentationGenerationRequest
 
 	/**
 	 * If needed, only certain categories of documented object can be processed.
-	 * The desired categories should be returned as a set of strings. 
-	 * 
+	 * The desired categories should be returned as a set of strings.
+	 *
 	 * If null is returned, then all categories are processed.
 	 */
 	Set<String> getCategoryFilter();
@@ -68,7 +68,7 @@ public interface DocumentationGenerationRequest
 	/**
 	 * The file where to put the generated documentation. The content
 	 * of the file will be XML.
-	 * 
+	 *
 	 * This method should return null when autopilot() returns true, because
 	 * in that case more than one XML will be generated and the documentation
 	 * generator will choose their paths.
@@ -88,7 +88,7 @@ public interface DocumentationGenerationRequest
 	 * returns true, then the file will be overwritten. If it returns false
 	 * then the file will not be overwritten (the documentation will not be
 	 * written to disk).
-	 * 
+	 *
 	 * This method is invoked in the same way for the file that holds the
 	 * warnings related to the Javadocs.
 	 */
@@ -96,15 +96,15 @@ public interface DocumentationGenerationRequest
 
 	/**
 	 * Notification about the overall progress of the operation.
-	 * 
+	 *
 	 * @param percentDone The amount of work that was performed (percentage).
 	 */
 	void progressUpdate(int percentDone);
 
 	/**
-	 * Gives the opportunity to perform any desired post processing before 
+	 * Gives the opportunity to perform any desired post processing before
 	 * the documentation is written to the XML file.
-	 * 
+	 *
 	 * @param docs The documentation as it was gathered from the Javadocs. Any needed modification
 	 * 				can be performed upon it, for example renaming types, replacing content, etc.
 	 * @param actualOutputFile The actual output path where the data will be written.
@@ -113,20 +113,27 @@ public interface DocumentationGenerationRequest
 
 	/**
 	 * Notification sent when the documentation generation has ended.
-	 * The generated files are sent as parameters (a list with the names of XML files 
-	 * and a list with the names of the text files that hold the warnings). 
-	 * Also if any exceptions are encountered, they are sent in a list (if 
-	 * everything went fine, the list will be null or empty). If there was any exception, 
-	 * then the two lists of files may be null or empty. 
-	 * 
+	 * The generated files are sent as parameters (a list with the names of XML files
+	 * and a list with the names of the text files that hold the warnings).
+	 * Also if any exceptions are encountered, they are sent in a list (if
+	 * everything went fine, the list will be null or empty). If there was any exception,
+	 * then the two lists of files may be null or empty.
+	 *
 	 * The fourth parameter will be set to true if the request was canceled by the user.
 	 */
 	void requestHandled(List<IPath> xmlFiles, List<IPath> warningsFiles, List<Throwable> exceptions, boolean canceled);
 
 	/**
-	 * This method is invoked repeatedly by the documentation generator during the 
-	 * documentation generation process. If the method returns true, then the generator 
+	 * This method is invoked repeatedly by the documentation generator during the
+	 * documentation generation process. If the method returns true, then the generator
 	 * engine will try its best to stop the documentation generation process.
 	 */
 	boolean cancelRequested();
+
+	/**
+	 * This is a flag to be used when building the documentation on jenkins,
+	 * tells the docgenerator to also import the projects into the workspace.
+	 * @return
+	 */
+	boolean importProjects();
 }

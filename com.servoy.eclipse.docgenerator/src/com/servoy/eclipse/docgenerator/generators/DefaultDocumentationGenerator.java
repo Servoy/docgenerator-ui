@@ -56,7 +56,7 @@ import com.servoy.eclipse.docgenerator.util.Pair;
 /**
  * @author gerzse
  */
-public class DefaultDocumentationGenerator implements IDocumentationGenerator
+public class DefaultDocumentationGenerator extends AbstractDocumentationGenerator
 {
 	public static final String STORE_KEY = DefaultDocumentationGenerator.class.getCanonicalName();
 

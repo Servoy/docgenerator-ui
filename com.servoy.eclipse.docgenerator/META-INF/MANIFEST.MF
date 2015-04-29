@@ -7,7 +7,11 @@ Bundle-Activator: com.servoy.eclipse.docgenerator.Activator
 Bundle-Vendor: Servoy
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
- org.eclipse.jdt.core
+ org.eclipse.jdt.core,
+ org.eclipse.ui.workbench,
+ org.eclipse.ui.ide,
+ servoy_shared,
+ org.eclipse.pde.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: com.servoy.eclipse.docgenerator,
@@ -17,3 +21,6 @@ Export-Package: com.servoy.eclipse.docgenerator,
  com.servoy.eclipse.docgenerator.parser,
  com.servoy.eclipse.docgenerator.service,
  com.servoy.eclipse.docgenerator.util
+Import-Package: com.servoy.j2db.persistence,
+ org.mozilla.javascript,
+ org.mozilla.javascript.ast

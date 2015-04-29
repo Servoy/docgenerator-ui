@@ -674,7 +674,12 @@ Servoy, De Brand 26, 3823 LJ Amersfoort, The Netherlands, www.servoy.com
       <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.core.resources"/>
       <import plugin="org.eclipse.jdt.core"/>
+      <import plugin="servoy_shared"/>
+      <import plugin="org.eclipse.dltk.javascript.rhino"/>
       <import plugin="org.eclipse.ui"/>
+      <import plugin="org.eclipse.ui.workbench"/>
+      <import plugin="org.eclipse.ui.ide"/>
+      <import plugin="org.eclipse.pde.core"/>
    </requires>
 
    <plugin

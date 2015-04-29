@@ -48,7 +48,7 @@ import com.servoy.eclipse.docgenerator.ui.Activator;
  * Command handler for generating a documentation XML. The command is enabled for
  * Java packages. One documentation XML is generated for the selected package (and
  * its subpackages).
- * 
+ *
  * @author gerzse
  */
 public class ExplicitDocumentationGenerationHandler extends AbstractHandler
@@ -106,6 +106,12 @@ public class ExplicitDocumentationGenerationHandler extends AbstractHandler
 							{
 								setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE);
 								setProperty(IProgressConstants.ACTION_PROPERTY, act);
+							}
+
+							@Override
+							public boolean importProjects()
+							{
+								return false;
 							}
 						};
 						Dictionary<String, String> props = new Hashtable<String, String>();

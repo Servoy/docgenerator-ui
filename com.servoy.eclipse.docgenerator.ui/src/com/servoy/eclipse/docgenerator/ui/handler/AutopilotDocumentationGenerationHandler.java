@@ -51,10 +51,10 @@ import com.servoy.eclipse.docgenerator.ui.Activator;
  * Command handler for generating documentation XMLs. The command is enabled for
  * Java projects or packages. If it's run upon a project, then the root package is
  * used.
- * 
- * The selected package and all it's subpackages are scanned for plugins and beans, 
+ *
+ * The selected package and all it's subpackages are scanned for plugins and beans,
  * then each plugin and bean gets a separate documentation XML.
- * 
+ *
  * @author gerzse
  */
 public class AutopilotDocumentationGenerationHandler extends AbstractHandler
@@ -137,6 +137,12 @@ public class AutopilotDocumentationGenerationHandler extends AbstractHandler
 							{
 								setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE);
 								setProperty(IProgressConstants.ACTION_PROPERTY, act);
+							}
+
+							@Override
+							public boolean importProjects()
+							{
+								return false;
 							}
 						};
 						Dictionary<String, String> props = new Hashtable<String, String>();

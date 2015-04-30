@@ -107,6 +107,7 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 
 	private DocumentationGenerationRequest req;
 	private ASTParser parser;
+	protected IWorkspaceRoot workspaceRoot;
 
 	@Override
 	public Object start(IApplicationContext context) throws Exception
@@ -119,9 +120,13 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 			com.servoy.j2db.persistence.Form.class.getCanonicalName();
 			StaticContentSpecLoader.getContentSpec();
 			//and dltk
+			Platform.getBundle("org.eclipse.dltk.javascript.rhino").start();
 			org.mozilla.javascript.EvaluatorException.class.getCanonicalName();
 			org.mozilla.javascript.Parser.class.getCanonicalName();
 			org.mozilla.javascript.ast.AstNode.class.getCanonicalName();
+			org.mozilla.javascript.ast.Label.class.getCanonicalName();
+			org.mozilla.javascript.ast.Scope.class.getCanonicalName();
+			org.mozilla.javascript.ast.Name.class.getCanonicalName();
 		}
 		catch (BundleException e)
 		{
@@ -132,15 +137,14 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 		parser = ASTParser.newParser(AST.JLS3);
 		req = parseArgs(args);
 
+		workspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		List<IProject> importedProjects = new ArrayList<IProject>();
 		List<IProject> existingClosedProjects = new ArrayList<IProject>();
 		if (req.importProjects())
 		{
-			IWorkspace workspace = ResourcesPlugin.getWorkspace();
-			IWorkspaceRoot workspaceRoot = workspace.getRoot();
 			File wr = workspaceRoot.getLocation().toFile();
-			importExistingAndOpenClosedProjects(wr, workspaceRoot, importedProjects, existingClosedProjects);
-			refreshProjects(workspaceRoot);
+			importExistingAndOpenClosedProjects(wr, importedProjects, existingClosedProjects);
+			refreshProjects();
 		}
 
 
@@ -262,16 +266,17 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 			System.exit(1);
 		}
 
-		return createDocumentationGenerationRequest(projectsAndPackages, isAutopilot, doMapUndocumentedTypes, outputFile, categories, importProjects);
+		return createDocumentationGenerationRequest(projectsAndPackages, isAutopilot, doMapUndocumentedTypes, outputFile, categories, importProjects, workspace);
 	}
 
 
 	/**
 	 * @param importProjects
+	 * @param workspace
 	 * @return
 	 */
 	private DocumentationGenerationRequest createDocumentationGenerationRequest(final Map<String, List<String>> projectsAndPackages, final boolean isAutopilot,
-		final boolean mapUndocumentedTypes, final String outputFile, final Set<String> categories, final boolean importProjects)
+		final boolean mapUndocumentedTypes, final String outputFile, final Set<String> categories, final boolean importProjects, final String workspace)
 	{
 		DocumentationGenerationRequest request = new DocumentationGenerationRequest()
 		{
@@ -308,7 +313,7 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 			public boolean confirmResourceOverwrite(IPath path)
 			{
 				// Just accept overwriting, but print a message to stdout.
-				LogUtil.logger().info("The following resource will be overwritten: '" + path.toString() + "'.");
+				LogUtil.logger().info("The following resource will be overwritten: '" + workspaceRoot.getFile(path).getLocation() + "'.");
 				return true;
 			}
 
@@ -338,7 +343,7 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 					message.append("The following XML files were generated:\n");
 					for (IPath p : xmlFiles)
 					{
-						message.append(p.toString()).append("\n");
+						message.append(workspaceRoot.getFile(p).getLocation()).append("\n");
 					}
 				}
 				else
@@ -350,7 +355,7 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 					message.append("The following warnings files were generated:\n");
 					for (IPath p : warningsFiles)
 					{
-						message.append(p.toString()).append("\n");
+						message.append(workspaceRoot.getFile(p).getLocation()).append("\n");
 					}
 				}
 				else
@@ -382,7 +387,6 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 		};
 		return request;
 	}
-
 
 	@Override
 	public void stop()
@@ -882,8 +886,7 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 	 * @param existingClosedProjects
 	 * @throws CoreException
 	 */
-	private void importExistingAndOpenClosedProjects(File sourceFolder, IWorkspaceRoot workspaceRoot, List<IProject> importedProjects,
-		List<IProject> existingClosedProjects)
+	private void importExistingAndOpenClosedProjects(File sourceFolder, List<IProject> importedProjects, List<IProject> existingClosedProjects)
 	{
 		try
 		{
@@ -1023,7 +1026,7 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 		}
 	}
 
-	private void refreshProjects(IWorkspaceRoot workspaceRoot)
+	private void refreshProjects()
 	{
 		IProject[] prjs = workspaceRoot.getProjects();
 		try

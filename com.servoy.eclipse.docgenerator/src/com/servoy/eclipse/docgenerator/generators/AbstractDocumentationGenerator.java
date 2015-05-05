@@ -98,7 +98,7 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 	private static final String AUTOPILOT = "--autopilot";
 	private static final String MAP_UNDOCUMENTED_TYPES = "--map-undocumented-types";
 	private static final String CATEGORIES = "--categories";
-	private static final String IMPORT_PROJECTS = "--importProjects"; //if present, the projects are imported into the workspace
+	private static final String IMPORT_PROJECTS = "--import-projects"; //if present, the projects are imported into the workspace
 
 	/**
 	 * The name of the XML file which holds documentation and other Servoy extension related info.

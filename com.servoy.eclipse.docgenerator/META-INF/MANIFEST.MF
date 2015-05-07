@@ -8,8 +8,6 @@ Bundle-Vendor: Servoy
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.jdt.core,
- org.eclipse.ui.workbench,
- org.eclipse.ui.ide,
  servoy_shared,
  org.eclipse.pde.core
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

@@ -62,9 +62,6 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
 import org.eclipse.pde.internal.core.PDECore;
-import org.eclipse.ui.dialogs.IOverwriteQuery;
-import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
-import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.osgi.framework.BundleException;
 
 import com.servoy.eclipse.docgenerator.Activator;
@@ -901,14 +898,6 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 
 		boolean useLinks = !workspaceRoot.getLocation().toFile().equals(sourceFolder);
 
-		IOverwriteQuery overwriteQuery = new IOverwriteQuery()
-		{
-			public String queryOverwrite(String file)
-			{
-				return ALL;
-			}
-		};
-
 		for (File f : sourceFolder.listFiles())
 		{
 			// this assumes that the name defined in ".project" matches the name of the parent folder;
@@ -936,11 +925,6 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 								// real project location is default - directly inside workspace folder
 								p.create(null);
 							}
-
-							ImportOperation importOperation = new ImportOperation(p.getFullPath(), f, FileSystemStructureProvider.INSTANCE, overwriteQuery);
-							importOperation.setCreateContainerStructure(false);
-							NullProgressMonitor monitor = new NullProgressMonitor();
-							importOperation.run(monitor);
 
 							importedProjects.add(p);
 						}

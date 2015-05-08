@@ -601,8 +601,7 @@ public class DefaultDocumentationGenerator implements IDocumentationGenerator
 					if (typeScp != null && memberScp != typeScp && !typeScp.supports(ClientSupport.mc) && memberScp.supports(ClientSupport.mc))
 					{
 						// when type is not mobile, do not mark element as mobile
-						memberScp = ClientSupport.create(memberScp.supports(ClientSupport.ng), false, memberScp.supports(ClientSupport.wc),
-							memberScp.supports(ClientSupport.sc));
+						memberScp = ClientSupport.create(false, memberScp.supports(ClientSupport.wc), memberScp.supports(ClientSupport.sc));
 					}
 					unionedScp = memberScp.union(unionedScp);
 				}

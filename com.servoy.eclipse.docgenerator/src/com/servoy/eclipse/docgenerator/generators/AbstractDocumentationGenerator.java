@@ -85,7 +85,7 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 
 	private static enum ScanState
 	{
-		None, BundleFolders, Project, Packages, Workspace, OutputFile, DocGeneratorId, Categories
+		None, BundleFolders, Project, Packages, Workspace, OutputFile, DocGeneratorId, Categories, ImportProjects
 	}
 
 	// Command-line options.
@@ -193,7 +193,7 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 			}
 			else if (IMPORT_PROJECTS.equals(arg))
 			{
-				importProjects = true;
+				state = ScanState.ImportProjects;
 			}
 			else if (MAP_UNDOCUMENTED_TYPES.equals(arg))
 			{
@@ -225,6 +225,10 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 				else if (state == ScanState.Categories)
 				{
 					categories.add(arg);
+				}
+				else if (state == ScanState.ImportProjects)
+				{
+					importProjects = Boolean.parseBoolean(arg);
 				}
 				else
 				{

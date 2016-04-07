@@ -39,11 +39,11 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
  * - if the class should appear or not in the generated XML
  * - supertype
  * - implemented interfaces
- * 
+ *
  * Note that all Java classes are parsed for Javadocs, even if they should not appear
  * in the generated XML. This is because of the @sameas, @sampleas and @clonedesc tags,
  * which may refer to any Java method, from any class.
- * 
+ *
  * @author gerzse
  */
 public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
@@ -54,8 +54,7 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 
 	/**
 	 * Default category to use when the "category" attribute is not explicitly given in the @ServoyDocumented annotation.
-	 * 
-	 * @see com.servoy.j2db.documentation.ServoyDocumented.PLUGINS
+	 *
 	 */
 	private static final String DEFAULT_CATEGORY = "plugins";
 
@@ -79,9 +78,9 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 
 	/**
 	 * Set of warnings raised while processing information about the class (type bindings, etc.).
-	 * 
+	 *
 	 * Note that each member has a separate set of warnings, distinct from those of the class.
-	 * This is so because at the end only the relevant warnings will be written to a file (the 
+	 * This is so because at the end only the relevant warnings will be written to a file (the
 	 * warnings that correspond to those members that will apear in the generated XML).
 	 */
 	private final Set<DocumentationWarning> warnings = new TreeSet<DocumentationWarning>();

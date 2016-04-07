@@ -2,14 +2,14 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Servoy Documentation Generator Plugin
 Bundle-SymbolicName: com.servoy.eclipse.docgenerator;singleton:=true
-Bundle-Version: 1.3.0.0
+Bundle-Version: 1.4.0.0
 Bundle-Activator: com.servoy.eclipse.docgenerator.Activator
 Bundle-Vendor: Servoy
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
  org.eclipse.jdt.core,
- servoy_shared,
- org.eclipse.pde.core
+ org.eclipse.pde.core,
+ org.eclipse.dltk.javascript.rhino
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Export-Package: com.servoy.eclipse.docgenerator,
@@ -19,6 +19,3 @@ Export-Package: com.servoy.eclipse.docgenerator,
  com.servoy.eclipse.docgenerator.parser,
  com.servoy.eclipse.docgenerator.service,
  com.servoy.eclipse.docgenerator.util
-Import-Package: com.servoy.j2db.persistence,
- org.mozilla.javascript,
- org.mozilla.javascript.ast

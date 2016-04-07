@@ -30,20 +30,14 @@ import com.servoy.eclipse.docgenerator.metamodel.MemberMetaModel.Visibility;
 import com.servoy.eclipse.docgenerator.metamodel.MetaModelHolder;
 import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.TypeName;
-import com.servoy.j2db.dataprocessing.DataException;
-import com.servoy.j2db.dataprocessing.FoundSet;
-import com.servoy.j2db.dataprocessing.Record;
-import com.servoy.j2db.dataprocessing.RelatedFoundSet;
-import com.servoy.j2db.scripting.JSUnitAssertFunctions;
-import com.servoy.j2db.ui.IScriptRenderMethods;
-import com.servoy.j2db.util.ServoyException;
 
 /**
  * Helper class that does some post-processing on the generated documentation XMLs.
  * Specifically it performs some cleanup on the documentation for the Servoy internal classes.
- * 
+ *
  * @author gerzse
- */
+ */
+
 public class DocBeautifier
 {
 	private static class FakeConstantMetaModel extends GenericMemberMetaModel
@@ -141,9 +135,9 @@ public class DocBeautifier
 	public void beautify()
 	{
 		// remove from DataException all constants that are also present in ServoyException
-		String servoyExName = ServoyException.class.getCanonicalName();
+		String servoyExName = "com.servoy.j2db.util.ServoyException";
 		TypeMetaModel servoyEx = holder.getType(servoyExName);
-		for (String dbExName : new String[] { DataException.class.getCanonicalName() })
+		for (String dbExName : new String[] { "com.servoy.j2db.dataprocessing.DataException" })
 		{
 			TypeMetaModel dbEx = holder.getType(dbExName);
 			if (servoyEx != null && dbEx != null)
@@ -163,12 +157,13 @@ public class DocBeautifier
 			}
 		}
 		// Remove all constants from some of the classes.
+		// TODO these should be kept in sync....
 		Set<String> names = new HashSet<String>();
-		names.add(FoundSet.class.getCanonicalName());
-		names.add(Record.class.getCanonicalName());
-		names.add(JSUnitAssertFunctions.class.getCanonicalName());
-		names.add(RelatedFoundSet.class.getCanonicalName());
-		names.add(IScriptRenderMethods.class.getCanonicalName());
+		names.add("com.servoy.j2db.dataprocessing.FoundSet");
+		names.add("com.servoy.j2db.dataprocessing.Record");
+		names.add("com.servoy.j2db.scripting.JSUnitAssertFunctions");
+		names.add("com.servoy.j2db.dataprocessing.RelatedFoundSet");
+		names.add("com.servoy.j2db.ui.IScriptRenderMethods");
 		for (String name : names)
 		{
 			TypeMetaModel cdr = holder.getType(name);

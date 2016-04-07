@@ -62,6 +62,7 @@ import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetPlatformService;
 import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
 import org.eclipse.pde.internal.core.PDECore;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 
 import com.servoy.eclipse.docgenerator.Activator;
@@ -72,7 +73,6 @@ import com.servoy.eclipse.docgenerator.parser.ServoyPluginDetector;
 import com.servoy.eclipse.docgenerator.parser.SourceCodeTracker;
 import com.servoy.eclipse.docgenerator.service.DocumentationGenerationRequest;
 import com.servoy.eclipse.docgenerator.service.LogUtil;
-import com.servoy.j2db.persistence.StaticContentSpecLoader;
 
 
 /**
@@ -112,10 +112,11 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 		try
 		{
 			//force start of the servoy shared bundle
-			Platform.getBundle("servoy_shared").start();
-			com.servoy.j2db.persistence.Field.class.getCanonicalName();
-			com.servoy.j2db.persistence.Form.class.getCanonicalName();
-			StaticContentSpecLoader.getContentSpec();
+			Bundle bundle = Platform.getBundle("servoy_shared");
+			if (bundle != null) bundle.start();
+//			com.servoy.j2db.persistence.Field.class.getCanonicalName();
+//			com.servoy.j2db.persistence.Form.class.getCanonicalName();
+//			StaticContentSpecLoader.getContentSpec();
 			//and dltk
 			Platform.getBundle("org.eclipse.dltk.javascript.rhino").start();
 			org.mozilla.javascript.EvaluatorException.class.getCanonicalName();
@@ -267,7 +268,8 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 			System.exit(1);
 		}
 
-		return createDocumentationGenerationRequest(projectsAndPackages, isAutopilot, doMapUndocumentedTypes, outputFile, categories, importProjects, workspace);
+		return createDocumentationGenerationRequest(projectsAndPackages, isAutopilot, doMapUndocumentedTypes, outputFile, categories, importProjects,
+			workspace);
 	}
 
 
@@ -488,9 +490,8 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 												}
 												if (!hasVisitedParent)
 												{
-													LogUtil.logger().fine(
-														"Will process package '" + thisPackageName + "' in project '" + prj.getName() +
-															"' because it contains a Servoy plugin and autopilot is on.");
+													LogUtil.logger().fine("Will process package '" + thisPackageName + "' in project '" + prj.getName() +
+														"' because it contains a Servoy plugin and autopilot is on.");
 													visitedPackages.add(thisPackageName);
 													toProcessProjectNames.add(prj.getName());
 													toProcessPackageNames.add(thisPackageName);
@@ -499,9 +500,8 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 												}
 												else
 												{
-													LogUtil.logger().fine(
-														"Skipping package '" + thisPackageName + "' in project '" + prj.getName() +
-															"' because it contains a Servoy plugin, but a parent package also contains a Servoy plugin.");
+													LogUtil.logger().fine("Skipping package '" + thisPackageName + "' in project '" + prj.getName() +
+														"' because it contains a Servoy plugin, but a parent package also contains a Servoy plugin.");
 												}
 											}
 											else
@@ -514,16 +514,14 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 												{
 													extraToProcessProjectNames.add(prj.getName());
 													extraToProcessPackageNames.add(thisPackageName);
-													LogUtil.logger().fine(
-														"Will process package '" + thisPackageName + "' in project '" + prj.getName() +
-															"' needed to document plugins with mobile client support.");
+													LogUtil.logger().fine("Will process package '" + thisPackageName + "' in project '" + prj.getName() +
+														"' needed to document plugins with mobile client support.");
 												}
 
 												else
 												{
-													LogUtil.logger().fine(
-														"Skipping package '" + thisPackageName + "' in project '" + prj.getName() +
-															"' because it does not contain a Servoy plugin and autopilot is on.");
+													LogUtil.logger().fine("Skipping package '" + thisPackageName + "' in project '" + prj.getName() +
+														"' because it does not contain a Servoy plugin and autopilot is on.");
 												}
 											}
 
@@ -531,9 +529,8 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 									}
 									else
 									{
-										LogUtil.logger().fine(
-											"Skipping package '" + pkg.getElementName() + "' in project '" + prj.getName() +
-												"' because it was not listed among the packages to document.");
+										LogUtil.logger().fine("Skipping package '" + pkg.getElementName() + "' in project '" + prj.getName() +
+											"' because it was not listed among the packages to document.");
 									}
 								}
 							}
@@ -699,15 +696,13 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 								int pkgFiles = pkg.getCompilationUnits().length;
 								selectedPackages.add(pkg);
 								prjFiles += pkgFiles;
-								LogUtil.logger().fine(
-									"Package '" + pkg.getElementName() + "' in project '" + prj.getName() + "' will be documented with " + pkgFiles +
-										" compilation units. The prefix used was '" + usedPrefix + "'.");
+								LogUtil.logger().fine("Package '" + pkg.getElementName() + "' in project '" + prj.getName() + "' will be documented with " +
+									pkgFiles + " compilation units. The prefix used was '" + usedPrefix + "'.");
 							}
 							else
 							{
-								LogUtil.logger().fine(
-									"Skipping package '" + pkg.getElementName() + "' in project '" + prj.getName() +
-										"' because it was not listed among the packages to document.");
+								LogUtil.logger().fine("Skipping package '" + pkg.getElementName() + "' in project '" + prj.getName() +
+									"' because it was not listed among the packages to document.");
 							}
 						}
 					}
@@ -940,8 +935,7 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 							{
 								if (!p.getLocation().toFile().equals(f))
 								{
-									LogUtil.logger().log(
-										Level.SEVERE,
+									LogUtil.logger().log(Level.SEVERE,
 										"Cannot use project in alternate location '" + f.getAbsolutePath() +
 											"'. Another project with that name is already present in workspace from location '" +
 											p.getLocation().toFile().getAbsolutePath() + "'.");
@@ -961,8 +955,7 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 				}
 				else if (useLinks && !p.getLocation().toFile().equals(f))
 				{
-					LogUtil.logger().log(
-						Level.SEVERE,
+					LogUtil.logger().log(Level.SEVERE,
 						"Cannot use project in alternate location '" + f.getAbsolutePath() +
 							"'. Another project with that name is already present in workspace from location '" + p.getLocation().toFile().getAbsolutePath() +
 							"'.");

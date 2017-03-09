@@ -3,7 +3,7 @@
   <groupId>com.servoy</groupId>
   <artifactId>docgenerator-ui</artifactId>
   <packaging>pom</packaging>
-  <version>8.1.2.3031</version>
+  <version>1.4.0.0</version>
   
   <properties>
 		<tycho.version>1.0.0</tycho.version>
@@ -137,7 +137,7 @@
 	</build>	
 	<modules>
 		<module>com.servoy.eclipse.docgenerator</module>
-		<module>com.servoy.eclipse.docgenerator.feature</module>
 		<module>com.servoy.eclipse.docgenerator.ui</module>
+		<module>com.servoy.eclipse.docgenerator.feature</module>
 	</modules>	
 </project>

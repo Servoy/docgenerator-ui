@@ -1,0 +1,24 @@
+<project>
+ <modelVersion>4.0.0</modelVersion>
+ <parent>
+  <groupId>com.servoy</groupId>
+  <artifactId>docgenerator-ui</artifactId>
+  <version>1.4.0.0</version>
+ </parent>
+
+ <artifactId>com.servoy.eclipse.docgenerator.feature</artifactId>
+ <packaging>eclipse-feature</packaging>
+
+ <build>
+  <plugins>
+   <plugin>
+    <groupId>org.eclipse.tycho</groupId>
+    <artifactId>tycho-p2-repository-plugin</artifactId>
+    <version>${tycho.version}</version>
+    <configuration>
+     <includeAllDependencies>true</includeAllDependencies>
+    </configuration>
+   </plugin>
+  </plugins>
+ </build>
+</project>

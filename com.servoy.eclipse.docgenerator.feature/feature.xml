@@ -2,7 +2,7 @@
 <feature
       id="com.servoy.eclipse.docgenerator.feature"
       label="Servoy Documentation Generator Feature"
-      version="1.4.0.0"
+      version="1.4.1"
       provider-name="Servoy">
 
    <description url="http://www.example.com/description">

@@ -58,10 +58,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
-import org.eclipse.pde.core.target.ITargetDefinition;
-import org.eclipse.pde.core.target.ITargetPlatformService;
-import org.eclipse.pde.core.target.LoadTargetDefinitionJob;
-import org.eclipse.pde.internal.core.PDECore;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 
@@ -1020,10 +1016,10 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 				}
 			}
 
-			ITargetPlatformService service = (ITargetPlatformService)PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
-			ITargetDefinition target = service.getTarget(workspaceRoot.getFile(new Path(SERVOY_TARGET))).getTargetDefinition();
-			target.resolve(new NullProgressMonitor());
-			LoadTargetDefinitionJob.load(target);
+//			ITargetPlatformService service = (ITargetPlatformService)PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+//			ITargetDefinition target = service.getTarget(workspaceRoot.getFile(new Path(SERVOY_TARGET))).getTargetDefinition();
+//			target.resolve(new NullProgressMonitor());
+//			LoadTargetDefinitionJob.load(target);
 			workspaceRoot.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, new NullProgressMonitor());
 			workspaceRoot.getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, new NullProgressMonitor());
 		}

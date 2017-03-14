@@ -72,7 +72,7 @@ import com.servoy.eclipse.docgenerator.service.LogUtil;
 /**
  * AST visitor that extracts relevant information about classes and their members
  * and also parses Javadocs and extracts the information from them.
- * 
+ *
  * @author gerzse
  */
 public class JavadocExtractor extends ASTVisitor
@@ -251,12 +251,12 @@ public class JavadocExtractor extends ASTVisitor
 							Object valObj = mvPair.getValue().resolveConstantExpressionValue();
 							if (valObj != null)
 							{
-								annotationMM.addAttribute(key, valObj.toString());
+								annotationMM.addAttribute(key, valObj);
 							}
 							else
 							{
 								warning(WarningType.Other, "Cannot retrieve value for attribute '" + key + "' of annotation: " + node.toString());
-								annotationMM.addAttribute(key, mvPair.getValue().toString());
+								annotationMM.addAttribute(key, mvPair.getValue());
 							}
 						}
 					}
@@ -267,12 +267,12 @@ public class JavadocExtractor extends ASTVisitor
 					Object value = sma.getValue().resolveConstantExpressionValue();
 					if (value != null)
 					{
-						annotationMM.addAttribute("value", value.toString());
+						annotationMM.addAttribute("value", value);
 					}
 					else
 					{
 						warning(WarningType.Other, "Cannot retrieve value from single member annotation: " + node.toString());
-						annotationMM.addAttribute("value", sma.getValue().toString());
+						annotationMM.addAttribute("value", sma.getValue());
 					}
 				}
 			}

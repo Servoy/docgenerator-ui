@@ -11,9 +11,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.7</maven.compiler.source>
 	    <maven.compiler.target>1.7</maven.compiler.target>
-		<servoy-repo.url>http://developer.servoy.com/p2_repository/compile_target/install/</servoy-repo.url>
-		<servoy-deltapack.url>http://developer.servoy.com/p2_repository/compile_target/install/deltapack/</servoy-deltapack.url>
-		<servoy-shiplibs.url>http://developer.servoy.com/p2_repository/ship_plugins/</servoy-shiplibs.url>
+		<servoy-repo.url>http://download.eclipse.org/eclipse/updates/4.7/R-4.7.1a-201710090410/</servoy-repo.url>
 	</properties>
 	
 	<repositories>
@@ -22,11 +20,6 @@
 			<url>${servoy-repo.url}</url>
 			<layout>p2</layout>
 		</repository>
-		<repository>
-			<id>servoy_deltapack</id>
-			<url>${servoy-deltapack.url}</url>
-			<layout>p2</layout>
-		</repository>		
 	</repositories>
 	<build>
 		<plugins>

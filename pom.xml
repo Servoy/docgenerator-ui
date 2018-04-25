@@ -3,13 +3,13 @@
   <groupId>com.servoy</groupId>
   <artifactId>docgenerator-ui</artifactId>
   <packaging>pom</packaging>
-  <version>1.4.2</version>
+  <version>1.4.3</version>
   
   <properties>
 		<tycho.version>1.1.0</tycho.version>
 		<tycho.extra.version>1.1.0</tycho.extra.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<servoy.version.range>[8.3.0,8.4.0)</servoy.version.range>
+		<servoy.version.range>[8.4.0,8.5.0)</servoy.version.range>
 		<maven.compiler.source>1.7</maven.compiler.source>
 	    <maven.compiler.target>1.7</maven.compiler.target>
 		<servoy-repo.url> http://download.eclipse.org/eclipse/updates/4.8milestones/S-4.8M6-201803080630/</servoy-repo.url>

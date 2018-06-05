@@ -10,7 +10,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jdt.core,
  org.eclipse.pde.core,
  org.eclipse.dltk.javascript.rhino
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Export-Package: com.servoy.eclipse.docgenerator,
  com.servoy.eclipse.docgenerator.annotations,
@@ -19,3 +19,4 @@ Export-Package: com.servoy.eclipse.docgenerator,
  com.servoy.eclipse.docgenerator.parser,
  com.servoy.eclipse.docgenerator.service,
  com.servoy.eclipse.docgenerator.util
+Automatic-Module-Name: com.servoy.eclipse.docgenerator

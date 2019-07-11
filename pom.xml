@@ -3,22 +3,34 @@
   <groupId>com.servoy</groupId>
   <artifactId>docgenerator-ui</artifactId>
   <packaging>pom</packaging>
-  <version>1.4.5</version>
+  <version>1.5.0</version>
   
-  <properties>
+	<properties>
 		<tycho.version>1.4.0</tycho.version>
 		<tycho.extra.version>1.4.0</tycho.extra.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<servoy.version.range>[2019.9, 2019.12)</servoy.version.range>
 		<maven.compiler.source>1.8</maven.compiler.source>
-	    <maven.compiler.target>1.8</maven.compiler.target>
+	    	<maven.compiler.target>1.8</maven.compiler.target>
 		<eclipse.url>http://download.eclipse.org/eclipse/updates/4.11/</eclipse.url>
+		<servoy-shiplibs.url>http://developer.servoy.com/p2_repository/ship_plugins/2019.06/</servoy-shiplibs.url>
+		<dltk.url>http://developer.servoy.com/p2_repository/dltk_repository/2019.06/</dltk.url>
 	</properties>
 	
 	<repositories>
 		<repository>
 			<id>servoy</id>
 			<url>${eclipse.url}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>servoy_shiplibs</id>
+			<url>${servoy-shiplibs.url}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>dltk</id>
+			<url>${dltk.url}</url>
 			<layout>p2</layout>
 		</repository>
 	</repositories>
@@ -133,6 +145,9 @@
 	<modules>
 		<module>com.servoy.eclipse.docgenerator</module>
 		<module>com.servoy.eclipse.docgenerator.ui</module>
+		<module>com.servoy.eclipse.docgenerator.client</module>
 		<module>com.servoy.eclipse.docgenerator.feature</module>
+		<module>com.servoy.eclipse.docgenerator.client.feature</module>
+		<module>com.servoy.eclipse.docgenerator.client.product</module>
 	</modules>	
 </project>

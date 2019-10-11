@@ -66,7 +66,6 @@ The timing of the provision by Servoy of the Releases shall be at its sole discr
 
    <requires>
       <import feature="com.servoy.eclipse.docgenerator.feature" version="1.5.0"/>
-      <import plugin="javax.transaction" version="1.1.0" match="perfect"/>
    </requires>
 
    <plugin

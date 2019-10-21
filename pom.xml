@@ -1,17 +1,22 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.servoy</groupId>
-  <artifactId>docgenerator-ui</artifactId>
-  <packaging>pom</packaging>
-  <version>1.5.0</version>
-  
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<prerequisites>
+		<maven>3.6.0</maven>
+	</prerequisites>
+	<groupId>com.servoy</groupId>
+	<artifactId>docgenerator-ui</artifactId>
+	<packaging>pom</packaging>
+	<version>1.5.0</version>
+
 	<properties>
 		<tycho.version>1.4.0</tycho.version>
 		<tycho.extra.version>1.4.0</tycho.extra.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<servoy.version.range>[2019.9, 2019.12)</servoy.version.range>
+		<servoy.version.range>[2019.9, 2020.12]</servoy.version.range>
 		<maven.compiler.source>1.8</maven.compiler.source>
-	    	<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.target>1.8</maven.compiler.target>
 		<eclipse.url>http://download.eclipse.org/eclipse/updates/4.13/</eclipse.url>
 		<servoy-shiplibs.url>http://developer.servoy.com/p2_repository/ship_plugins/2019.12/</servoy-shiplibs.url>
 		<dltk.url>http://developer.servoy.com/p2_repository/dltk_repository/2019.12/</dltk.url>
@@ -19,7 +24,7 @@
 		<orbit.url>https://download.eclipse.org/tools/orbit/downloads/drops/R20190827152740/repository</orbit.url>
 		<emf.url>https://download.eclipse.org/modeling/emf/emf/builds/release/2.19/</emf.url>
 	</properties>
-	
+
 	<repositories>
 		<repository>
 			<id>servoy</id>
@@ -40,7 +45,7 @@
 			<id>m2e</id>
 			<url>${m2e.url}</url>
 			<layout>p2</layout>
-		</repository>		
+		</repository>
 		<repository>
 			<id>orbit</id>
 			<url>${orbit.url}</url>
@@ -59,6 +64,16 @@
 				<artifactId>tycho-maven-plugin</artifactId>
 				<version>${tycho.version}</version>
 				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-compiler-plugin</artifactId>
+				<version>${tycho.version}</version>
+				<configuration>
+					<compilerArgument>-warn:none</compilerArgument>
+					<useProjectSettings>false</useProjectSettings>
+					<useJDK>BREE</useJDK>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
@@ -86,62 +101,62 @@
 					</environments>
 					<filters>
 						<filter>
-				            <type>eclipse-plugin</type>
-				            <id>org.eclipse.dltk.javascript.rhino</id>
-				            <restrictTo>
-				               <versionRange>${servoy.version.range}</versionRange> <!-- alternative: <version> for selecting exactly one versions -->
-				            </restrictTo>
-				         </filter>
-							<filter>
-				            <type>eclipse-plugin</type>
-				            <id>com.servoy.eclipse.docgenerator</id>
-				            <restrictTo>
-				               <version>${project.version}</version> <!-- alternative: <version> for selecting exactly one versions -->
-				            </restrictTo>
-				         </filter>
+							<type>eclipse-plugin</type>
+							<id>org.eclipse.dltk.javascript.rhino</id>
+							<restrictTo>
+								<versionRange>${servoy.version.range}</versionRange> <!-- alternative: <version> for selecting exactly one versions -->
+							</restrictTo>
+						</filter>
+						<filter>
+							<type>eclipse-plugin</type>
+							<id>com.servoy.eclipse.docgenerator</id>
+							<restrictTo>
+								<version>${project.version}</version> <!-- alternative: <version> for selecting exactly one versions -->
+							</restrictTo>
+						</filter>
 					</filters>
 				</configuration>
 			</plugin>
-		    <plugin>
-		      <groupId>org.eclipse.tycho.extras</groupId>
-		      <artifactId>tycho-pack200a-plugin</artifactId>
-		      <version>${tycho.extra.version}</version>
-		      <executions>
-		       <execution>
-		        <id>pack200-normalize</id>
-		        <goals>
-		         <goal>normalize</goal>
-		        </goals>
-		       </execution>
-		      </executions>
-		     </plugin>
-		    <plugin>
-		    <groupId>org.apache.maven.plugins</groupId>
-		    <artifactId>maven-jarsigner-plugin</artifactId>
-		    <version>1.4</version>
-		    <executions>
-		     <execution>
-		      <id>sign</id>
-		      <goals>
-		       <goal>sign</goal>
-		      </goals>
-		     </execution>
-		    </executions>
-		   </plugin>
-		   <plugin>
-		      <groupId>org.eclipse.tycho.extras</groupId>
-		      <artifactId>tycho-pack200b-plugin</artifactId>
-		      <version>${tycho.extra.version}</version>
-		      <executions>
-		       <execution>
-		        <id>pack200-pack</id>
-		        <goals>
-		         <goal>pack</goal>
-		        </goals>
-		       </execution>
-		      </executions>
-		     </plugin>
-		     <plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-pack200a-plugin</artifactId>
+				<version>${tycho.extra.version}</version>
+				<executions>
+					<execution>
+						<id>pack200-normalize</id>
+						<goals>
+							<goal>normalize</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jarsigner-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>sign</id>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-pack200b-plugin</artifactId>
+				<version>${tycho.extra.version}</version>
+				<executions>
+					<execution>
+						<id>pack200-pack</id>
+						<goals>
+							<goal>pack</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-p2-plugin</artifactId>
 				<version>${tycho.version}</version>
@@ -159,7 +174,7 @@
 				</configuration>
 			</plugin>
 		</plugins>
-	</build>	
+	</build>
 	<modules>
 		<module>com.servoy.eclipse.docgenerator</module>
 		<module>com.servoy.eclipse.docgenerator.ui</module>
@@ -167,5 +182,5 @@
 		<module>com.servoy.eclipse.docgenerator.feature</module>
 		<module>com.servoy.eclipse.docgenerator.client.feature</module>
 		<module>com.servoy.eclipse.docgenerator.client.product</module>
-	</modules>	
+	</modules>
 </project>

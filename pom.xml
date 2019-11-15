@@ -116,6 +116,13 @@
 						</filter>
 						<filter>
 							<type>eclipse-plugin</type>
+							<id>servoy_ngclient</id>
+							<restrictTo>
+								<versionRange>${servoy.version.range}</versionRange> <!-- alternative: <version> for selecting exactly one versions -->
+							</restrictTo>
+						</filter>
+						<filter>
+							<type>eclipse-plugin</type>
 							<id>com.servoy.eclipse.docgenerator</id>
 							<restrictTo>
 								<version>${project.version}</version> <!-- alternative: <version> for selecting exactly one versions -->

@@ -230,9 +230,8 @@ public class DefaultDocumentationGenerator extends AbstractDocumentationGenerato
 							MemberStoragePlace targetData = (MemberStoragePlace)target.getStore().get(STORE_KEY);
 							if (targetData.getDocData() == null)
 							{
-								memberMM.getWarnings().add(
-									new DocumentationWarning(WarningType.RedirectionProblem, memberMM.getFullSignature(),
-										"Target of redirection is not documented: " + docData.getSameAs().toString()));
+								memberMM.getWarnings().add(new DocumentationWarning(WarningType.RedirectionProblem, memberMM.getFullSignature(),
+									"Target of redirection is not documented: " + docData.getSameAs().toString()));
 							}
 							else
 							{
@@ -251,9 +250,8 @@ public class DefaultDocumentationGenerator extends AbstractDocumentationGenerato
 								MemberStoragePlace targetData = (MemberStoragePlace)target.getStore().get(STORE_KEY);
 								if (targetData.getDocData() == null)
 								{
-									memberMM.getWarnings().add(
-										new DocumentationWarning(WarningType.RedirectionProblem, memberMM.getFullSignature(),
-											"Target of redirection is not documented: " + docData.getCloneSample().toString()));
+									memberMM.getWarnings().add(new DocumentationWarning(WarningType.RedirectionProblem, memberMM.getFullSignature(),
+										"Target of redirection is not documented: " + docData.getCloneSample().toString()));
 								}
 								else
 								{
@@ -270,9 +268,8 @@ public class DefaultDocumentationGenerator extends AbstractDocumentationGenerato
 								MemberStoragePlace targetData = (MemberStoragePlace)target.getStore().get(STORE_KEY);
 								if (targetData.getDocData() == null)
 								{
-									memberMM.getWarnings().add(
-										new DocumentationWarning(WarningType.RedirectionProblem, memberMM.getFullSignature(),
-											"Target of redirection is not documented: " + docData.getCloneDescription().toString()));
+									memberMM.getWarnings().add(new DocumentationWarning(WarningType.RedirectionProblem, memberMM.getFullSignature(),
+										"Target of redirection is not documented: " + docData.getCloneDescription().toString()));
 								}
 								else
 								{
@@ -306,16 +303,14 @@ public class DefaultDocumentationGenerator extends AbstractDocumentationGenerato
 			}
 			if (reportMissing)
 			{
-				target.getWarnings().add(
-					new DocumentationWarning(WarningType.RedirectionProblem, target.getFullSignature(), "Cannot find target member of redirection: " +
-						redirect.toString()));
+				target.getWarnings().add(new DocumentationWarning(WarningType.RedirectionProblem, target.getFullSignature(),
+					"Cannot find target member of redirection: " + redirect.toString()));
 			}
 		}
 		else if (reportMissing)
 		{
-			target.getWarnings().add(
-				new DocumentationWarning(WarningType.RedirectionProblem, target.getFullSignature(), "Cannot find target class of redirection: " +
-					redirect.toString()));
+			target.getWarnings().add(new DocumentationWarning(WarningType.RedirectionProblem, target.getFullSignature(),
+				"Cannot find target class of redirection: " + redirect.toString()));
 		}
 		return null;
 	}
@@ -359,7 +354,7 @@ public class DefaultDocumentationGenerator extends AbstractDocumentationGenerato
 			String newLinkContent = resolvePublicLinks(holder, typeMM, doc.getLinks().get(i));
 			doc.getLinks().set(i, newLinkContent);
 		}
-		//replace Deprecated 
+		//replace Deprecated
 		if (doc.getDeprecatedText() != null)
 		{
 			String newTextContent = resolvePublicLinks(holder, typeMM, doc.getDeprecatedText());
@@ -380,14 +375,14 @@ public class DefaultDocumentationGenerator extends AbstractDocumentationGenerato
 	}
 
 	/**
-	 * Input : 
+	 * Input :
 	 * linkContent , ex :  <p>1 - com.servoy.extensions.plugins.dialog.DialogProvider#js_showDialog() <br/>
 	 *                     2 - com.servoy.extensions.plugins.dialog.DialogProvider<br/>
 	 *                     3 - #js_showDialog() <br/>
 	 *                     4 - http://www.quartz-scheduler.org/docs/tutorials/crontrigger.html <br/>
 	 *                     5 - Lorem ipsum  com.servoy.extensions.plugins.dialog.DialogProvider#js_showDialog() , com.servoy.extensions.plugins.dialog.DialogProvider#js_showDialog() <br/>
 	 *                     </p>
-	 * 
+	 *
 	 * Output (return) , ex: <p>1 - dialogs#showDialog()  <br/>
 	 *                       2 - dialogs <br/>
 	 *                       3 - #showDialog <br/>
@@ -432,7 +427,7 @@ public class DefaultDocumentationGenerator extends AbstractDocumentationGenerato
 				}
 
 				//replace oldpackage name with new public name and if method was not present(only full qName was given ) do not append '#'
-				currentMatch = currentMatch.replaceAll(packagePattern + functionSignaturePattern,/* "$1" */
+				currentMatch = currentMatch.replaceAll(packagePattern + functionSignaturePattern, /* "$1" */
 					realTypePublicName + (parts.length > 1 ? "#" + parts[1] : ""));
 
 			}
@@ -518,7 +513,7 @@ public class DefaultDocumentationGenerator extends AbstractDocumentationGenerato
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			transformerFactory.setAttribute("indent-number", new Integer(2));
 			Transformer transformer = transformerFactory.newTransformer();
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty(OutputKeys.INDENT, "no");
 			transformer.transform(source, new StreamResult(new OutputStreamWriter(baos, "utf-8")));
 			baos.close();
 

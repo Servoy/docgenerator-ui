@@ -184,7 +184,7 @@ public class MethodTemplatesXmlGenerator extends AbstractDocumentationGenerator
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		transformerFactory.setAttribute("indent-number", new Integer(2));
 		Transformer transformer = transformerFactory.newTransformer();
-		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer.setOutputProperty(OutputKeys.INDENT, "no");
 		transformer.transform(source, new StreamResult(new OutputStreamWriter(baos, "utf-8")));
 		baos.close();
 

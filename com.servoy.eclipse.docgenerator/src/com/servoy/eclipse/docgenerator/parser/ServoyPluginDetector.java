@@ -35,7 +35,7 @@ import com.servoy.eclipse.docgenerator.service.LogUtil;
 /**
  * Quick AST visitor to determine if inside a certain package there is any Servoy client plugin.
  * A Servoy client plugin is a class that directly implements the com.servoy.j2db.plugins.IClientPlugin interface.
- * 
+ *
  * @author gerzse
  */
 public class ServoyPluginDetector extends ASTVisitor
@@ -103,7 +103,8 @@ public class ServoyPluginDetector extends ASTVisitor
 							LogUtil.logger().fine("Found a class that is Servoy-aware bean: '" + clz.getName().getFullyQualifiedName() + "'.");
 							return true;
 						}
-						else if (tni.getQualifiedName().equals("com.servoy.j2db.IServoyBeanFactory"))
+						else if (tni.getQualifiedName().equals("com.servoy.j2db.IServoyBeanFactory") ||
+							tni.getQualifiedName().equals("com.servoy.j2db.IServoyBeanFactory2"))
 						{
 							LogUtil.logger().fine("Found a class that is Servoy bean factory: '" + clz.getName().getFullyQualifiedName() + "'.");
 							return true;

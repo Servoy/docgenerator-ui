@@ -134,8 +134,13 @@ public class MethodTemplatesXmlGenerator extends AbstractDocumentationGenerator
 			String allText = paramTag.getAsString(clean);
 			StringTokenizer tok = new StringTokenizer(allText);
 			String argTypeStr = tok.nextToken();
+			String nextToken = null;
+			while (tok.hasMoreTokens() && "|".equals((nextToken = tok.nextToken()).trim()))
+			{
+				argTypeStr += "|" + tok.nextToken();
+			}
 			ArgumentType argType = ArgumentType.valueOf(argTypeStr);
-			String argName = tok.nextToken();
+			String argName = nextToken != null ? nextToken : tok.nextToken();
 			String argDesc = allText.substring(allText.indexOf(argName) + argName.length()).trim();
 			MethodArgument arg = new MethodArgument(argName, argType, argDesc);
 			arguments.add(arg);

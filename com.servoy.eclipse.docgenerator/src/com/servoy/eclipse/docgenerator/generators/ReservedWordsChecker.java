@@ -31,14 +31,14 @@ public class ReservedWordsChecker
 	static
 	{
 		javascriptKeywords.add("break");
-		javascriptKeywords.add("case");
+//		javascriptKeywords.add("case");
 		javascriptKeywords.add("catch");
 		javascriptKeywords.add("continue");
 		javascriptKeywords.add("debugger");
 		javascriptKeywords.add("default");
 		javascriptKeywords.add("delete");
 		javascriptKeywords.add("do");
-		javascriptKeywords.add("else");
+//		javascriptKeywords.add("else");
 		javascriptKeywords.add("finally");
 		javascriptKeywords.add("for");
 		javascriptKeywords.add("function");

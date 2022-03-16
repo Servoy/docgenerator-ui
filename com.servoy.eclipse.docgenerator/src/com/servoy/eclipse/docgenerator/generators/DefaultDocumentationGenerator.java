@@ -80,6 +80,7 @@ public class DefaultDocumentationGenerator extends AbstractDocumentationGenerato
 	public static final String TAG_CONSTRUCTOR = "constructor";
 	protected static final String ATTR_TYPECODE = "typecode";
 	protected static final String ATTR_TYPE = "type";
+	protected static final String ATTR_JS_TYPE = "jstype";
 	// for fields
 	public static final String TAG_CONSTANT = "constant";
 

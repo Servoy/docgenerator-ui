@@ -215,9 +215,9 @@ public class MethodStoragePlace extends MemberStoragePlace
 						elPar.setAttribute(DefaultDocumentationGenerator.ATTR_TYPE, parType.getQualifiedName());
 						elPar.setAttribute(DefaultDocumentationGenerator.ATTR_TYPECODE, parType.getBinaryName());
 					}
-					else if (par.getJSType() != null)
+					if (par.getJSType() != null)
 					{
-						elPar.setAttribute(DefaultDocumentationGenerator.ATTR_TYPE, par.getJSType());
+						elPar.setAttribute(DefaultDocumentationGenerator.ATTR_JS_TYPE, par.getJSType());
 					}
 					paramDocs.appendChild(elPar);
 				}

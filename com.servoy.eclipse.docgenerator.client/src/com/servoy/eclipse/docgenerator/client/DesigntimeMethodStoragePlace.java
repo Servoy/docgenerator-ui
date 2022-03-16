@@ -143,7 +143,12 @@ public class DesigntimeMethodStoragePlace extends MethodStoragePlace
 							String paramType = st.nextToken();
 							if (st.hasMoreTokens())
 							{
-								String paramName = st.nextToken();
+								String nextToken = null;
+								while (st.hasMoreTokens() && "|".equals((nextToken = st.nextToken()).trim()))
+								{
+									paramType += "|" + st.nextToken();
+								}
+								String paramName = nextToken != null ? nextToken : st.nextToken();
 								String paramDescription = paramText;
 								int idx = paramDescription.indexOf(paramType);
 								paramDescription = paramDescription.substring(idx + paramType.length());
@@ -233,8 +238,9 @@ public class DesigntimeMethodStoragePlace extends MethodStoragePlace
 
 					if (elem == null &&
 						(realTypeMM.getName().getQualifiedName().startsWith(
-							com.servoy.j2db.documentation.persistence.docs.BaseDocsGraphicalComponentWithTitle.class.getPackage().getName()) && ((MethodMetaModel)memberMM).getClassName().startsWith(
-							com.servoy.j2db.documentation.persistence.docs.BaseDocsGraphicalComponentWithTitle.class.getPackage().getName())))
+							com.servoy.j2db.documentation.persistence.docs.BaseDocsGraphicalComponentWithTitle.class.getPackage().getName()) &&
+							((MethodMetaModel)memberMM).getClassName().startsWith(
+								com.servoy.j2db.documentation.persistence.docs.BaseDocsGraphicalComponentWithTitle.class.getPackage().getName())))
 					{
 						// everything from docs package
 						return new Pair<Boolean, ClientSupport>(Boolean.TRUE, newClientSupport);

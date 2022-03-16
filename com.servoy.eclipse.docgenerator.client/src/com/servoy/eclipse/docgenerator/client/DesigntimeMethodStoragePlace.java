@@ -158,6 +158,10 @@ public class DesigntimeMethodStoragePlace extends MethodStoragePlace
 								DocumentedParameterData parData = new DocumentedParameterData(paramName, false, paramDescription);
 								paramType = cleanType(paramType);
 								parData.checkIfHasType(holder, typeMapper, paramType);
+								if (parData.getType() == null && paramType != null)
+								{
+									parData.setJSType(paramType);
+								}
 								getDocData().addParameter(parData);
 							}
 							else
@@ -299,17 +303,17 @@ public class DesigntimeMethodStoragePlace extends MethodStoragePlace
 
 	private String cleanType(String type)
 	{
-		type = type.replaceAll("<[^>]*>", "");
-		if (type.indexOf('.') == -1)
+		String convertedType = type.replaceAll("<[^>]*>", "");
+		if (convertedType.indexOf('.') == -1)
 		{
 			for (String pkg : packagesToCheck)
 			{
-				String currName = pkg + type;
+				String currName = pkg + convertedType;
 				try
 				{
 					Class< ? > cc = Class.forName(currName);
-					type = cc.getCanonicalName();
-					break;
+					convertedType = cc.getCanonicalName();
+					return convertedType;
 				}
 				catch (Throwable th)
 				{

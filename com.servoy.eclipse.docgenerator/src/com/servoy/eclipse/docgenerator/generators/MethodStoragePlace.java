@@ -120,7 +120,7 @@ public class MethodStoragePlace extends MemberStoragePlace
 			{
 				String propName = shortName.substring(goodPref.length());
 				if (hasSetter(propName, methodMM.getType(), wasPrefixed) || //
-					hasSetter(propName, new TypeName(Object.class), wasPrefixed) // special case when the setter has an Object parameter		
+					hasSetter(propName, new TypeName(Object.class), wasPrefixed) // special case when the setter has an Object parameter
 				)
 				{
 					isProperty = true;
@@ -214,6 +214,10 @@ public class MethodStoragePlace extends MemberStoragePlace
 					{
 						elPar.setAttribute(DefaultDocumentationGenerator.ATTR_TYPE, parType.getQualifiedName());
 						elPar.setAttribute(DefaultDocumentationGenerator.ATTR_TYPECODE, parType.getBinaryName());
+					}
+					else if (par.getJSType() != null)
+					{
+						elPar.setAttribute(DefaultDocumentationGenerator.ATTR_TYPE, par.getJSType());
 					}
 					paramDocs.appendChild(elPar);
 				}

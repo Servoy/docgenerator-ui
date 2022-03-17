@@ -156,12 +156,8 @@ public class DesigntimeMethodStoragePlace extends MethodStoragePlace
 								paramDescription = paramDescription.substring(idx + paramName.length());
 								paramDescription = paramDescription.trim();
 								DocumentedParameterData parData = new DocumentedParameterData(paramName, false, paramDescription);
-								paramType = cleanType(paramType);
-								parData.checkIfHasType(holder, typeMapper, paramType);
-								if (parData.getType() == null && paramType != null)
-								{
-									parData.setJSType(paramType);
-								}
+								parData.setJSType(paramType);
+								parData.checkIfHasType(holder, typeMapper, cleanType(paramType));
 								getDocData().addParameter(parData);
 							}
 							else
@@ -321,7 +317,7 @@ public class DesigntimeMethodStoragePlace extends MethodStoragePlace
 				}
 			}
 		}
-		return type;
+		return convertedType;
 	}
 
 }

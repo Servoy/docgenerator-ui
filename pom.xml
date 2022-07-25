@@ -13,7 +13,7 @@
 	<properties>
 		<tycho.version>2.6.0</tycho.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<servoy.version.range>[2021.09, 2022.03]</servoy.version.range>
+		<servoy.version.range>[2022.03, 2022.06]</servoy.version.range>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		

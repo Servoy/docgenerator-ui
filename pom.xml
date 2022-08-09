@@ -12,6 +12,7 @@
 
 	<properties>
 		<tycho.version>2.6.0</tycho.version>
+		<rhino.version>1.7.14.s1</rhino.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<servoy.version.range>[2022.03, 2022.09]</servoy.version.range>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -100,9 +101,9 @@
 						<filter>
 							<type>eclipse-plugin</type>
 							<id>org.eclipse.dltk.javascript.rhino</id>
-							<restrictTo>
-								<versionRange>${servoy.version.range}</versionRange> <!-- alternative: <version> for selecting exactly one versions -->
-							</restrictTo>
+                            <restrictTo>
+                                <version>${rhino.version}</version>
+                            </restrictTo>
 						</filter>
 						<filter>
 							<type>eclipse-plugin</type>

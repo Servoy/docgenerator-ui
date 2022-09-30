@@ -225,6 +225,7 @@
       <plugin id="servoy_smart_client"/>
       <plugin id="slf4j.api"/>
       <plugin id="slf4j.log4j12" fragment="true"/>
+      <plugin id="xstream"/>
    </plugins>
 
    <features>

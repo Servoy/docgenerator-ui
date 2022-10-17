@@ -28,7 +28,8 @@ import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
 
 /**
  * @author gerzse
- */
+ */
+
 public class DesigntimeDocumentationGenerator extends DefaultDocumentationGenerator
 {
 	public static final String TAG_EVENT = "event";
@@ -73,7 +74,7 @@ public class DesigntimeDocumentationGenerator extends DefaultDocumentationGenera
 	@Override
 	protected boolean includeSample()
 	{
-		return false;
+		return true;
 	}
 
 	@Override

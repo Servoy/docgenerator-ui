@@ -61,26 +61,6 @@
             </plugin>
             <plugin>
                 <groupId>org.eclipse.tycho</groupId>
-                <artifactId>tycho-p2-director-plugin</artifactId>
-                <version>${tycho.version}</version>
-                <executions>
-                    <execution>
-                        <id>materialize-products</id>
-                        <goals>
-                            <goal>materialize-products</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>archive-products</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>archive-products</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.eclipse.tycho</groupId>
                 <artifactId>tycho-compiler-plugin</artifactId>
                 <version>${tycho.version}</version>
                 <configuration>

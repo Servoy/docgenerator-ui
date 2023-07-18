@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Servoy Documentation Generator Plugin
 Bundle-SymbolicName: com.servoy.eclipse.docgenerator.client;singleton:=true
-Bundle-Version: 1.5.1
+Bundle-Version: 1.6.1
 Bundle-Activator: com.servoy.eclipse.docgenerator.client.Activator
 Bundle-Vendor: Servoy
 Require-Bundle: servoy_shared,

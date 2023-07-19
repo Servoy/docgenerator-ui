@@ -8,20 +8,20 @@
     <groupId>com.servoy</groupId>
     <artifactId>docgenerator-ui</artifactId>
     <packaging>pom</packaging>
-    <version>1.6.0</version>
+    <version>1.6.1</version>
     <properties>
         <tycho.version>2.7.5</tycho.version>
         <rhino.version>1.7.14.s5</rhino.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <servoy.version.range>[2022.12, 2023.03]</servoy.version.range>
+        <servoy.version.range>[2023.03, 2023.06]</servoy.version.range>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <!--  the following should be kept in sync with com.servoy.eclipse.target.target versions -->
-        <eclipse.url>https://download.eclipse.org/eclipse/updates/4.25</eclipse.url>
-        <servoy-shiplibs.url>https://developer.servoy.com/p2_repository/ship_plugins/2022.12/</servoy-shiplibs.url>
-        <dltk.url>https://developer.servoy.com/p2_repository/dltk_repository/2021.12/</dltk.url>
+        <eclipse.url>https://download.eclipse.org/eclipse/updates/4.28</eclipse.url>
+        <servoy-shiplibs.url>https://developer.servoy.com/p2_repository/ship_plugins/2023.06/</servoy-shiplibs.url>
+        <dltk.url>https://developer.servoy.com/p2_repository/dltk_repository/2023.06/</dltk.url>
         <orbit.url>https://download.eclipse.org/tools/orbit/downloads/drops/R20210223232630/repository</orbit.url>
-        <wst.url>https://download.eclipse.org/releases/2022-09/</wst.url>
+        <wst.url>https://download.eclipse.org/releases/2023-06/</wst.url>
         <!-- end -->
     </properties>
     <repositories>

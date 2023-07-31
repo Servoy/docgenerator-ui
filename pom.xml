@@ -10,44 +10,26 @@
     <packaging>pom</packaging>
     <version>1.6.1</version>
     <properties>
-        <tycho.version>2.7.5</tycho.version>
+        <tycho.version>4.0.1</tycho.version>
         <rhino.version>1.7.14.s5</rhino.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <servoy.version.range>[2023.03, 2023.06]</servoy.version.range>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <!--  the following should be kept in sync with com.servoy.eclipse.target.target versions -->
-        <eclipse.url>https://download.eclipse.org/eclipse/updates/4.28</eclipse.url>
-        <servoy-shiplibs.url>https://developer.servoy.com/p2_repository/ship_plugins/2023.06/</servoy-shiplibs.url>
-        <dltk.url>https://developer.servoy.com/p2_repository/dltk_repository/2023.06/</dltk.url>
-        <orbit.url>https://download.eclipse.org/tools/orbit/downloads/drops/R20210223232630/repository</orbit.url>
-        <wst.url>https://download.eclipse.org/releases/2023-06/</wst.url>
+        <eclipse.url>https://download.eclipse.org/releases/2023-06/</eclipse.url>
+        <servoy.url>https://download.servoy.com/developer/latest</servoy.url>
         <!-- end -->
     </properties>
     <repositories>
-        <repository>
-            <id>servoy</id>
+		 <repository>
+            <id>eclipse</id>
             <url>${eclipse.url}</url>
             <layout>p2</layout>
-        </repository>
+        </repository>    
         <repository>
-            <id>servoy_shiplibs</id>
-            <url>${servoy-shiplibs.url}</url>
-            <layout>p2</layout>
-        </repository>
-        <repository>
-            <id>dltk</id>
-            <url>${dltk.url}</url>
-            <layout>p2</layout>
-        </repository>
-        <repository>
-            <id>orbit</id>
-            <url>${orbit.url}</url>
-            <layout>p2</layout>
-        </repository>
-        <repository>
-            <id>wst</id>
-            <url>${wst.url}</url>
+            <id>servoy</id>
+            <url>${servoy.url}</url>
             <layout>p2</layout>
         </repository>
     </repositories>
@@ -75,7 +57,6 @@
                 <version>${tycho.version}</version>
                 <configuration>
                     <pomDependencies>consider</pomDependencies>
-                    <resolver>p2</resolver>
                     <environments>
                         <environment>
                             <os>win32</os>

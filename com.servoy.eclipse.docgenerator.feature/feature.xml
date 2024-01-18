@@ -2,7 +2,7 @@
 <feature
       id="com.servoy.eclipse.docgenerator.feature"
       label="Servoy Documentation Generator Feature"
-      version="1.6.1"
+      version="1.6.2"
       provider-name="Servoy">
 
    <description url="http://www.example.com/description">
@@ -72,23 +72,14 @@ The timing of the provision by Servoy of the Releases shall be at its sole discr
 
    <plugin
          id="com.servoy.eclipse.docgenerator"
-         download-size="0"
-         install-size="0"
-         version="1.6.1"
-         unpack="false"/>
+         version="1.6.2"/>
 
    <plugin
          id="com.servoy.eclipse.docgenerator.ui"
-         download-size="0"
-         install-size="0"
-         version="1.6.1"
-         unpack="false"/>
+         version="1.6.2"/>
 
    <plugin
          id="org.eclipse.dltk.javascript.rhino"
-         download-size="0"
-         install-size="0"
-         version="1.7.14.s6"
-         unpack="false"/>
+         version="1.7.14.s6"/>
 
 </feature>

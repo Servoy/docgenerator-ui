@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Documentation Generator" uid="docgenerator.client.product" id="com.servoy.eclipse.docgenerator.client.product" application="com.servoy.eclipse.docgenerator.client.default" useFeatures="true" includeLaunchers="true">
+<product name="Documentation Generator" uid="docgenerator.client.product" id="com.servoy.eclipse.docgenerator.client.product" application="com.servoy.eclipse.docgenerator.client.default" version="1.6" useFeatures="true" includeLaunchers="true" autoIncludeRequirements="true">
+
 
    <configIni use="">
       <win32>/com.servoy.eclipse.docgenerator.client/config.ini</win32>
@@ -15,14 +16,17 @@
 
    <windowImages/>
 
+
    <launcher name="docgenerator">
       <win useIco="false">
          <bmp/>
       </win>
    </launcher>
 
+
    <vm>
    </vm>
+
 
    <plugins>
       <plugin id="com.ibm.icu"/>
@@ -225,6 +229,7 @@
       <plugin id="servoy_smart_client"/>
       <plugin id="slf4j.api"/>
       <plugin id="slf4j.log4j12" fragment="true"/>
+      <plugin id="xstream"/>
    </plugins>
 
    <features>
@@ -251,13 +256,10 @@
       <feature id="org.eclipse.equinox.p2.extras.feature"/>
       <feature id="org.eclipse.gef"/>
       <feature id="org.eclipse.pde"/>
-      <feature id="org.eclipse.ecf.filetransfer.httpclient4.feature"/>
       <feature id="org.eclipse.ecf.core.ssl.feature"/>
       <feature id="org.eclipse.ecf.filetransfer.ssl.feature"/>
       <feature id="org.eclipse.ecf.filetransfer.feature"/>
-      <feature id="org.sweetlemonade.eclipse.json.feature"/>
       <feature id="org.eclipse.ecf.core.feature"/>
-      <feature id="org.eclipse.ecf.filetransfer.httpclient4.ssl.feature"/>
    </features>
 
    <configurations>
@@ -269,5 +271,12 @@
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
       <property name="osgi.bundles" value="org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@3:start,org.eclipse.core.runtime@start" />
    </configurations>
+
+   <preferencesInfo>
+      <targetfile overwrite="false"/>
+   </preferencesInfo>
+
+   <cssInfo>
+   </cssInfo>
 
 </product>

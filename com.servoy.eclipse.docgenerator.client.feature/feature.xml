@@ -2,7 +2,7 @@
 <feature
       id="com.servoy.eclipse.docgenerator.client.feature"
       label="Servoy Documentation Generator Client Feature"
-      version="1.6.1"
+      version="1.6.2"
       provider-name="Servoy">
 
    <description url="http://www.example.com/description">
@@ -71,9 +71,6 @@ The timing of the provision by Servoy of the Releases shall be at its sole discr
 
    <plugin
          id="com.servoy.eclipse.docgenerator.client"
-         download-size="0"
-         install-size="0"
-         version="1.6.1"
-         unpack="false"/>
+         version="1.6.2"/>
 
 </feature>

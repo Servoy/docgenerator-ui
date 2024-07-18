@@ -143,7 +143,12 @@ public class DesigntimeMethodStoragePlace extends MethodStoragePlace
 							String paramType = st.nextToken();
 							if (st.hasMoreTokens())
 							{
-								String paramName = st.nextToken();
+								String nextToken = null;
+								while (st.hasMoreTokens() && "|".equals((nextToken = st.nextToken()).trim()))
+								{
+									paramType += "|" + st.nextToken();
+								}
+								String paramName = nextToken != null ? nextToken : st.nextToken();
 								String paramDescription = paramText;
 								int idx = paramDescription.indexOf(paramType);
 								paramDescription = paramDescription.substring(idx + paramType.length());
@@ -151,8 +156,8 @@ public class DesigntimeMethodStoragePlace extends MethodStoragePlace
 								paramDescription = paramDescription.substring(idx + paramName.length());
 								paramDescription = paramDescription.trim();
 								DocumentedParameterData parData = new DocumentedParameterData(paramName, false, paramDescription);
-								paramType = cleanType(paramType);
-								parData.checkIfHasType(holder, typeMapper, paramType);
+								parData.setJSType(paramType);
+								parData.checkIfHasType(holder, typeMapper, cleanType(paramType));
 								getDocData().addParameter(parData);
 							}
 							else
@@ -233,8 +238,9 @@ public class DesigntimeMethodStoragePlace extends MethodStoragePlace
 
 					if (elem == null &&
 						(realTypeMM.getName().getQualifiedName().startsWith(
-							com.servoy.j2db.documentation.persistence.docs.BaseDocsGraphicalComponentWithTitle.class.getPackage().getName()) && ((MethodMetaModel)memberMM).getClassName().startsWith(
-							com.servoy.j2db.documentation.persistence.docs.BaseDocsGraphicalComponentWithTitle.class.getPackage().getName())))
+							com.servoy.j2db.documentation.persistence.docs.BaseDocsGraphicalComponentWithTitle.class.getPackage().getName()) &&
+							((MethodMetaModel)memberMM).getClassName().startsWith(
+								com.servoy.j2db.documentation.persistence.docs.BaseDocsGraphicalComponentWithTitle.class.getPackage().getName())))
 					{
 						// everything from docs package
 						return new Pair<Boolean, ClientSupport>(Boolean.TRUE, newClientSupport);
@@ -293,17 +299,17 @@ public class DesigntimeMethodStoragePlace extends MethodStoragePlace
 
 	private String cleanType(String type)
 	{
-		type = type.replaceAll("<[^>]*>", "");
-		if (type.indexOf('.') == -1)
+		String convertedType = type.replaceAll("<[^>]*>", "");
+		if (convertedType.indexOf('.') == -1)
 		{
 			for (String pkg : packagesToCheck)
 			{
-				String currName = pkg + type;
+				String currName = pkg + convertedType;
 				try
 				{
 					Class< ? > cc = Class.forName(currName);
-					type = cc.getCanonicalName();
-					break;
+					convertedType = cc.getCanonicalName();
+					return convertedType;
 				}
 				catch (Throwable th)
 				{
@@ -311,7 +317,7 @@ public class DesigntimeMethodStoragePlace extends MethodStoragePlace
 				}
 			}
 		}
-		return type;
+		return convertedType;
 	}
 
 }

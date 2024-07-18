@@ -27,7 +27,7 @@ import com.servoy.eclipse.docgenerator.metamodel.TypeName;
 
 /**
  * Holds information extracted from a @param tag from Javadocs.
- * 
+ *
  * @author gerzse
  */
 public class DocumentedParameterData
@@ -42,6 +42,7 @@ public class DocumentedParameterData
 	private String description;
 	private TypeName type;
 	private boolean typeWasChecked = false;
+	private String paramType;
 
 	public DocumentedParameterData(String name, boolean optional, String description)
 	{
@@ -125,5 +126,21 @@ public class DocumentedParameterData
 			root.appendChild(elDescr);
 		}
 		return root;
+	}
+
+	/**
+	 * @param paramType
+	 */
+	public void setJSType(String paramType)
+	{
+		this.paramType = paramType;
+	}
+
+	/**
+	 * @return the paramType
+	 */
+	public String getJSType()
+	{
+		return paramType;
 	}
 }

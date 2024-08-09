@@ -42,6 +42,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.runtime.IPath;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import com.servoy.eclipse.docgenerator.metamodel.ClientSupport;
 import com.servoy.eclipse.docgenerator.metamodel.DocumentationWarning;
@@ -551,6 +552,16 @@ public class DefaultDocumentationGenerator extends AbstractDocumentationGenerato
 		if (typeData.getExtendsComponent() != null && typeData.getExtendsComponent().trim().length() > 0)
 		{
 			objElement.setAttribute(ATTR_EXTENDSCOMPONENT, typeData.getExtendsComponent());
+		}
+
+		if (typeMM.getJavadoc() != null)
+		{
+			String description = ExtractorUtil.grabDescription(typeMM.getJavadoc(), typeMM.getWarnings(), typeMM.getName().getQualifiedName());
+			if (description != null)
+			{
+				Node descriptionElement = objElement.appendChild(doc.createElement("description"));
+				descriptionElement.appendChild(doc.createCDATASection(description.trim()));
+			}
 		}
 
 		ClientSupport scp = typeMM.getServoyClientSupport(holder);

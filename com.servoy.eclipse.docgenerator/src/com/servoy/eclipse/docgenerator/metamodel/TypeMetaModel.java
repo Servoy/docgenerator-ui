@@ -81,7 +81,7 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 	 *
 	 * Note that each member has a separate set of warnings, distinct from those of the class.
 	 * This is so because at the end only the relevant warnings will be written to a file (the
-	 * warnings that correspond to those members that will apear in the generated XML).
+	 * warnings that correspond to those members that will appear in the generated XML).
 	 */
 	private final Set<DocumentationWarning> warnings = new TreeSet<DocumentationWarning>();
 

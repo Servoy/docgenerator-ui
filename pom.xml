@@ -19,7 +19,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <!--  the following should be kept in sync with com.servoy.eclipse.target.target versions -->
         <eclipse.url>https://download.eclipse.org/releases/2024-03/</eclipse.url>
-        <servoy.url>file:/${project.build.directory}/repo</servoy.url>
+        <servoy.url>file:/${project.build.directory}/p2</servoy.url>
         <!-- end -->
     </properties>
     <repositories>

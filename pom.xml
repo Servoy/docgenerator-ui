@@ -17,8 +17,8 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <!--  the following should be kept in sync with com.servoy.eclipse.target.target versions -->
-        <eclipse.url>https://download.eclipse.org/releases/2023-09/</eclipse.url>
-        <servoy.url>https://download.servoy.com/developer/latest</servoy.url>
+        <eclipse.url>https://download.eclipse.org/releases/2024-03/</eclipse.url>
+        <servoy.url>file:/${project.build.directory}/repo</servoy.url>
         <!-- end -->
     </properties>
     <repositories>
@@ -35,6 +35,33 @@
     </repositories>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>unpack_plugins</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.servoy</groupId>
+                                    <artifactId>com.servoy.eclipse.product</artifactId>
+                                    <version>${project.version}</version>
+                                    <type>tar.gz</type>
+                                    <classifier>linux.gtk.x86_64</classifier> <!-- should be win32.win32.x86_64 on windows -->
+                                    <overWrite>false</overWrite>
+                                    <outputDirectory>${project.build.directory}/repo</outputDirectory>
+                                </artifactItem>
+                                </artifactItems>
+                                </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.eclipse.tycho</groupId>
                 <artifactId>tycho-maven-plugin</artifactId>

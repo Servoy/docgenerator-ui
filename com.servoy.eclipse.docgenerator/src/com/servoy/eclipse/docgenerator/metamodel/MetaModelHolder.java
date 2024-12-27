@@ -29,7 +29,7 @@ import com.servoy.eclipse.docgenerator.annotations.AnnotationManagerJdt;
 /**
  * Holds an index of all parsed Java classes, indexed by their qualified name.
  * Also handled the generation of the documentation XML file.
- * 
+ *
  * @author gerzse
  */
 public class MetaModelHolder
@@ -67,7 +67,7 @@ public class MetaModelHolder
 		{
 			return null;
 		}
-		return getType(name.getQualifiedName());
+		return getType(name.getBaseBinaryName());
 	}
 
 	public TypeMetaModel getType(String name)

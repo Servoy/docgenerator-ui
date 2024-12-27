@@ -17,7 +17,10 @@
 
 package com.servoy.eclipse.docgenerator.metamodel;
 
+import static com.servoy.eclipse.docgenerator.generators.DefaultDocumentationGenerator.STORE_KEY;
+
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.eclipse.jdt.core.dom.ITypeBinding;
@@ -25,12 +28,14 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Type;
 
+import com.servoy.eclipse.docgenerator.generators.MethodStoragePlace;
+
 /**
  * Holds data for a method from a Java class. Compared to the information stored about a generic member, it adds:
  * - return type
  * - names and type of parameters
  * - varargs flag
- * 
+ *
  * @author gerzse
  */
 public class MethodMetaModel extends MemberMetaModel
@@ -39,78 +44,94 @@ public class MethodMetaModel extends MemberMetaModel
 	private final String fullSignature;
 	private final boolean varargs;
 	private TypeName returnType;
-	private LinkedHashMap<String, TypeName> parameters = new LinkedHashMap<String, TypeName>();
+	private LinkedHashMap<String, TypeName> parameters = new LinkedHashMap<>();
 
 	private static final String ANNOTATION_JS_SIGNATURE = "JSSignature";
 
 	public MethodMetaModel(String className, MethodDeclaration astNode)
 	{
-		super(className, astNode.getName().getFullyQualifiedName(), astNode);
+		super(className, astNode.getName().getFullyQualifiedName(), getVisibility(astNode), isStatic(astNode));
 
 		Type ret = astNode.getReturnType2();
 		if (ret != null)
 		{
 			returnType = new TypeName(ret, false, className + " - " + getName(), "method return", getWarnings());
 		}
-		else
-		{
-			returnType = null;
-		}
 
-		StringBuilder indexSig = new StringBuilder();
-		StringBuilder fullSig = new StringBuilder();
-		if (returnType != null)
-		{
-			fullSig.append(returnType.getQualifiedName()).append(" ");
-		}
-		fullSig.append(className).append(".");
-		indexSig.append(getName());
-		fullSig.append(getName());
-		indexSig.append("(");
-		fullSig.append("(");
-		boolean first = true;
 		boolean hasVarargs = false;
 		for (Object parObj : astNode.parameters())
 		{
-			if (parObj instanceof SingleVariableDeclaration)
+			if (parObj instanceof SingleVariableDeclaration varDecl)
 			{
-				SingleVariableDeclaration varDecl = (SingleVariableDeclaration)parObj;
 				String parName = varDecl.getName().getFullyQualifiedName();
-				Type t = varDecl.getType();
-				TypeName parType = new TypeName(t, varDecl.isVarargs(), className + " - " + getName(), "method parameter", getWarnings());
+				Type type = varDecl.getType();
+				TypeName parType = new TypeName(type, varDecl.isVarargs(), className + " - " + getName(), "method parameter", getWarnings());
 				parameters.put(parName, parType);
-				if (!first)
-				{
-					indexSig.append(",");
-					fullSig.append(", ");
-				}
-				indexSig.append(parType.getQualifiedName());
-				fullSig.append(parType.getShortName()).append(" ").append(parName);
+
 				if (varDecl.isVarargs()) hasVarargs = true;
-				first = false;
 			}
 		}
-		indexSig.append(")");
-		fullSig.append(")");
 		varargs = hasVarargs;
-		indexSignature = indexSig.toString();
-		fullSignature = fullSig.toString();
-	}
-
-	private MethodMetaModel(MethodMetaModel original)
-	{
-		super(original);
-		this.indexSignature = original.indexSignature;
-		this.fullSignature = original.fullSignature;
-		this.parameters.putAll(original.parameters);
-		this.returnType = original.returnType;
-		this.varargs = original.varargs;
+		indexSignature = buildIndexSignature(name, parameters);
+		fullSignature = buildFullSignature(returnType, className, name, parameters);
 	}
 
 	@Override
 	public String getIndexSignature()
 	{
 		return indexSignature;
+	}
+
+	private MethodMetaModel(MethodMetaModel original, ITypeBinding typeArgument)
+	{
+		super(original.className, original.getName(), original.getVisibility(), original.isStatic());
+		this.setJavadoc(original.getJavadoc(null));
+		this.getWarnings().addAll(original.getWarnings());
+		this.setAnnotations(original.getAnnotations());
+		this.varargs = original.varargs;
+		this.parameters.putAll(original.parameters);
+		this.returnType = original.returnType.withType(typeArgument);
+		indexSignature = buildIndexSignature(name, parameters);
+		fullSignature = buildFullSignature(returnType, className, name, parameters);
+		MethodStoragePlace methodData = (MethodStoragePlace)original.getStore().get(STORE_KEY);
+		this.getStore().put(STORE_KEY, methodData.withMember(this));
+	}
+
+	private static String buildIndexSignature(String name, Map<String, TypeName> parameters)
+	{
+		StringBuilder indexSig = new StringBuilder().append(name).append("(");
+		boolean first = true;
+		for (var parameter : parameters.entrySet())
+		{
+			if (!first)
+			{
+				indexSig.append(",");
+			}
+			indexSig.append(parameter.getValue().getQualifiedName());
+			first = false;
+		}
+		return indexSig.append(")").toString();
+	}
+
+	private static String buildFullSignature(TypeName returnType, String className, String name, Map<String, TypeName> parameters)
+	{
+		StringBuilder fullSig = new StringBuilder();
+		if (returnType != null)
+		{
+			fullSig.append(returnType.getQualifiedName()).append(" ");
+		}
+		fullSig.append(className).append(".").append(name).append("(");
+		boolean first = true;
+		for (var parameter : parameters.entrySet())
+		{
+			if (!first)
+			{
+				fullSig.append(", ");
+			}
+			fullSig.append(parameter.getValue().getShortName()).append(" ").append(parameter.getKey());
+			first = false;
+		}
+		return fullSig.append(")").toString();
 	}
 
 	@Override
@@ -179,16 +200,6 @@ public class MethodMetaModel extends MemberMetaModel
 		return parameters;
 	}
 
-	public MethodMetaModel duplicate()
-	{
-		return new MethodMetaModel(this);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.servoy.eclipse.docgenerator.metamodel.MemberMetaModel#setAnnotations(com.servoy.eclipse.docgenerator.metamodel.AnnotationsList)
-	 */
 	@Override
 	public void setAnnotations(AnnotationsList ann)
 	{
@@ -222,6 +233,12 @@ public class MethodMetaModel extends MemberMetaModel
 	public ClientSupport getServoyClientSupport(TypeMetaModel tmm, MetaModelHolder holder)
 	{
 		return ClientSupport.fromAnnotation(holder.getAnnotationManager().getAnnotation(this, tmm, ANNOTATION_SERVOY_CLIENT_SUPPORT));
+	}
+
+	@Override
+	public IMemberMetaModel withType(ITypeBinding typeArgument)
+	{
+		return new MethodMetaModel(this, typeArgument);
 	}
 
 	@Override

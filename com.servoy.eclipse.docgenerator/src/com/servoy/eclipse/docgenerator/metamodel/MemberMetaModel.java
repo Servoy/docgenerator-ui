@@ -28,62 +28,48 @@ import org.eclipse.jdt.core.dom.Modifier;
  * - static or not
  * - deprecated flag
  * - Javadoc, if any
- * 
+ *
  * @author gerzse
  */
 public abstract class MemberMetaModel extends GenericMemberMetaModel
 {
-	public static enum Visibility
+	public enum Visibility
 	{
 		Private, Protected, Public
 	}
 
-
 	protected final String className;
-	private final String name;
+	protected final String name;
 	private final Visibility visibility;
 	private final boolean statc;
 
 	private AnnotationsList annotations = null;
 	private JavadocMetaModel javadoc = null;
 
-	private final boolean duplicate;
-
-	protected MemberMetaModel(String className, String name, BodyDeclaration astNode)
+	protected MemberMetaModel(String className, String name, Visibility visibility, boolean statc)
 	{
 		this.className = className;
 		this.name = name;
-		Visibility vis = Visibility.Protected;
+		this.visibility = visibility;
+		this.statc = statc;
+	}
+
+	public static Visibility getVisibility(BodyDeclaration astNode)
+	{
 		for (Object o : astNode.modifiers())
 		{
-			if (o instanceof Modifier)
+			if (o instanceof Modifier mod)
 			{
-				Modifier mod = (Modifier)o;
-				if (mod.isPrivate()) vis = Visibility.Private;
-				else if (mod.isPublic()) vis = Visibility.Public;
+				if (mod.isPrivate()) return Visibility.Private;
+				if (mod.isPublic()) return Visibility.Public;
 			}
 		}
-		visibility = vis;
-		statc = Modifier.isStatic(astNode.getModifiers());
-		duplicate = false;
+		return Visibility.Protected;
 	}
 
-	protected MemberMetaModel(MemberMetaModel original)
+	public static boolean isStatic(BodyDeclaration astNode)
 	{
-		this.className = original.className;
-		this.name = original.name;
-		this.visibility = original.visibility;
-		this.statc = original.statc;
-		if (original.annotations != null)
-		{
-			this.annotations = new AnnotationsList(original.annotations);
-		}
-		duplicate = true;
-	}
-
-	public boolean isDuplicate()
-	{
-		return duplicate;
+		return Modifier.isStatic(astNode.getModifiers());
 	}
 
 	public String getClassName()
@@ -119,6 +105,11 @@ public abstract class MemberMetaModel extends GenericMemberMetaModel
 		}
 
 		return getJavadoc(holder.getType(className), holder);
+	}
+
+	public TypeMetaModel getClassType(MetaModelHolder holder)
+	{
+		return holder.getType(className);
 	}
 
 	private JavadocMetaModel getJavadoc(TypeMetaModel tmm, MetaModelHolder holder)
@@ -170,9 +161,9 @@ public abstract class MemberMetaModel extends GenericMemberMetaModel
 	}
 
 	/**
-	 * Members of a class are indexed by a short form of their signature. This method 
+	 * Members of a class are indexed by a short form of their signature. This method
 	 * returns this short form of the signature.
-	 * 
+	 *
 	 * For fields the index signature is the name of the field. For methods it is the
 	 * name of the method and the qualified types of its arguments.
 	 */

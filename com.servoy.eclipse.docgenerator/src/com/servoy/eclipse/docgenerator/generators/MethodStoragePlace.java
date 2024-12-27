@@ -55,7 +55,6 @@ public class MethodStoragePlace extends MemberStoragePlace
 	private static final String JS_FUNCTION_PREFIX = "jsFunction_";
 	private static final String JS_CONSTRUCTOR_PREFIX = "jsConstructor_";
 
-	private final MethodMetaModel methodMM;
 	private final String officialName;
 
 	private final LinkedHashMap<String, TypeName> parameters = new LinkedHashMap<String, TypeName>();
@@ -63,8 +62,12 @@ public class MethodStoragePlace extends MemberStoragePlace
 	public MethodStoragePlace(MethodMetaModel methodMM, TypeMetaModel typeMM, MetaModelHolder holder)
 	{
 		super(methodMM, typeMM, holder);
-		this.methodMM = methodMM;
 		officialName = buildOfficialName();
+	}
+
+	private MethodMetaModel getMethodMM()
+	{
+		return (MethodMetaModel)memberMM;
 	}
 
 	@Override
@@ -76,31 +79,31 @@ public class MethodStoragePlace extends MemberStoragePlace
 	@Override
 	public String getOfficialSignature()
 	{
-		int paren = methodMM.getIndexSignature().indexOf("(");
-		return getOfficialName() + methodMM.getIndexSignature().substring(paren);
+		int paren = getMethodMM().getIndexSignature().indexOf("(");
+		return getOfficialName() + getMethodMM().getIndexSignature().substring(paren);
 	}
 
 	@Override
 	public String getKind()
 	{
-		if (methodMM.getName().startsWith(JS_CONSTRUCTOR_PREFIX))
+		if (getMethodMM().getName().startsWith(JS_CONSTRUCTOR_PREFIX))
 		{
 			return DefaultDocumentationGenerator.TAG_CONSTRUCTOR;
 		}
 
 		boolean isProperty = false;
-		if (holder.getAnnotationManager().hasAnnotation(methodMM, typeMM, ANNOTATION_JS_READONLY_PROPERTY) ||
-			holder.getAnnotationManager().hasAnnotation(methodMM, typeMM, ANNOTATION_JS_GETTER))
+		if (holder.getAnnotationManager().hasAnnotation(getMethodMM(), typeMM, ANNOTATION_JS_READONLY_PROPERTY) ||
+			holder.getAnnotationManager().hasAnnotation(getMethodMM(), typeMM, ANNOTATION_JS_GETTER))
 		{
 			isProperty = true;
 		}
-		else if (holder.getAnnotationManager().hasAnnotation(methodMM, typeMM, ANNOTATION_JS_FUNCTION))
+		else if (holder.getAnnotationManager().hasAnnotation(getMethodMM(), typeMM, ANNOTATION_JS_FUNCTION))
 		{
 			isProperty = false;
 		}
 		else
 		{
-			String shortName = methodMM.getName();
+			String shortName = getMethodMM().getName();
 			boolean wasPrefixed = false;
 			if (shortName.startsWith(JS_PREFIX))
 			{
@@ -116,10 +119,10 @@ public class MethodStoragePlace extends MemberStoragePlace
 			{
 				goodPref = "is";
 			}
-			if (goodPref != null && methodMM.getType() != null)
+			if (goodPref != null && getMethodMM().getType() != null)
 			{
 				String propName = shortName.substring(goodPref.length());
-				if (hasSetter(propName, methodMM.getType(), wasPrefixed) || //
+				if (hasSetter(propName, getMethodMM().getType(), wasPrefixed) || //
 					hasSetter(propName, new TypeName(Object.class), wasPrefixed) // special case when the setter has an Object parameter
 				)
 				{
@@ -139,7 +142,7 @@ public class MethodStoragePlace extends MemberStoragePlace
 	public Element toXML(TypeMetaModel tmm, Document doc, boolean includeSample, ClientSupport scp)
 	{
 		Element root = super.toXML(tmm, doc, includeSample, scp);
-		if (methodMM.isVarargs())
+		if (getMethodMM().isVarargs())
 		{
 			root.setAttribute(ATTR_VARARGS, Boolean.TRUE.toString());
 		}
@@ -243,9 +246,9 @@ public class MethodStoragePlace extends MemberStoragePlace
 	public void mapTypes(TypeMapper proc)
 	{
 		super.mapTypes(proc);
-		for (String parName : methodMM.getParameters().keySet())
+		for (String parName : getMethodMM().getParameters().keySet())
 		{
-			TypeName parData = methodMM.getParameters().get(parName);
+			TypeName parData = getMethodMM().getParameters().get(parName);
 			boolean[] flag = new boolean[1];
 			TypeName nw = proc.mapType(holder, parData, false, flag);
 			if (flag[0])
@@ -263,31 +266,31 @@ public class MethodStoragePlace extends MemberStoragePlace
 	public Pair<Boolean, ClientSupport> shouldShow(TypeMetaModel realTypeMM)
 	{
 		// if it's private, don't show
-		if (methodMM.getVisibility() == Visibility.Private)
+		if (getMethodMM().getVisibility() == Visibility.Private)
 		{
 			return new Pair<Boolean, ClientSupport>(Boolean.FALSE, null);
 		}
 		// if it's static, don't show
-		if (methodMM.isStatic())
+		if (getMethodMM().isStatic())
 		{
 			return new Pair<Boolean, ClientSupport>(Boolean.FALSE, null);
 		}
 
 		// if it's annotated properly, then it should show
-		if (holder.getAnnotationManager().hasAnnotation(methodMM, realTypeMM, ANNOTATION_JS_FUNCTION) ||
-			holder.getAnnotationManager().hasAnnotation(methodMM, realTypeMM, ANNOTATION_JS_READONLY_PROPERTY) ||
-			holder.getAnnotationManager().hasAnnotation(methodMM, realTypeMM, ANNOTATION_JS_GETTER))
+		if (holder.getAnnotationManager().hasAnnotation(getMethodMM(), realTypeMM, ANNOTATION_JS_FUNCTION) ||
+			holder.getAnnotationManager().hasAnnotation(getMethodMM(), realTypeMM, ANNOTATION_JS_READONLY_PROPERTY) ||
+			holder.getAnnotationManager().hasAnnotation(getMethodMM(), realTypeMM, ANNOTATION_JS_GETTER))
 		{
 			return new Pair<Boolean, ClientSupport>(Boolean.TRUE, null);
 		}
 
-		if (methodMM.getName().startsWith(JS_PREFIX))
+		if (getMethodMM().getName().startsWith(JS_PREFIX))
 		{
-			String shortName = methodMM.getName().substring(JS_PREFIX.length());
+			String shortName = getMethodMM().getName().substring(JS_PREFIX.length());
 			// setters from properties should not show
-			if (shortName.startsWith("set") && methodMM.getType() != null && methodMM.getType().getQualifiedName().equals(void.class.getSimpleName()))
+			if (shortName.startsWith("set") && getMethodMM().getType() != null && getMethodMM().getType().getQualifiedName().equals(void.class.getSimpleName()))
 			{
-				if (methodMM.getParameters().size() == 1)
+				if (getMethodMM().getParameters().size() == 1)
 				{
 					IMemberMetaModel getter = realTypeMM.getMember(JS_PREFIX + "get" + shortName.substring("set".length()) + "()", holder);
 					if (getter == null)
@@ -296,7 +299,7 @@ public class MethodStoragePlace extends MemberStoragePlace
 					}
 					if (getter instanceof MethodMetaModel)
 					{
-						TypeName par = methodMM.getParameters().values().iterator().next();
+						TypeName par = getMethodMM().getParameters().values().iterator().next();
 						MethodMetaModel getterMeth = (MethodMetaModel)getter;
 						if (getterMeth.getType() != null && getterMeth.getType().getQualifiedName().equals(par.getQualifiedName()))
 						{
@@ -313,8 +316,8 @@ public class MethodStoragePlace extends MemberStoragePlace
 			return new Pair<Boolean, ClientSupport>(Boolean.TRUE, null);
 		}
 
-		return new Pair<Boolean, ClientSupport>(Boolean.valueOf(methodMM.getName().startsWith(JS_FUNCTION_PREFIX) ||
-			methodMM.getName().startsWith(JS_CONSTRUCTOR_PREFIX)), null);
+		return new Pair<Boolean, ClientSupport>(Boolean.valueOf(getMethodMM().getName().startsWith(JS_FUNCTION_PREFIX) ||
+			getMethodMM().getName().startsWith(JS_CONSTRUCTOR_PREFIX)), null);
 	}
 
 	private boolean hideParameters()
@@ -330,11 +333,11 @@ public class MethodStoragePlace extends MemberStoragePlace
 
 	private String buildOfficialName()
 	{
-		String official = methodMM.getName();
+		String official = getMethodMM().getName();
 		if (official.startsWith(JS_PREFIX) || official.startsWith(JS_FUNCTION_PREFIX))
 		{
 			// start from what was build in the constructor
-			official = buildOfficialNameBase(methodMM.getName());
+			official = buildOfficialNameBase(getMethodMM().getName());
 		}
 		else if (official.startsWith(JS_CONSTRUCTOR_PREFIX))
 		{
@@ -366,7 +369,7 @@ public class MethodStoragePlace extends MemberStoragePlace
 				{
 					official = official.substring(ARRAY_INDEX_PROPERTY_PREFIX.length());
 					// commented out because the return type should not be the index type, but the actual type of the array elements (for code completion)
-//					if (methodMM.getType() != null && methodMM.getType().getShortName().equals(String.class.getSimpleName()))
+//					if (getMethodMM().getType() != null && getMethodMM().getType().getShortName().equals(String.class.getSimpleName()))
 //					{
 //						official = "['" + official + "']";
 //					}
@@ -444,5 +447,10 @@ public class MethodStoragePlace extends MemberStoragePlace
 			}
 		}
 		return false;
+	}
+
+	public MethodStoragePlace withMember(MethodMetaModel methodMetaModel)
+	{
+		return new MethodStoragePlace(methodMetaModel, this.typeMM, this.holder);
 	}
 }

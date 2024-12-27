@@ -29,20 +29,22 @@ import com.servoy.eclipse.docgenerator.metamodel.DocumentationWarning.WarningTyp
  * - qualified name
  * - short name
  * - binary name
- * 
+ *
  * This is needed, for example, when outputting the data to XML, where
  * both the qualified names and the binary names of referenced classed
  * are needed.
- *  
+ *
  * @author gerzse
  */
 public class TypeName
 {
+	private static final ITypeBinding[] NO_TYPE_ARGUMENTS = new ITypeBinding[0];
+
 	/**
 	 * Holds the qualified name of the base form of this type (no array or generics information).
-	 * This is needed for identifying the same type even if appears as arrays with 
+	 * This is needed for identifying the same type even if appears as arrays with
 	 * different dimensions for example.
-	 * 
+	 *
 	 * @see adaptQualifiedName(String)
 	 * @see buildQualifiedName()
 	 */
@@ -50,17 +52,17 @@ public class TypeName
 
 	/**
 	 * The fully qualified name of the class, including array information, if any.
-	 * 
+	 *
 	 * @see adaptQualifiedName(String)
 	 * @see buildQualifiedName()
 	 */
 	private final String qualifiedName;
 
 	/**
-	 * Holds the short name of the class, without package information, but with array 
-	 * information, if any. This is needed because we map for example from the java.lang.String 
+	 * Holds the short name of the class, without package information, but with array
+	 * information, if any. This is needed because we map for example from the java.lang.String
 	 * class to a fake String class that is used only for documentation purposes.
-	 * 
+	 *
 	 * @see buildShortName()
 	 */
 	private final String shortName;
@@ -68,15 +70,15 @@ public class TypeName
 	/**
 	 * Holds the binary name of the base form of this type (no array information, no generics).
 	 * This is needed when building the binary name for array types.
-	 * 
+	 *
 	 * @see buildBinaryName()
 	 */
 	private final String baseBinaryName;
 
 	/**
-	 * The binary name of the class. This can be used to load the class with Class.forName(...) 
+	 * The binary name of the class. This can be used to load the class with Class.forName(...)
 	 * for example.
-	 * 
+	 *
 	 * @see buildBinaryName()
 	 */
 	private final String binaryName;
@@ -89,7 +91,7 @@ public class TypeName
 	/**
 	 * Flag that tells us if we are dealing with a primitive type. This is needed when building the
 	 * binary representation of the class name (it is built differently for primitive types).
-	 * 
+	 *
 	 * @see buildBinaryName()
 	 */
 	private final boolean primitive;
@@ -102,6 +104,8 @@ public class TypeName
 	private final int nestingLevel;
 
 	private final boolean varargs;
+
+	private final ITypeBinding[] typeArguments;
 
 	public TypeName(ITypeBinding binding, boolean varargs)
 	{
@@ -123,7 +127,11 @@ public class TypeName
 		}
 		if (inner.isParameterizedType())
 		{
-			inner = inner.getErasure();
+			typeArguments = inner.getTypeArguments();
+		}
+		else
+		{
+			typeArguments = NO_TYPE_ARGUMENTS;
 		}
 		ITypeBinding parent = inner;
 		int nesting = 0;
@@ -136,22 +144,22 @@ public class TypeName
 		primitive = inner.isPrimitive();
 		baseQualifiedName = adaptQualifiedName(inner.getQualifiedName());
 		baseBinaryName = inner.getBinaryName();
-		shortName = buildShortName();
-		qualifiedName = buildQualifiedName();
-		binaryName = buildBinaryName();
+		shortName = buildShortName(baseBinaryName, dimensions);
+		qualifiedName = buildQualifiedName(baseQualifiedName, dimensions);
+		binaryName = buildBinaryName(baseBinaryName, baseQualifiedName, dimensions, primitive);
 	}
 
 	/**
 	 * Create an instance based on a JDT type.
-	 * 
-	 * The location, context and warnings parameters are used for raising warnings when the type bindings 
+	 *
+	 * The location, context and warnings parameters are used for raising warnings when the type bindings
 	 * cannot be resolved.
 	 */
-	public TypeName(Type t, boolean varargs, String location, String context, Set<DocumentationWarning> warnings)
+	public TypeName(Type type, boolean varargs, String location, String context, Set<DocumentationWarning> warnings)
 	{
 		this.varargs = varargs;
 		// Try to resolve the binding.
-		ITypeBinding binding = t.resolveBinding();
+		ITypeBinding binding = type.resolveBinding();
 		// If binding was resolved, then use it to extract the names.
 		if (binding != null)
 		{
@@ -170,10 +178,16 @@ public class TypeName
 				}
 				dimensions = dims;
 			}
+
 			if (inner.isParameterizedType())
 			{
-				inner = inner.getErasure();
+				typeArguments = inner.getTypeArguments();
 			}
+			else
+			{
+				typeArguments = NO_TYPE_ARGUMENTS;
+			}
+
 			ITypeBinding parent = inner;
 			int nesting = 0;
 			while (parent.isNested())
@@ -187,11 +201,12 @@ public class TypeName
 			baseBinaryName = inner.getBinaryName();
 		}
 		// If the binding was not resolved, then use the type name anyway.
-		// This may not be accurate, but is better than nothing. 
+		// This may not be accurate, but is better than nothing.
 		// Also raise a warning in this case.
 		else
 		{
-			String rawName = t.toString();
+			typeArguments = NO_TYPE_ARGUMENTS;
+			String rawName = type.toString();
 			int idx = rawName.indexOf("[");
 			if (idx >= 0)
 			{
@@ -206,24 +221,25 @@ public class TypeName
 			}
 			nestingLevel = 0;
 			baseBinaryName = baseQualifiedName;
-			primitive = t.isPrimitiveType();
+			primitive = type.isPrimitiveType();
 			DocumentationWarning dw = new DocumentationWarning(WarningType.UnresolvedBinding, location, "Cannot resolve binding for " + context + " type: '" +
 				baseQualifiedName + "'.");
 			warnings.add(dw);
 		}
-		shortName = buildShortName();
-		qualifiedName = buildQualifiedName();
-		binaryName = buildBinaryName();
+		shortName = buildShortName(baseBinaryName, dimensions);
+		qualifiedName = buildQualifiedName(baseQualifiedName, dimensions);
+		binaryName = buildBinaryName(baseBinaryName, baseQualifiedName, dimensions, primitive);
 	}
 
 	/**
-	 * Create an instance based on a String qualified name and a possible container name 
+	 * Create an instance based on a String qualified name and a possible container name
 	 * (package, maybe container class).
 	 */
 	public TypeName(String qName, String containerName)
 	{
 		dimensions = 0;
 		varargs = false;
+		typeArguments = NO_TYPE_ARGUMENTS;
 		int nesting = 0;
 		StringBuffer sb = new StringBuffer();
 		if (containerName != null)
@@ -242,9 +258,9 @@ public class TypeName
 		baseQualifiedName = sb.toString();
 		baseBinaryName = baseQualifiedName;
 		primitive = false;
-		shortName = buildShortName();
-		qualifiedName = buildQualifiedName();
-		binaryName = buildBinaryName();
+		shortName = buildShortName(baseBinaryName, dimensions);
+		qualifiedName = buildQualifiedName(baseQualifiedName, dimensions);
+		binaryName = buildBinaryName(baseBinaryName, baseQualifiedName, dimensions, primitive);
 	}
 
 	/**
@@ -268,17 +284,18 @@ public class TypeName
 			parent = parent.getDeclaringClass();
 		}
 		nestingLevel = nesting;
+		typeArguments = NO_TYPE_ARGUMENTS;
 		baseQualifiedName = adaptQualifiedName(cls.getCanonicalName());
 		baseBinaryName = cls.getName();
 		primitive = cls.isPrimitive();
-		shortName = buildShortName();
-		qualifiedName = buildQualifiedName();
-		binaryName = buildBinaryName();
 		varargs = false;
+		shortName = buildShortName(baseBinaryName, dimensions);
+		qualifiedName = buildQualifiedName(baseQualifiedName, dimensions);
+		binaryName = buildBinaryName(baseBinaryName, baseQualifiedName, dimensions, primitive);
 	}
 
 	/**
-	 * Construct a new instance based on an existing instance, by changing only the binary name and 
+	 * Construct a new instance based on an existing instance, by changing only the binary name and
 	 * the array information.
 	 */
 	private TypeName(TypeName source, String baseBinaryName, String binaryName, int newDimensions)
@@ -288,10 +305,27 @@ public class TypeName
 		this.baseBinaryName = baseBinaryName;
 		this.binaryName = binaryName;
 		this.varargs = source.varargs;
+		typeArguments = NO_TYPE_ARGUMENTS;
 		dimensions = newDimensions;
 		primitive = source.primitive;
-		shortName = buildShortName();
-		qualifiedName = buildQualifiedName();
+		shortName = buildShortName(baseBinaryName, dimensions);
+		qualifiedName = buildQualifiedName(baseQualifiedName, dimensions);
+	}
+
+	private TypeName(TypeName original, ITypeBinding typeArgument)
+	{
+		this.nestingLevel = original.nestingLevel;
+		this.varargs = original.varargs;
+		this.primitive = original.primitive;
+		this.dimensions = original.dimensions;
+
+		typeArguments = NO_TYPE_ARGUMENTS;
+
+		baseQualifiedName = adaptQualifiedName(typeArgument.getQualifiedName());
+		baseBinaryName = typeArgument.getBinaryName();
+		shortName = buildShortName(baseBinaryName, dimensions);
+		qualifiedName = buildQualifiedName(baseQualifiedName, dimensions);
+		binaryName = buildBinaryName(baseBinaryName, baseQualifiedName, dimensions, primitive);
 	}
 
 	/**
@@ -307,6 +341,11 @@ public class TypeName
 		return shortName;
 	}
 
+	public String getBaseBinaryName()
+	{
+		return baseBinaryName;
+	}
+
 	public String getBaseName()
 	{
 		return baseQualifiedName;
@@ -320,6 +359,11 @@ public class TypeName
 	public String getBinaryName()
 	{
 		return binaryName;
+	}
+
+	public ITypeBinding[] getTypeArguments()
+	{
+		return typeArguments;
 	}
 
 	/**
@@ -341,11 +385,16 @@ public class TypeName
 	 */
 	public TypeName changeBaseTo(TypeName src)
 	{
-		return new TypeName(src, this.baseBinaryName, this.binaryName, dimensions);
+		return new TypeName(src, baseBinaryName, binaryName, dimensions);
+	}
+
+	public TypeName withType(ITypeBinding typeArgument)
+	{
+		return new TypeName(this, typeArgument);
 	}
 
 	/**
-	 * Build the base qualified name, starting from the raw qualified name and 
+	 * Build the base qualified name, starting from the raw qualified name and
 	 * given a nesting level. Basically replaces the last '.' separators with '$'.
 	 */
 	private String adaptQualifiedName(String rawQualifiedName)
@@ -370,7 +419,7 @@ public class TypeName
 	 * Build the qualified name of the class, starting from the base qualified name.
 	 * Basically just add the needed "[]" for arrays.
 	 */
-	private String buildQualifiedName()
+	private static String buildQualifiedName(String baseQualifiedName, int dimensions)
 	{
 		StringBuffer sb = new StringBuffer();
 		sb.append(baseQualifiedName);
@@ -381,21 +430,21 @@ public class TypeName
 
 	/**
 	 * Builds the short name of this class. Basically takes the last segment from the
-	 * base qualified name and adds the required "[]"s for arrays.
+	 * base binary name and adds the required "[]"s for arrays.
 	 */
-	private String buildShortName()
+	private static String buildShortName(String baseBinaryName, int dimensions)
 	{
-		StringBuffer sb = new StringBuffer();
-		int idxDot = baseQualifiedName.lastIndexOf(".");
-		int idxDollar = baseQualifiedName.lastIndexOf("$");
+		StringBuilder sb = new StringBuilder();
+		int idxDot = baseBinaryName.lastIndexOf(".");
+		int idxDollar = baseBinaryName.lastIndexOf("$");
 		int idx = Math.max(idxDot, idxDollar);
 		if (idx >= 0)
 		{
-			sb.append(baseQualifiedName.substring(idx + 1));
+			sb.append(baseBinaryName.substring(idx + 1));
 		}
 		else
 		{
-			sb.append(baseQualifiedName);
+			sb.append(baseBinaryName);
 		}
 		for (int i = 0; i < dimensions; i++)
 			sb.append("[]");
@@ -406,7 +455,7 @@ public class TypeName
 	 * Builds the binary name of the class. For array types the binary name has a specific form.
 	 * For non-array types the binary name is the same as the qualified name.
 	 */
-	private String buildBinaryName()
+	private static String buildBinaryName(String baseBinaryName, String baseQualifiedName, int dimensions, boolean primitive)
 	{
 		StringBuffer sb = new StringBuffer();
 		if (dimensions > 0)

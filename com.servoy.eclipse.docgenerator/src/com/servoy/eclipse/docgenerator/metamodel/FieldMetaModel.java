@@ -18,6 +18,7 @@
 package com.servoy.eclipse.docgenerator.metamodel;
 
 import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
@@ -27,7 +28,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
  * - type
  * - static flag
  * - public flag
- * 
+ *
  * @author gerzse
  */
 public class FieldMetaModel extends MemberMetaModel
@@ -38,7 +39,7 @@ public class FieldMetaModel extends MemberMetaModel
 
 	public FieldMetaModel(String className, FieldDeclaration fld, VariableDeclarationFragment astNode)
 	{
-		super(className, astNode.getName().getFullyQualifiedName(), fld);
+		super(className, astNode.getName().getFullyQualifiedName(), getVisibility(fld), isStatic(fld));
 
 		Type t = fld.getType();
 		type = new TypeName(t, false, getClassName() + " - " + getName(), "field type", getWarnings());
@@ -48,14 +49,6 @@ public class FieldMetaModel extends MemberMetaModel
 		StringBuffer sb = new StringBuffer();
 		sb.append(getType().getQualifiedName()).append(" ").append(className).append(".").append(getName());
 		fullSignature = sb.toString();
-	}
-
-	private FieldMetaModel(FieldMetaModel original)
-	{
-		super(original);
-		this.type = original.type;
-		this.indexSignature = original.indexSignature;
-		this.fullSignature = original.indexSignature;
 	}
 
 	@Override
@@ -88,8 +81,9 @@ public class FieldMetaModel extends MemberMetaModel
 		return ClientSupport.fromAnnotation(holder.getAnnotationManager().getAnnotation(this, ANNOTATION_SERVOY_CLIENT_SUPPORT));
 	}
 
-	public FieldMetaModel duplicate()
+	@Override
+	public IMemberMetaModel withType(ITypeBinding iTypeBinding)
 	{
-		return new FieldMetaModel(this);
+		throw new RuntimeException("NOT IMPLEMENTED (yet)");
 	}
 }

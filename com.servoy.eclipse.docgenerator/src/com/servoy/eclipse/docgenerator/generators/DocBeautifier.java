@@ -23,13 +23,9 @@ import java.util.List;
 import java.util.Set;
 
 import com.servoy.eclipse.docgenerator.metamodel.FieldMetaModel;
-import com.servoy.eclipse.docgenerator.metamodel.GenericMemberMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.IMemberMetaModel;
-import com.servoy.eclipse.docgenerator.metamodel.JavadocMetaModel;
-import com.servoy.eclipse.docgenerator.metamodel.MemberMetaModel.Visibility;
 import com.servoy.eclipse.docgenerator.metamodel.MetaModelHolder;
 import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
-import com.servoy.eclipse.docgenerator.metamodel.TypeName;
 
 /**
  * Helper class that does some post-processing on the generated documentation XMLs.
@@ -40,91 +36,6 @@ import com.servoy.eclipse.docgenerator.metamodel.TypeName;
 
 public class DocBeautifier
 {
-	private static class FakeConstantMetaModel extends GenericMemberMetaModel
-	{
-		private final String name;
-		private final String fullSignature;
-		private final TypeName type;
-
-		public FakeConstantMetaModel(String className, String name, Class< ? > retType)
-		{
-			this.name = name;
-
-			StringBuffer sb = new StringBuffer();
-			sb.append(retType.getCanonicalName()).append(" ").append(className).append(".").append(getName());
-			fullSignature = sb.toString();
-
-			type = new TypeName(retType);
-		}
-
-		private FakeConstantMetaModel(FakeConstantMetaModel original)
-		{
-			this.name = original.name;
-			this.fullSignature = original.fullSignature;
-			this.type = original.type;
-		}
-
-		public String getName()
-		{
-			return name;
-		}
-
-		public TypeName getType()
-		{
-			return type;
-		}
-
-		public JavadocMetaModel getJavadoc()
-		{
-			return null;
-		}
-
-		public JavadocMetaModel getJavadoc(MetaModelHolder holder)
-		{
-			return null;
-		}
-
-		public boolean isDeprecated()
-		{
-			return false;
-		}
-
-		public String getIndexSignature()
-		{
-			return name;
-		}
-
-		public String getFullSignature()
-		{
-			return fullSignature;
-		}
-
-		public boolean matchesSignature(String signature)
-		{
-			return name.equals(signature);
-		}
-
-		public Visibility getVisibility()
-		{
-			return Visibility.Public;
-		}
-
-		public boolean isStatic()
-		{
-			return true;
-		}
-
-		public IMemberMetaModel duplicate()
-		{
-			return new FakeConstantMetaModel(this);
-		}
-
-		public boolean isDuplicate()
-		{
-			return false;
-		}
-	}
-
 	private final MetaModelHolder holder;
 
 	public DocBeautifier(MetaModelHolder holder)

@@ -30,6 +30,7 @@ import java.util.TreeSet;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.eclipse.jdt.core.dom.TypeParameter;
 
 
 /**
@@ -49,6 +50,7 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 {
 	private final boolean isInterface;
+	private final List<TypeParameter> typeParameters;
 
 	Map<String, IMemberMetaModel> members = new TreeMap<String, IMemberMetaModel>();
 
@@ -88,6 +90,7 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 	public TypeMetaModel(String packageName, List<String> ancestorClassNames, TypeDeclaration astNode, boolean isInterface)
 	{
 		this.isInterface = isInterface;
+		this.typeParameters = astNode.typeParameters();
 		String parentName = packageName + ".";
 		for (String s : ancestorClassNames)
 		{
@@ -247,6 +250,11 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 		return interfaceNames;
 	}
 
+	public List<TypeParameter> getTypeParameters()
+	{
+		return typeParameters;
+	}
+
 	public Set<DocumentationWarning> getWarnings()
 	{
 		return warnings;
@@ -283,30 +291,51 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 		{
 			return members.values();
 		}
-		return getAllMembers(this, holder, new TreeMap<String, IMemberMetaModel>()).values();
+		return addMembersRecursively(this, null, holder, new TreeMap<String, IMemberMetaModel>()).values();
 	}
 
-	private static Map<String, IMemberMetaModel> getAllMembers(TypeMetaModel tmm, MetaModelHolder holder, Map<String, IMemberMetaModel> allMembers)
+	private static Map<String, IMemberMetaModel> addMembersRecursively(TypeMetaModel tmm, ITypeBinding[] typeArguments, MetaModelHolder holder,
+		Map<String, IMemberMetaModel> members)
 	{
 		if (tmm != null)
 		{
 			for (TypeName intf : tmm.getInterfaces())
 			{
-				getAllMembers(holder.getType(intf), holder, allMembers);
+				addMembersRecursively(holder.getType(intf), intf.getTypeArguments(), holder, members);
 			}
 
-			TypeMetaModel superType = holder.getType(tmm.getSupertype());
-			if (superType != null)
-			{
-				getAllMembers(superType, holder, allMembers);
-			}
+			addMembersRecursively(holder.getType(tmm.getSupertype()), null, holder, members);
 
 			for (Entry<String, IMemberMetaModel> entry : tmm.members.entrySet())
 			{
-				allMembers.put(entry.getKey(), entry.getValue());
+				members.put(entry.getKey(), applyTypeArguments(entry.getValue(), typeArguments, holder));
 			}
 		}
-		return allMembers;
+		return members;
+	}
+
+	private static IMemberMetaModel applyTypeArguments(IMemberMetaModel member, ITypeBinding[] typeArguments,
+		MetaModelHolder holder)
+	{
+		if (typeArguments != null && typeArguments.length > 0 && member instanceof MethodMetaModel methodMetaModel)
+		{
+			List<TypeParameter> typeParameters = methodMetaModel.getClassType(holder).getTypeParameters();
+			if (typeParameters.size() == typeArguments.length)
+			{
+				for (int i = 0; i < typeArguments.length; i++)
+				{
+					String typeParameterName = typeParameters.get(i).getName().getIdentifier();
+					String typeGenericName = methodMetaModel.getType().getQualifiedName();
+					if (typeParameterName.equals(typeGenericName))
+					{
+						return member.withType(typeArguments[i]);
+					}
+				}
+
+			} // weird they should match
+		}
+
+		return member;
 	}
 
 	public IMemberMetaModel getMember(String memberName, MetaModelHolder holder)

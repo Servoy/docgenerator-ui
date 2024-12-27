@@ -19,6 +19,8 @@ package com.servoy.eclipse.docgenerator.metamodel;
 
 import java.util.Set;
 
+import org.eclipse.jdt.core.dom.ITypeBinding;
+
 import com.servoy.eclipse.docgenerator.metamodel.MemberMetaModel.Visibility;
 
 /**
@@ -46,7 +48,5 @@ public interface IMemberMetaModel extends IPublicStore
 
 	boolean isStatic();
 
-	IMemberMetaModel duplicate();
-
-	boolean isDuplicate();
+	IMemberMetaModel withType(ITypeBinding iTypeBinding);
 }

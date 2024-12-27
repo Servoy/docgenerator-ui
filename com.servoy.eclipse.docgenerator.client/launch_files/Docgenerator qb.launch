@@ -11,7 +11,7 @@
     <booleanAttribute key="clearConfig" value="false"/>
     <booleanAttribute key="clearws" value="false"/>
     <booleanAttribute key="clearwslog" value="false"/>
-    <stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/Docgenerator default"/>
+    <stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/Docgenerator qb"/>
     <booleanAttribute key="default" value="false"/>
     <setAttribute key="deselected_workspace_bundles"/>
     <booleanAttribute key="includeOptional" value="true"/>
@@ -21,7 +21,7 @@
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_SHOW_CODEDETAILS_IN_EXCEPTION_MESSAGES" value="true"/>
     <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
     <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-    <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-data ${workspace_loc:} -os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog --workspace ${workspace_loc} --project &quot;servoy_shared&quot; &quot;com.servoy.j2db&quot; --project &quot;servoy_smart_client&quot; &quot;com.servoy.j2db&quot; --project &quot;servoy_headless_client&quot; &quot;com.servoy.j2db.server.headlessclient&quot; --project &quot;servoy_base&quot; &quot;com.servoy.base&quot; --project &quot;com.servoy.eclipse.core&quot; &quot;com.servoy.eclipse.core&quot; --project servoy_ngclient &quot;com.servoy.j2db.server.ngclient.scripting&quot; --output-file &quot;/com.servoy.eclipse.core/src/com/servoy/eclipse/core/doc/servoydoc.xml&quot;&#13;&#10;--categories &quot;runtime&quot; --map-undocumented-types"/>
+    <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-data ${workspace_loc:} -os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl} -consoleLog --workspace ${workspace_loc} --project &quot;servoy_shared&quot; &quot;com.servoy.j2db.querybuilder&quot; --output-file &quot;/com.servoy.eclipse.core/src/com/servoy/eclipse/core/doc/servoydoc_qb.xml&quot;&#13;&#10;--categories &quot;runtime&quot; --map-undocumented-types"/>
     <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
     <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Xms128m -Xmx4G"/>
     <stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc}"/>

@@ -105,27 +105,25 @@ public class SampleCodeAnalyzer
 			{
 				for (IMemberMetaModel memberMM : typeMM.getMembers(holder))
 				{
-					if (!memberMM.isDuplicate())
+					JavadocMetaModel docMM = memberMM.getJavadoc(holder);
+					if (docMM != null)
 					{
-						JavadocMetaModel docMM = memberMM.getJavadoc(holder);
-						if (docMM != null)
+						String sampleCode = ExtractorUtil.grabExactlyOne(DocumentationDataDistilled.TAG_SAMPLE, true, docMM, warnings,
+							memberMM.getFullSignature());
+						if (sampleCode != null)
 						{
-							String sampleCode = ExtractorUtil.grabExactlyOne(DocumentationDataDistilled.TAG_SAMPLE, true, docMM, warnings,
-								memberMM.getFullSignature());
-							if (sampleCode != null)
-							{
-								sampleCode = sampleCode.replaceAll("%%elementName%%", "elementName");
-								sampleCode = sampleCode.replaceAll("%%prefix%%", "prefix.");
-								sampleCode = sampleCode.replaceAll("&#47;", "/");
-								out.println("<div style=\"background-color: #" + (odd ? "DDDDDD" : "CCCCCC") + "\">");
-								out.println("<h2>" + memberMM.getFullSignature() + "</h2>");
-								out.println("<pre style=\"margin-left: 30px; margin-right: 30px; border: 1px solid black; background-color: white; color: #111111;\">" +
+							sampleCode = sampleCode.replaceAll("%%elementName%%", "elementName");
+							sampleCode = sampleCode.replaceAll("%%prefix%%", "prefix.");
+							sampleCode = sampleCode.replaceAll("&#47;", "/");
+							out.println("<div style=\"background-color: #" + (odd ? "DDDDDD" : "CCCCCC") + "\">");
+							out.println("<h2>" + memberMM.getFullSignature() + "</h2>");
+							out.println(
+								"<pre style=\"margin-left: 30px; margin-right: 30px; border: 1px solid black; background-color: white; color: #111111;\">" +
 									sampleCode.replaceAll("<", "&lt;") + "\n</pre>");
-								out.println("<br/>");
-								validateJS(sampleCode, out);
-								out.println("</div>");
-								odd = !odd;
-							}
+							out.println("<br/>");
+							validateJS(sampleCode, out);
+							out.println("</div>");
+							odd = !odd;
 						}
 					}
 				}

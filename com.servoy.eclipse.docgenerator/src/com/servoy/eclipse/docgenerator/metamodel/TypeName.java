@@ -128,6 +128,7 @@ public class TypeName
 		if (inner.isParameterizedType())
 		{
 			typeArguments = inner.getTypeArguments();
+			inner = inner.getErasure();
 		}
 		else
 		{
@@ -182,6 +183,7 @@ public class TypeName
 			if (inner.isParameterizedType())
 			{
 				typeArguments = inner.getTypeArguments();
+				inner = inner.getErasure();
 			}
 			else
 			{

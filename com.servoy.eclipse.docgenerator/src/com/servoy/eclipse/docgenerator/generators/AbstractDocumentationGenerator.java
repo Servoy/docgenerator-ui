@@ -58,8 +58,8 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
-//import org.eclipse.m2e.core.MavenPlugin;
-//import org.eclipse.m2e.jdt.MavenJdtPlugin;
+import org.eclipse.m2e.core.MavenPlugin;
+import org.eclipse.m2e.jdt.MavenJdtPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 
@@ -129,9 +129,9 @@ public abstract class AbstractDocumentationGenerator implements IDocumentationGe
 			LogUtil.logger().log(Level.SEVERE, e.getMessage(), e);
 		}
 
-		//System.err.println("Maven local repo path: " + MavenPlugin.getMaven().getLocalRepositoryPath());
+		System.err.println("Maven local repo path: " + MavenPlugin.getMaven().getLocalRepositoryPath());
 		// start the maven jdt plugin so that the m2 repo classpath variables and containers are setup.
-		//	MavenJdtPlugin.getDefault();
+		MavenJdtPlugin.getDefault();
 
 		String[] args = (String[])context.getArguments().get(IApplicationContext.APPLICATION_ARGS);
 		parser = ASTParser.newParser(AST.JLS3);

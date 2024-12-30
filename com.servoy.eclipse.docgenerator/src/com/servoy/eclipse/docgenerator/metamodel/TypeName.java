@@ -143,7 +143,7 @@ public class TypeName
 		nestingLevel = nesting;
 		primitive = inner.isPrimitive();
 		baseQualifiedName = adaptQualifiedName(inner.getQualifiedName());
-		baseBinaryName = inner.getBinaryName();
+		baseBinaryName = ifnull(inner.getBinaryName(), baseQualifiedName);
 		shortName = buildShortName(baseBinaryName, dimensions);
 		qualifiedName = buildQualifiedName(baseQualifiedName, dimensions);
 		binaryName = buildBinaryName(baseBinaryName, baseQualifiedName, dimensions, primitive);
@@ -198,7 +198,7 @@ public class TypeName
 			nestingLevel = nesting;
 			primitive = inner.isPrimitive();
 			baseQualifiedName = adaptQualifiedName(inner.getQualifiedName());
-			baseBinaryName = inner.getBinaryName();
+			baseBinaryName = ifnull(inner.getBinaryName(), baseQualifiedName);
 		}
 		// If the binding was not resolved, then use the type name anyway.
 		// This may not be accurate, but is better than nothing.
@@ -481,6 +481,14 @@ public class TypeName
 		return sb.toString();
 	}
 
+	private static String ifnull(String string1, String string2)
+	{
+		if (string1 == null)
+		{
+			return string2;
+		}
+		return string1;
+	}
 
 	@Override
 	public int hashCode()

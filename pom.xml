@@ -8,17 +8,17 @@
     <groupId>com.servoy</groupId>
     <artifactId>docgenerator-ui</artifactId>
     <packaging>pom</packaging>
-    <version>1.6.2</version>
+    <version>1.7.0</version>
     <properties>
         <tycho.version>4.0.9</tycho.version>
         <rhino.version>1.7.15.s2</rhino.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <servoy.version.range>[2024.06, 2024.09]</servoy.version.range>
-        <servoy.version>2024.9.0.4000_rc</servoy.version>
+        <servoy.version.range>[2024.12, 2025.3]</servoy.version.range>
+        <servoy.version>2025.3.0.4040_rc</servoy.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <!--  the following should be kept in sync with com.servoy.eclipse.target.target versions -->
-        <eclipse.url>https://download.eclipse.org/releases/2024-03/</eclipse.url>
+        <eclipse.url>https://download.eclipse.org/releases/2024-09/</eclipse.url>
         <servoy.url>file:${user.dir}/target/p2</servoy.url>
         <!-- end -->
     </properties>

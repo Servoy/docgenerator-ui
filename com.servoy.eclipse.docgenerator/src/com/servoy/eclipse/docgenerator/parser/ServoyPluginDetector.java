@@ -86,29 +86,37 @@ public class ServoyPluginDetector extends ASTVisitor
 		{
 			for (Object o : superInterfaces)
 			{
-				if (o instanceof Type)
+				if (o instanceof Type interf)
 				{
-					Type interf = (Type)o;
-					TypeName tni = new TypeName(interf, false, clz.getName().getFullyQualifiedName(), "interface", new TreeSet<DocumentationWarning>());
-					if (tni.getQualifiedName() != null)
+					try
 					{
-						if (tni.getQualifiedName().equals("com.servoy.j2db.plugins.IClientPlugin"))
+						TypeName tni = new TypeName(interf, false, clz.getName().getFullyQualifiedName(), "interface", new TreeSet<DocumentationWarning>());
+						if (tni.getQualifiedName() != null)
 						{
-							LogUtil.logger().fine("Found a class that is Servoy plugin: '" + clz.getName().getFullyQualifiedName() + "'.");
-							return true;
+							if (tni.getQualifiedName().equals("com.servoy.j2db.plugins.IClientPlugin"))
+							{
+								LogUtil.logger().fine("Found a class that is Servoy plugin: '" + clz.getName().getFullyQualifiedName() + "'.");
+								return true;
+							}
+							else if (tni.getQualifiedName().equals("com.servoy.j2db.dataui.IServoyAwareBean") ||
+								tni.getQualifiedName().equals("com.servoy.j2db.dataui.IServoyAwareVisibilityBean"))
+							{
+								LogUtil.logger().fine("Found a class that is Servoy-aware bean: '" + clz.getName().getFullyQualifiedName() + "'.");
+								return true;
+							}
+							else if (tni.getQualifiedName().equals("com.servoy.j2db.IServoyBeanFactory") ||
+								tni.getQualifiedName().equals("com.servoy.j2db.IServoyBeanFactory2"))
+							{
+								LogUtil.logger().fine("Found a class that is Servoy bean factory: '" + clz.getName().getFullyQualifiedName() + "'.");
+								return true;
+							}
 						}
-						else if (tni.getQualifiedName().equals("com.servoy.j2db.dataui.IServoyAwareBean") ||
-							tni.getQualifiedName().equals("com.servoy.j2db.dataui.IServoyAwareVisibilityBean"))
-						{
-							LogUtil.logger().fine("Found a class that is Servoy-aware bean: '" + clz.getName().getFullyQualifiedName() + "'.");
-							return true;
-						}
-						else if (tni.getQualifiedName().equals("com.servoy.j2db.IServoyBeanFactory") ||
-							tni.getQualifiedName().equals("com.servoy.j2db.IServoyBeanFactory2"))
-						{
-							LogUtil.logger().fine("Found a class that is Servoy bean factory: '" + clz.getName().getFullyQualifiedName() + "'.");
-							return true;
-						}
+					}
+					catch (Exception e)
+					{
+						LogUtil.logger()
+							.warning("Error while checking if class is Servoy plugin: " + clz.getName().getFullyQualifiedName() + " of the interface " +
+								interf + ", message:" + e.getMessage());
 					}
 				}
 			}

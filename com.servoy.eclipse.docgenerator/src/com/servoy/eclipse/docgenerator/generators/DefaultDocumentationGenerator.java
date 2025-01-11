@@ -70,7 +70,6 @@ public class DefaultDocumentationGenerator extends AbstractDocumentationGenerato
 	private static final String ATTR_SCRIPTINGNAME = "scriptingName";
 	private static final String ATTR_QUALIFIEDNAME = "qualifiedName";
 	private static final String ATTR_EXTENDSCOMPONENT = "extendsComponent";
-	private static final String ATTR_REALCLASS = "realClass";
 	public static final String ATTR_CLIENT_SUPPORT = "clientSupport";
 	protected static final String ATTR_DEPRECATED = "deprecated";
 	public static final String TAG_CONSTANTS = "constants";
@@ -553,11 +552,6 @@ public class DefaultDocumentationGenerator extends AbstractDocumentationGenerato
 		if (typeData.getExtendsComponent() != null && typeData.getExtendsComponent().trim().length() > 0)
 		{
 			objElement.setAttribute(ATTR_EXTENDSCOMPONENT, typeData.getExtendsComponent());
-		}
-
-		if (typeData.getRealClassName() != null)
-		{
-			objElement.setAttribute(ATTR_REALCLASS, typeData.getRealClassName());
 		}
 
 		if (typeMM.getJavadoc() != null)

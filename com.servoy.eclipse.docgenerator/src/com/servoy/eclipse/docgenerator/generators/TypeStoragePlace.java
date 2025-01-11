@@ -25,12 +25,10 @@ import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
 public class TypeStoragePlace
 {
 	private String extendsComponent;
-	private final String realClassName;
 
 	public TypeStoragePlace(TypeMetaModel typeMM)
 	{
 		extendsComponent = typeMM.getExtendsComponent();
-		realClassName = typeMM.getRealClassName();
 	}
 
 	public String getExtendsComponent()
@@ -41,10 +39,5 @@ public class TypeStoragePlace
 	public void setExtendsComponent(String extendsComponent)
 	{
 		this.extendsComponent = extendsComponent;
-	}
-
-	public String getRealClassName()
-	{
-		return realClassName;
 	}
 }

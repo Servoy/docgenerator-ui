@@ -32,10 +32,10 @@ import com.servoy.eclipse.docgenerator.metamodel.TypeMetaModel;
 import com.servoy.eclipse.docgenerator.metamodel.TypeName;
 
 /**
- * Performs type mapping. We don't want to expose certain types, and we want 
+ * Performs type mapping. We don't want to expose certain types, and we want
  * to map standard types to a set of classes which represent JavaScript types
  * and have Javadocs.
- * 
+ *
  * @author gerzse
  */
 public class TypeMapper
@@ -93,6 +93,8 @@ public class TypeMapper
 		store(Map.class, Object.class.getSimpleName());
 
 		store("org.mozilla.javascript.Function", "Function");
+
+		store("org.mozilla.javascript.NativeBigInt", "BigInt");
 
 		store(Exception.class, "com.servoy.j2db.util.ServoyException");
 

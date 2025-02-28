@@ -94,7 +94,12 @@ public class MethodMetaModel extends MemberMetaModel
 		indexSignature = buildIndexSignature(name, parameters);
 		fullSignature = buildFullSignature(returnType, className, name, parameters);
 		MethodStoragePlace methodData = (MethodStoragePlace)original.getStore().get(STORE_KEY);
-		this.getStore().put(STORE_KEY, methodData.withMember(this));
+		if (methodData != null)
+			this.getStore().put(STORE_KEY, methodData.withMember(this));
+		else
+		{
+			System.err.println("no Method data for " + original.getFullSignature());
+		}
 	}
 
 	private static String buildIndexSignature(String name, Map<String, TypeName> parameters)

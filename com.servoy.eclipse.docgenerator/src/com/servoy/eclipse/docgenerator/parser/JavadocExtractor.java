@@ -24,7 +24,9 @@ import java.util.regex.Pattern;
 
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.Annotation;
+import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.IAnnotationBinding;
 import org.eclipse.jdt.core.dom.IBinding;
@@ -120,24 +122,50 @@ public class JavadocExtractor extends ASTVisitor
 	@Override
 	public boolean visit(TypeDeclaration node)
 	{
-		List<String> ancestorNames = new ArrayList<String>();
-		for (TypeMetaModel ancestorType : typesStack)
-		{
-			ancestorNames.add(ancestorType.getName().getShortName());
-		}
-		TypeMetaModel typeData = new TypeMetaModel(packageName, ancestorNames, node, node.isInterface());
-		typesStack.push(typeData);
-		annotationsStack.push(new AnnotationsList());
+		startNewType(node);
 		return true;
 	}
 
 	@Override
 	public void endVisit(TypeDeclaration node)
 	{
+		addCurrentType();
+	}
+
+	@Override
+	public boolean visit(EnumDeclaration node)
+	{
+		startNewType(node);
+		return true;
+	}
+
+	@Override
+	public void endVisit(EnumDeclaration node)
+	{
+		addCurrentType();
+	}
+
+	private void startNewType(AbstractTypeDeclaration node)
+	{
+		List<String> ancestorNames = new ArrayList<String>();
+		for (TypeMetaModel ancestorType : typesStack)
+		{
+			ancestorNames.add(ancestorType.getName().getShortName());
+		}
+		TypeMetaModel typeData = node instanceof TypeDeclaration typeDeclaration
+			? new TypeMetaModel(packageName, ancestorNames, typeDeclaration, typeDeclaration.isInterface())
+			: new TypeMetaModel(packageName, ancestorNames, (EnumDeclaration)node);
+		typesStack.push(typeData);
+		annotationsStack.push(new AnnotationsList());
+	}
+
+	private void addCurrentType()
+	{
 		TypeMetaModel typeMM = typesStack.pop();
 		AnnotationsList annotations = annotationsStack.pop();
 		typeMM.setAnnotations(annotations);
 		allTypes.addType(typeMM.getName().getQualifiedName(), typeMM);
+
 	}
 
 	@Override

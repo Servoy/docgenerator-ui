@@ -27,6 +27,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Type;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
@@ -102,6 +103,30 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 		{
 			supertypeName = new TypeName(astNode.getSuperclassType(), false, name.getQualifiedName(), "supertype", warnings);
 		}
+		List< ? > superInterfaces = astNode.superInterfaceTypes();
+		if (superInterfaces != null)
+		{
+			for (Object o : superInterfaces)
+			{
+				if (o instanceof Type)
+				{
+					interfaceNames.add(new TypeName((Type)o, false, name.getQualifiedName(), "interface", warnings));
+				}
+			}
+		}
+	}
+
+	public TypeMetaModel(String packageName, List<String> ancestorClassNames, EnumDeclaration astNode)
+	{
+		this.isInterface = false;
+		this.typeParameters = new ArrayList<TypeParameter>();
+		String parentName = packageName + ".";
+		for (String s : ancestorClassNames)
+		{
+			parentName += s + "$";
+		}
+		name = new TypeName(astNode.getName().getFullyQualifiedName(), parentName);
+
 		List< ? > superInterfaces = astNode.superInterfaceTypes();
 		if (superInterfaces != null)
 		{

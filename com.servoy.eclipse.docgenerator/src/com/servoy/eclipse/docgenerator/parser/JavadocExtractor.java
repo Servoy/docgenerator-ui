@@ -408,11 +408,11 @@ public class JavadocExtractor extends ASTVisitor
 			javadocsStack.pop();
 			currentJavadoc.compress();
 			int parentType = node.getParent().getNodeType();
-			if (parentType == ASTNode.TYPE_DECLARATION)
+			if (parentType == ASTNode.TYPE_DECLARATION || parentType == ASTNode.ENUM_DECLARATION)
 			{
 				typesStack.peek().setJavadoc(currentJavadoc);
 			}
-			else if (parentType == ASTNode.METHOD_DECLARATION || parentType == ASTNode.FIELD_DECLARATION)
+			else if (parentType == ASTNode.METHOD_DECLARATION || parentType == ASTNode.FIELD_DECLARATION || parentType == ASTNode.ENUM_CONSTANT_DECLARATION)
 			{
 				for (MemberMetaModel memberMM : currentMembers)
 				{
@@ -429,7 +429,8 @@ public class JavadocExtractor extends ASTVisitor
 		if (node.getParent() != null)
 		{
 			int parentType = node.getParent().getNodeType();
-			if (parentType == ASTNode.TYPE_DECLARATION || parentType == ASTNode.METHOD_DECLARATION || parentType == ASTNode.FIELD_DECLARATION)
+			if (parentType == ASTNode.TYPE_DECLARATION || parentType == ASTNode.METHOD_DECLARATION || parentType == ASTNode.FIELD_DECLARATION ||
+				parentType == ASTNode.ENUM_DECLARATION || parentType == ASTNode.ENUM_CONSTANT_DECLARATION)
 			{
 				return true;
 			}

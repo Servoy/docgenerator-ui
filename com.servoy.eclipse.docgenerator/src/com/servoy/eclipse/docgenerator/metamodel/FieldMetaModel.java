@@ -17,10 +17,10 @@
 
 package com.servoy.eclipse.docgenerator.metamodel;
 
+import org.eclipse.jdt.core.dom.BodyDeclaration;
+import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.ITypeBinding;
-import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 
 /**
  * Holds information about a field from a Java class. Compared to what is stored about a generic member of a class,
@@ -37,12 +37,22 @@ public class FieldMetaModel extends MemberMetaModel
 	private final String indexSignature;
 	private final String fullSignature;
 
-	public FieldMetaModel(String className, FieldDeclaration fld, VariableDeclarationFragment astNode)
+	public FieldMetaModel(String className, BodyDeclaration fld, String name)
 	{
-		super(className, astNode.getName().getFullyQualifiedName(), getVisibility(fld), isStatic(fld));
+		super(className, name, getVisibility(fld), isStatic(fld));
 
-		Type t = fld.getType();
-		type = new TypeName(t, false, getClassName() + " - " + getName(), "field type", getWarnings());
+		if (fld instanceof FieldDeclaration fieldDeclaration)
+		{
+			type = new TypeName(fieldDeclaration.getType(), false, getClassName() + " - " + getName(), "field type", getWarnings());
+		}
+		else if (fld instanceof EnumConstantDeclaration enumConstantDeclaration)
+		{
+			type = new TypeName(enumConstantDeclaration.resolveVariable().getType(), false);
+		}
+		else
+		{
+			throw new RuntimeException("FieldMetaModel can only be created for FieldDeclaration or EnumConstantDeclaration");
+		}
 
 		indexSignature = getName();
 

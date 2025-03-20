@@ -26,6 +26,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.Annotation;
+import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
 import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
 import org.eclipse.jdt.core.dom.IAnnotationBinding;
@@ -145,6 +146,36 @@ public class JavadocExtractor extends ASTVisitor
 		addCurrentType();
 	}
 
+	@Override
+	public boolean visit(EnumConstantDeclaration node)
+	{
+		if (typesStack.isEmpty())
+		{
+			return false;
+		}
+
+		FieldMetaModel fieldMM = new FieldMetaModel(typesStack.peek().getName().getQualifiedName(), node, node.getName().getFullyQualifiedName());
+		typesStack.peek().addMember(fieldMM.getIndexSignature(), fieldMM);
+		currentMembers.add(fieldMM);
+
+		annotationsStack.push(new AnnotationsList());
+		return true;
+	}
+
+	@Override
+	public void endVisit(EnumConstantDeclaration node)
+	{
+		if (!typesStack.isEmpty())
+		{
+			AnnotationsList ann = annotationsStack.pop();
+			for (MemberMetaModel memberMM : currentMembers)
+			{
+				memberMM.setAnnotations(ann);
+			}
+			currentMembers.clear();
+		}
+	}
+
 	private void startNewType(AbstractTypeDeclaration node)
 	{
 		List<String> ancestorNames = new ArrayList<String>();
@@ -210,7 +241,7 @@ public class JavadocExtractor extends ASTVisitor
 			if (o instanceof VariableDeclarationFragment)
 			{
 				VariableDeclarationFragment varDecl = (VariableDeclarationFragment)o;
-				FieldMetaModel fieldMM = new FieldMetaModel(typesStack.peek().getName().getQualifiedName(), node, varDecl);
+				FieldMetaModel fieldMM = new FieldMetaModel(typesStack.peek().getName().getQualifiedName(), node, varDecl.getName().getFullyQualifiedName());
 				typesStack.peek().addMember(fieldMM.getIndexSignature(), fieldMM);
 				currentMembers.add(fieldMM);
 			}

@@ -18,6 +18,7 @@
 package com.servoy.eclipse.docgenerator.metamodel;
 
 import org.eclipse.jdt.core.dom.BodyDeclaration;
+import org.eclipse.jdt.core.dom.EnumConstantDeclaration;
 import org.eclipse.jdt.core.dom.Modifier;
 
 /**
@@ -56,6 +57,10 @@ public abstract class MemberMetaModel extends GenericMemberMetaModel
 
 	public static Visibility getVisibility(BodyDeclaration astNode)
 	{
+		if (astNode instanceof EnumConstantDeclaration)
+		{
+			return Visibility.Public;
+		}
 		for (Object o : astNode.modifiers())
 		{
 			if (o instanceof Modifier mod)
@@ -69,6 +74,10 @@ public abstract class MemberMetaModel extends GenericMemberMetaModel
 
 	public static boolean isStatic(BodyDeclaration astNode)
 	{
+		if (astNode instanceof EnumConstantDeclaration)
+		{
+			return true;
+		}
 		return Modifier.isStatic(astNode.getModifiers());
 	}
 

@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.dltk.javascript.rhino,
  org.eclipse.m2e.core,
  org.eclipse.m2e.jdt
-Bundle-RequiredExecutionEnvironment: JavaSE-21
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ActivationPolicy: lazy
 Export-Package: com.servoy.eclipse.docgenerator,
  com.servoy.eclipse.docgenerator.annotations,

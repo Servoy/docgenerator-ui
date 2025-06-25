@@ -3,7 +3,7 @@
  <parent>
   <groupId>com.servoy</groupId>
   <artifactId>docgenerator-ui</artifactId>
-  <version>1.7.0</version>
+  <version>1.8.0</version>
  </parent>
 
  <artifactId>com.servoy.eclipse.docgenerator.feature</artifactId>

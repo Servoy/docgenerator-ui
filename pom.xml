@@ -14,7 +14,7 @@
         <rhino.version>1.8.0.s9</rhino.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <servoy.version.range>[2025.9, 2025.12]</servoy.version.range>
-        <servoy.version>2025.9.0.4100_rc</servoy.version>
+        <servoy.version>2025.9.0.4101_rc2</servoy.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <!--  the following should be kept in sync with com.servoy.eclipse.target.target versions -->

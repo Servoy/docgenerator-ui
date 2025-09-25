@@ -98,14 +98,14 @@
                         </filter>
                         <filter>
                             <type>eclipse-plugin</type>
-                            <id>com.servoy.eclipse.docgenerator</id>
+                            <id>com.servoy.eclipse.ngclient</id>
                             <restrictTo>
-                                <version>${project.version}</version> <!-- alternative: <version> for selecting exactly one versions -->
+                                <version>${servoy.version.range}</version> <!-- alternative: <version> for selecting exactly one versions -->
                             </restrictTo>
                         </filter>
                         <filter>
                             <type>eclipse-plugin</type>
-                            <id>com.servoy.eclipse.ngclient</id>
+                            <id>com.servoy.eclipse.docgenerator</id>
                             <restrictTo>
                                 <version>${project.version}</version> <!-- alternative: <version> for selecting exactly one versions -->
                             </restrictTo>

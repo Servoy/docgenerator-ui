@@ -100,7 +100,7 @@
                             <type>eclipse-plugin</type>
                             <id>com.servoy.eclipse.ngclient</id>
                             <restrictTo>
-                                <version>${servoy.version.range}</version> <!-- alternative: <version> for selecting exactly one versions -->
+                                <versionRange>${servoy.version.range}</versionRange> <!-- alternative: <version> for selecting exactly one versions -->
                             </restrictTo>
                         </filter>
                         <filter>

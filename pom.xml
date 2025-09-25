@@ -103,6 +103,13 @@
                                 <version>${project.version}</version> <!-- alternative: <version> for selecting exactly one versions -->
                             </restrictTo>
                         </filter>
+                        <filter>
+                            <type>eclipse-plugin</type>
+                            <id>com.servoy.eclipse.ngclient</id>
+                            <restrictTo>
+                                <version>${project.version}</version> <!-- alternative: <version> for selecting exactly one versions -->
+                            </restrictTo>
+                        </filter>
                     </filters>
                 </configuration>
             </plugin>

@@ -13,7 +13,7 @@
         <tycho.version>4.0.5</tycho.version>
         <rhino.version>1.7.14.s7</rhino.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <servoy.version.range>[2023.12,2024.6]</servoy.version.range>
+        <servoy.version.range>(2024.3, 2024.6]</servoy.version.range>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <!--  the following should be kept in sync with com.servoy.eclipse.target.target versions -->

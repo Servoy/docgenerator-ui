@@ -49,9 +49,9 @@ public class AnnotationMetaModel
 		return attributes.containsKey(nm);
 	}
 
-	public Object getAttribute(String nm)
+	public <T> T getAttribute(String nm)
 	{
-		return attributes.get(nm);
+		return (T)attributes.get(nm);
 	}
 
 	@Override

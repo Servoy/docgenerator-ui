@@ -187,7 +187,16 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 
 	public String getRealClassName()
 	{
-		ITypeBinding val = (ITypeBinding)getAttribute(ATTRIBUTE_REAL_CLASS);
+		ITypeBinding val = getAttribute(ATTRIBUTE_REAL_CLASS);
+		if (val == null)
+		{
+			AnnotationMetaModel amm = ann.getAnnotation(JS_REAL_CLASS);
+			if (amm != null && amm.hasAttribute("value"))
+			{
+				val = amm.getAttribute("value");
+			}
+		}
+
 		if (val != null)
 		{
 			String className = val.getBinaryName();
@@ -225,7 +234,7 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 		return def;
 	}
 
-	private Object getAttribute(String key)
+	private <T> T getAttribute(String key)
 	{
 		AnnotationMetaModel amm = ann.getAnnotation(ANNOTATION_SERVOY_DOCUMENTED);
 		if (amm != null && amm.hasAttribute(key))

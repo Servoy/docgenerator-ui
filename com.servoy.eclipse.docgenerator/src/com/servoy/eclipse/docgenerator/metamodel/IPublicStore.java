@@ -24,9 +24,10 @@ import java.util.Map;
  */
 public interface IPublicStore
 {
-	public static final String ANNOTATION_SERVOY_DOCUMENTED = "ServoyDocumented";
-	static final String ANNOTATION_DEPRECATED = "Deprecated";
-	static final String ANNOTATION_SERVOY_CLIENT_SUPPORT = "ServoyClientSupport";
+	String ANNOTATION_SERVOY_DOCUMENTED = "ServoyDocumented";
+	String ANNOTATION_DEPRECATED = "Deprecated";
+	String ANNOTATION_SERVOY_CLIENT_SUPPORT = "ServoyClientSupport";
+	String JS_REAL_CLASS = "JSRealClass";
 
 	Map<String, Object> getStore();
 }

@@ -348,25 +348,42 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 		return members;
 	}
 
-	private static IMemberMetaModel applyTypeArguments(IMemberMetaModel member, ITypeBinding[] typeArguments,
-		MetaModelHolder holder)
+	private static IMemberMetaModel applyTypeArguments(IMemberMetaModel member, ITypeBinding[] typeArguments, MetaModelHolder holder)
 	{
-		if (typeArguments != null && typeArguments.length > 0 && member instanceof MethodMetaModel methodMetaModel)
+		if (member instanceof MethodMetaModel methodMetaModel)
 		{
+			TypeName methodMetaModelType = methodMetaModel.getType();
 			List<TypeParameter> typeParameters = methodMetaModel.getClassType(holder).getTypeParameters();
-			if (typeParameters.size() == typeArguments.length)
+			if (methodMetaModelType != null && (typeParameters.size() > 0) && (typeArguments == null || (typeParameters.size() == typeArguments.length)))
 			{
-				for (int i = 0; i < typeArguments.length; i++)
+				for (int i = 0; i < typeParameters.size(); i++)
 				{
-					String typeParameterName = typeParameters.get(i).getName().getIdentifier();
-					String typeGenericName = methodMetaModel.getType().getQualifiedName();
+					TypeParameter typeParameter = typeParameters.get(i);
+					String typeParameterName = typeParameter.getName().getIdentifier();
+					String typeGenericName = methodMetaModelType.getQualifiedName();
 					if (typeParameterName.equals(typeGenericName))
 					{
-						return member.withType(typeArguments[i]);
+						ITypeBinding boundType = null;
+						if (typeArguments == null)
+						{
+							List< ? > typeBounds = typeParameter.typeBounds();
+							if (typeBounds != null && !typeBounds.isEmpty() && typeBounds.get(0) instanceof Type type)
+							{
+								// default to first type bound
+								boundType = type.resolveBinding();
+							}
+						}
+						else
+						{
+							boundType = typeArguments[i];
+						}
+						if (boundType != null)
+						{
+							return member.withType(boundType);
+						}
 					}
 				}
-
-			} // weird they should match
+			}
 		}
 
 		return member;

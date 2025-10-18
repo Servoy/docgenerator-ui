@@ -141,10 +141,6 @@ public class TypeMapper
 		store("com.servoy.j2db.scripting.FormScope", "Form");
 		store("com.servoy.base.scripting.api.IJSController", "Form");
 
-		store("com.servoy.j2db.querybuilder.IQueryBuilderCondition", "com.servoy.j2db.querybuilder.impl.QBCondition");
-		store("com.servoy.j2db.querybuilder.IQueryBuilderLogicalCondition", "com.servoy.j2db.querybuilder.impl.QBLogicalCondition");
-		store("com.servoy.j2db.querybuilder.IQueryBuilderWhereCondition", "com.servoy.j2db.querybuilder.impl.QBWhereCondition");
-
 		store("com.servoy.j2db.ui.IScriptRenderMethods", "com.servoy.j2db.ui.IScriptRenderMethodsWithFormat");
 
 		store(PrinterJob.class, PrinterJob.class.getSimpleName());
@@ -157,7 +153,6 @@ public class TypeMapper
 	private void store(Class< ? > cls, String target)
 	{
 		store(cls.getCanonicalName(), target);
-//		store(cls.getSimpleName(), target);
 	}
 
 	private void store(String cls, String target)
@@ -241,18 +236,29 @@ public class TypeMapper
 			// if nothing succeeded so far, try to find a class
 			// that implements our type
 			TypeName equiv = null;
-			for (TypeMetaModel cdr : docs.getTypes())
+
+
+			if (originalType.getRealClassName() != null)
 			{
-				if (cdr.isServoyDocumented())
+				TypeMetaModel cdr = docs.getType(originalType.getRealClassName());
+				if (cdr != null)
 				{
-					if (cdr.getSupertype() != null && originalType.isSameType(cdr.getSupertype()))
+					equiv = cdr.getName();
+				}
+			}
+
+			if (equiv == null)
+			{
+				for (TypeMetaModel cdr : docs.getTypes())
+				{
+					if (cdr.isServoyDocumented())
 					{
-						equiv = cdr.getName();
-						break;
-					}
-					boolean found = false;
-					if (cdr.getInterfaces() != null)
-					{
+						if (cdr.getSupertype() != null && originalType.isSameType(cdr.getSupertype()))
+						{
+							equiv = cdr.getName();
+							break;
+						}
+						boolean found = false;
 						for (TypeName i : cdr.getInterfaces())
 						{
 							if (originalType.isSameType(i))
@@ -262,10 +268,10 @@ public class TypeMapper
 								break;
 							}
 						}
-					}
-					if (found)
-					{
-						break;
+						if (found)
+						{
+							break;
+						}
 					}
 				}
 			}

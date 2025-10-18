@@ -17,8 +17,15 @@
 
 package com.servoy.eclipse.docgenerator.metamodel;
 
+import static com.servoy.eclipse.docgenerator.metamodel.IPublicStore.ANNOTATION_JS_REAL_CLASS;
+import static com.servoy.eclipse.docgenerator.metamodel.IPublicStore.ANNOTAION_JS_REAL_CLASS_NAME;
+import static java.util.Arrays.stream;
+
+import java.util.Arrays;
 import java.util.Set;
 
+import org.eclipse.jdt.core.dom.IAnnotationBinding;
+import org.eclipse.jdt.core.dom.IMemberValuePairBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.Type;
 
@@ -49,6 +56,11 @@ public class TypeName
 	 * @see buildQualifiedName()
 	 */
 	private final String baseQualifiedName;
+
+	/**
+	 * Holds the real class name, when set using the @JSRealClass annotation.
+	 */
+	private final String realClassName;
 
 	/**
 	 * The fully qualified name of the class, including array information, if any.
@@ -144,6 +156,7 @@ public class TypeName
 		nestingLevel = nesting;
 		primitive = inner.isPrimitive();
 		baseQualifiedName = adaptQualifiedName(inner.getQualifiedName());
+		realClassName = getRealClass(inner);
 		baseBinaryName = ifnull(inner.getBinaryName(), baseQualifiedName);
 		shortName = buildShortName(baseBinaryName, dimensions);
 		qualifiedName = buildQualifiedName(baseQualifiedName, dimensions);
@@ -200,6 +213,7 @@ public class TypeName
 			nestingLevel = nesting;
 			primitive = inner.isPrimitive();
 			baseQualifiedName = adaptQualifiedName(inner.getQualifiedName());
+			realClassName = getRealClass(inner);
 			baseBinaryName = ifnull(inner.getBinaryName(), baseQualifiedName);
 		}
 		// If the binding was not resolved, then use the type name anyway.
@@ -222,6 +236,7 @@ public class TypeName
 				dimensions = 0;
 			}
 			nestingLevel = 0;
+			realClassName = null;
 			baseBinaryName = baseQualifiedName;
 			primitive = type.isPrimitiveType();
 			DocumentationWarning dw = new DocumentationWarning(WarningType.UnresolvedBinding, location, "Cannot resolve binding for " + context + " type: '" +
@@ -231,6 +246,20 @@ public class TypeName
 		shortName = buildShortName(baseBinaryName, dimensions);
 		qualifiedName = buildQualifiedName(baseQualifiedName, dimensions);
 		binaryName = buildBinaryName(baseBinaryName, baseQualifiedName, dimensions, primitive);
+	}
+
+	public static String getRealClass(ITypeBinding binding)
+	{
+		return stream(binding.getAnnotations())
+			.filter(annotation -> ANNOTATION_JS_REAL_CLASS.equals(annotation.getName()))
+			.map(IAnnotationBinding::getDeclaredMemberValuePairs)
+			.flatMap(Arrays::stream)
+			.filter(declaredMemberValuePair -> ANNOTAION_JS_REAL_CLASS_NAME.equals(declaredMemberValuePair.getName()))
+			.map(IMemberValuePairBinding::getValue)
+			.filter(ITypeBinding.class::isInstance)
+			.map(ITypeBinding.class::cast)
+			.map(typeBinding -> typeBinding.getQualifiedName())
+			.findAny().orElse(null);
 	}
 
 	/**
@@ -258,6 +287,7 @@ public class TypeName
 		sb.append(qName);
 		nestingLevel = nesting;
 		baseQualifiedName = sb.toString();
+		realClassName = null;
 		baseBinaryName = baseQualifiedName;
 		primitive = false;
 		shortName = buildShortName(baseBinaryName, dimensions);
@@ -288,6 +318,7 @@ public class TypeName
 		nestingLevel = nesting;
 		typeArguments = NO_TYPE_ARGUMENTS;
 		baseQualifiedName = adaptQualifiedName(cls.getCanonicalName());
+		realClassName = null;
 		baseBinaryName = cls.getName();
 		primitive = cls.isPrimitive();
 		varargs = false;
@@ -303,6 +334,7 @@ public class TypeName
 	private TypeName(TypeName source, String baseBinaryName, String binaryName, int newDimensions)
 	{
 		this.baseQualifiedName = source.baseQualifiedName;
+		this.realClassName = source.realClassName;
 		this.nestingLevel = source.nestingLevel;
 		this.baseBinaryName = baseBinaryName;
 		this.binaryName = binaryName;
@@ -324,6 +356,7 @@ public class TypeName
 		typeArguments = NO_TYPE_ARGUMENTS;
 
 		baseQualifiedName = adaptQualifiedName(typeArgument.getQualifiedName());
+		realClassName = getRealClass(typeArgument);
 		baseBinaryName = typeArgument.getBinaryName();
 		shortName = buildShortName(baseBinaryName, dimensions);
 		qualifiedName = buildQualifiedName(baseQualifiedName, dimensions);
@@ -351,6 +384,11 @@ public class TypeName
 	public String getBaseName()
 	{
 		return baseQualifiedName;
+	}
+
+	public String getRealClassName()
+	{
+		return realClassName;
 	}
 
 	public String getQualifiedName()

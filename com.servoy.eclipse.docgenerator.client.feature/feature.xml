@@ -60,12 +60,9 @@ Article 1. Definitions.
 The timing of the provision by Servoy of the Releases shall be at its sole discretion.
    </license>
 
-   <includes
-         id="org.eclipse.m2e.feature"
-         version="0.0.0"/>
-
    <requires>
       <import feature="org.eclipse.platform" version="3.5.0.0" match="greaterOrEqual"/>
+      <import feature="org.eclipse.m2e.feature" version="2.5.0" match="greaterOrEqual"/>
       <import feature="com.servoy.eclipse.docgenerator.feature" version="1.8.0"/>
    </requires>
 

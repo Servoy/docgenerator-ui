@@ -46,8 +46,6 @@ public class MethodMetaModel extends MemberMetaModel
 	private TypeName returnType;
 	private LinkedHashMap<String, TypeName> parameters = new LinkedHashMap<>();
 
-	private static final String ANNOTATION_JS_SIGNATURE = "JSSignature";
-
 	public MethodMetaModel(String className, MethodDeclaration astNode)
 	{
 		super(className, astNode.getName().getFullyQualifiedName(), getVisibility(astNode), isStatic(astNode));

@@ -27,7 +27,10 @@ public interface IPublicStore
 	String ANNOTATION_SERVOY_DOCUMENTED = "ServoyDocumented";
 	String ANNOTATION_DEPRECATED = "Deprecated";
 	String ANNOTATION_SERVOY_CLIENT_SUPPORT = "ServoyClientSupport";
-	String JS_REAL_CLASS = "JSRealClass";
+	String ANNOTATION_JS_REAL_CLASS = "JSRealClass";
+	String ANNOTAION_JS_REAL_CLASS_NAME = "value";
+	String ANNOTATION_JS_SIGNATURE = "JSSignature";
+
 
 	Map<String, Object> getStore();
 }

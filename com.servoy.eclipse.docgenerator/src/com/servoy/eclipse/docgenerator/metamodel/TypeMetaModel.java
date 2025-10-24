@@ -72,7 +72,7 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 	private final TypeName name;
 
 	private TypeName supertypeName;
-	private final List<TypeName> interfaceNames = new ArrayList<TypeName>();
+	private final List<TypeName> interfaceNames = new ArrayList<>();
 
 	private JavadocMetaModel jd;
 	private AnnotationsList ann;
@@ -108,9 +108,9 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 		{
 			for (Object o : superInterfaces)
 			{
-				if (o instanceof Type)
+				if (o instanceof Type type)
 				{
-					interfaceNames.add(new TypeName((Type)o, false, name.getQualifiedName(), "interface", warnings));
+					interfaceNames.add(new TypeName(type, false, name.getQualifiedName(), "interface", warnings));
 				}
 			}
 		}
@@ -119,7 +119,7 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 	public TypeMetaModel(String packageName, List<String> ancestorClassNames, EnumDeclaration astNode)
 	{
 		this.isInterface = false;
-		this.typeParameters = new ArrayList<TypeParameter>();
+		this.typeParameters = new ArrayList<>();
 		String parentName = packageName + ".";
 		for (String s : ancestorClassNames)
 		{
@@ -132,9 +132,9 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 		{
 			for (Object o : superInterfaces)
 			{
-				if (o instanceof Type)
+				if (o instanceof Type type)
 				{
-					interfaceNames.add(new TypeName((Type)o, false, name.getQualifiedName(), "interface", warnings));
+					interfaceNames.add(new TypeName(type, false, name.getQualifiedName(), "interface", warnings));
 				}
 			}
 		}
@@ -190,10 +190,10 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 		ITypeBinding val = getAttribute(ATTRIBUTE_REAL_CLASS);
 		if (val == null)
 		{
-			AnnotationMetaModel amm = ann.getAnnotation(JS_REAL_CLASS);
-			if (amm != null && amm.hasAttribute("value"))
+			AnnotationMetaModel amm = ann.getAnnotation(ANNOTATION_JS_REAL_CLASS);
+			if (amm != null && amm.hasAttribute(ANNOTAION_JS_REAL_CLASS_NAME))
 			{
-				val = amm.getAttribute("value");
+				val = amm.getAttribute(ANNOTAION_JS_REAL_CLASS_NAME);
 			}
 		}
 

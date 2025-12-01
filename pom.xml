@@ -19,7 +19,6 @@
         <maven.compiler.target>21</maven.compiler.target>
         <!--  the following should be kept in sync with com.servoy.eclipse.target.target versions -->
         <eclipse.url>https://download.eclipse.org/releases/2025-03/</eclipse.url>
-        <servoy.url>file:${user.dir}/target/p2</servoy.url>
         <!-- end -->
     </properties>
     <repositories>
@@ -36,35 +35,6 @@
     </repositories>
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <id>unpack_plugins</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>com.servoy</groupId>
-                                    <artifactId>
-                                        com.servoy.eclipse.product</artifactId>
-                                    <version>${servoy.version}</version>
-                                    <type>zip</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>
-                                        ${user.dir}/target/p2/</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-                <inherited>false</inherited>
-            </plugin>
             <plugin>
                 <groupId>org.eclipse.tycho</groupId>
                 <artifactId>tycho-maven-plugin</artifactId>
@@ -86,6 +56,13 @@
                 <artifactId>target-platform-configuration</artifactId>
                 <version>${tycho.version}</version>
                 <configuration>
+                    <target>
+                        <artifact>
+                            <groupId>com.servoy</groupId>
+                            <artifactId>com.servoy.eclipse.target</artifactId>
+                            <version>${servoy.version}</version>
+                        </artifact>
+                    </target>                
                     <pomDependencies>consider</pomDependencies>
                     <environments>
                         <environment>

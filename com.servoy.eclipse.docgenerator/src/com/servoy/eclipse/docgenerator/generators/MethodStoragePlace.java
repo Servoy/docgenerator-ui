@@ -150,14 +150,22 @@ public class MethodStoragePlace extends MemberStoragePlace
 		if (!hideParameters())
 		{
 			Element argTypes = doc.createElement(TAG_ARGUMENTS_TYPES);
-			for (String parName : getParameters().keySet())
+			// prefer mapped parameters, but if those are missing (for example for some generic-instantiated methods)
+			// then fall back to the raw MethodMetaModel parameters so that argumentType is still written
+			LinkedHashMap<String, TypeName> sourceParams = getParameters().isEmpty() ? getMethodMM().getParameters() : getParameters();
+			for (String parName : sourceParams.keySet())
 			{
-				TypeName parType = getParameters().get(parName);
+				TypeName parType = sourceParams.get(parName);
+				if (parType == null) continue; // defensive, do not emit empty argumentType elements
 				Element argType = doc.createElement(TAG_ARGUMENT_TYPE);
-				argTypes.appendChild(argType);
 				argType.setAttribute(DefaultDocumentationGenerator.ATTR_TYPECODE, parType.getBinaryName());
+				argTypes.appendChild(argType);
 			}
-			root.insertBefore(argTypes, root.getFirstChild());
+			// only insert argumentsTypes if we actually have at least one argumentType child
+			if (argTypes.hasChildNodes())
+			{
+				root.insertBefore(argTypes, root.getFirstChild());
+			}
 		}
 		boolean showParameters = false;
 		if (ddr != null && ddr.hasDocumentation())

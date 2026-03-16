@@ -161,11 +161,7 @@ public class MethodStoragePlace extends MemberStoragePlace
 				argType.setAttribute(DefaultDocumentationGenerator.ATTR_TYPECODE, parType.getBinaryName());
 				argTypes.appendChild(argType);
 			}
-			// only insert argumentsTypes if we actually have at least one argumentType child
-			if (argTypes.hasChildNodes())
-			{
-				root.insertBefore(argTypes, root.getFirstChild());
-			}
+			root.insertBefore(argTypes, root.getFirstChild());
 		}
 		boolean showParameters = false;
 		if (ddr != null && ddr.hasDocumentation())

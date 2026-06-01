@@ -53,32 +53,16 @@ pipeline {
     
     post {
         failure {
-            // Enkel Teams notificatie bij een harde fail
-            office365ConnectorSend webhookUrl: "${TEAMS_WEBHOOK}", status: 'Failed'
-            
-            // E-mail naar developers
-            emailext body: '$PROJECT_DEFAULT_CONTENT', 
-                     subject: '$PROJECT_DEFAULT_SUBJECT', 
-                     replyTo: '$PROJECT_DEFAULT_REPLYTO', 
-                     recipientProviders: [developers(), upstreamCommitters()]
+            office365ConnectorSend webhookUrl: TEAMS_WEBHOOK, status: 'Failed'
         }
         
         unstable {
-            office365ConnectorSend webhookUrl: "${TEAMS_WEBHOOK}", status: 'Unstable'
-            
-            emailext body: '$PROJECT_DEFAULT_CONTENT', 
-                     subject: '$PROJECT_DEFAULT_SUBJECT', 
-                     replyTo: '$PROJECT_DEFAULT_REPLYTO', 
-                     recipientProviders: [developers(), upstreamCommitters()]
+            office365ConnectorSend webhookUrl: TEAMS_WEBHOOK, status: 'Unstable'
         }
         
         fixed {
-            office365ConnectorSend webhookUrl: "${TEAMS_WEBHOOK}", status: 'Back to Normal'
-            
-            emailext body: '$PROJECT_DEFAULT_CONTENT', 
-                     subject: '$PROJECT_DEFAULT_SUBJECT', 
-                     replyTo: '$PROJECT_DEFAULT_REPLYTO', 
-                     recipientProviders: [developers(), upstreamCommitters()]
+            office365ConnectorSend webhookUrl: TEAMS_WEBHOOK, status: 'Back to Normal'
         }
+
     }
 }

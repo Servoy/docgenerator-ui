@@ -5,6 +5,8 @@ pipeline {
         quietPeriod(120)
         // Log-rotator instellingen (max 10 dagen/10 builds)
         buildDiscarder(logRotator(daysToKeepStr: '10', numToKeepStr: '10'))
+        
+        withFolderProperties()
     }
     
     triggers {

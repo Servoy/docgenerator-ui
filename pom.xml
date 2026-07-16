@@ -119,5 +119,6 @@
         <module>com.servoy.eclipse.docgenerator.feature</module>
         <module>com.servoy.eclipse.docgenerator.client.feature</module>
         <module>com.servoy.eclipse.docgenerator.client.product</module>
+        <module>com.servoy.eclipse.docgenerator.tests</module>
     </modules>
 </project>

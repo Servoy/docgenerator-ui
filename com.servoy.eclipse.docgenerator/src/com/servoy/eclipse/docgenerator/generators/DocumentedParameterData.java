@@ -82,13 +82,31 @@ public class DocumentedParameterData
 				if (strtok.hasMoreTokens())
 				{
 					String first = strtok.nextToken();
-					TypeName tn = new TypeName(first, null);
-					boolean[] flag = new boolean[1];
-					TypeName tentativeType = proc.mapType(holder, tn, false, flag);
-					if (flag[0])
+					if (first.startsWith("{") && first.contains("<") && first.endsWith("}"))
 					{
-						type = tentativeType;
+						String innerType = first.substring(1, first.length() - 1);
+						setJSType(innerType);
+						int angleIdx = innerType.indexOf('<');
+						String baseType = innerType.substring(0, angleIdx);
+						TypeName tn = new TypeName(baseType, null);
+						boolean[] flag = new boolean[1];
+						TypeName tentativeType = proc.mapType(holder, tn, false, flag);
+						if (flag[0])
+						{
+							type = tentativeType;
+						}
 						description = description.substring(first.length()).trim();
+					}
+					else
+					{
+						TypeName tn = new TypeName(first, null);
+						boolean[] flag = new boolean[1];
+						TypeName tentativeType = proc.mapType(holder, tn, false, flag);
+						if (flag[0])
+						{
+							type = tentativeType;
+							description = description.substring(first.length()).trim();
+						}
 					}
 				}
 			}

@@ -338,7 +338,9 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 				addMembersRecursively(holder.getType(intf), intf.getTypeArguments(), holder, members);
 			}
 
-			addMembersRecursively(holder.getType(tmm.getSupertype()), null, holder, members);
+			TypeName supertype = tmm.getSupertype();
+			ITypeBinding[] supertypeArgs = supertype != null && supertype.getTypeArguments().length > 0 ? supertype.getTypeArguments() : null;
+			addMembersRecursively(holder.getType(supertype), supertypeArgs, holder, members);
 
 			for (Entry<String, IMemberMetaModel> entry : tmm.members.entrySet())
 			{

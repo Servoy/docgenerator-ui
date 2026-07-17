@@ -371,8 +371,12 @@ public class TypeMetaModel implements Comparable<TypeMetaModel>, IPublicStore
 							List< ? > typeBounds = typeParameter.typeBounds();
 							if (typeBounds != null && !typeBounds.isEmpty() && typeBounds.get(0) instanceof Type type)
 							{
-								// default to first type bound
+								// default to first type bound (erase parameterized types)
 								boundType = type.resolveBinding();
+								if (boundType != null && boundType.isParameterizedType())
+								{
+									boundType = boundType.getErasure();
+								}
 							}
 						}
 						else

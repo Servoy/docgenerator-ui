@@ -14,7 +14,7 @@ pipeline {
     }
     
     parameters {
-        string(name: 'goals', defaultValue: 'clean install -Dtycho.localArtifacts=ignore', trim: false)
+        string(name: 'goals', defaultValue: 'clean install -Dtycho.localArtifacts=ignore -Dservoy.url=file:///data/www/latest/servoy_2026.03/update_site/', trim: false)
     }
     
     environment {

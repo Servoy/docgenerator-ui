@@ -9,9 +9,16 @@ pipeline {
         withFolderProperties()
     }
     
-    triggers {
-        githubPush()
-    }
+    properties([
+        pipelineTriggers([
+            [$class: 'GenericTrigger',
+                genericVariables: [[key: 'ref', value: '$.ref']],
+                token: 'docgenerator', // Same token used everywhere for this repo!
+                regexpFilterText: '$ref',
+                regexpFilterExpression: "^refs/heads/${targetBranch}\$"
+            ]
+        ])
+    ])
     
     parameters {
         string(name: 'goals', defaultValue: 'clean install -Dtycho.localArtifacts=ignore -Dservoy.url=file:///data/www/latest/servoy_2026.03/update_site/', trim: false)

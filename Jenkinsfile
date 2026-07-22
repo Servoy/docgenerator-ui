@@ -10,7 +10,14 @@ pipeline {
     }
     
     triggers {
-        githubPush()
+        GenericTrigger(
+            genericVariables: [
+                [key: 'ref', value: '$.ref']
+            ],
+            token: 'docgenerator',
+            regexpFilterText: '$ref',
+            regexpFilterExpression: "^refs/heads/${env.BRANCH}\$"
+        )
     }
     
     parameters {
@@ -28,11 +35,6 @@ pipeline {
     }
     
     stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
-        }
         stage('Build with Tycho 5') {
             steps {
                 configFileProvider([

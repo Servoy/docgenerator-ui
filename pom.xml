@@ -16,7 +16,7 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <!--  the following should be kept in sync with com.servoy.eclipse.target.target versions -->
-        <servoy.url>https://build.servoy.com/latest/servoy_master/update_site/</servoy.url>
+        <servoy.url>https://build.servoy.com/latest/servoy_release/update_site/</servoy.url>
         <eclipse.url>https://download.eclipse.org/releases/2025-12/</eclipse.url>
         <!-- end -->
     </properties>

@@ -13,58 +13,34 @@
         <tycho.version>4.0.9</tycho.version>
         <rhino.version>1.7.15.s4</rhino.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <servoy.version.range>[2024.12, 2025.6]</servoy.version.range>
-        <servoy.version>2025.3.3.4045_LTS</servoy.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <!--  the following should be kept in sync with com.servoy.eclipse.target.target versions -->
+        <servoy.url>https://build.servoy.com/latest/servoy_lts_2025/update_site/</servoy.url>
         <eclipse.url>https://download.eclipse.org/releases/2024-12/</eclipse.url>
-        <servoy.url>file:${user.dir}/target/p2</servoy.url>
         <!-- end -->
     </properties>
     <repositories>
-		 <repository>
-            <id>eclipse</id>
-            <url>${eclipse.url}</url>
-            <layout>p2</layout>
-        </repository>    
-        <repository>
+         <repository>
             <id>servoy</id>
             <url>${servoy.url}</url>
             <layout>p2</layout>
         </repository>
+        <repository>
+            <id>eclipse</id>
+            <url>${eclipse.url}</url>
+            <layout>p2</layout>
+        </repository>
     </repositories>
+
+     <distributionManagement>
+        <repository>
+            <id>my-s3-release-repo</id>
+            <url>file://C:/m2-repo/</url>
+        </repository>
+    </distributionManagement>
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.0.0</version>
-                <executions>
-                    <execution>
-                        <id>unpack_plugins</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>unpack</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>com.servoy</groupId>
-                                    <artifactId>
-                                        com.servoy.eclipse.product</artifactId>
-                                    <version>${servoy.version}</version>
-                                    <type>zip</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>
-                                        ${user.dir}/target/p2/</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-                <inherited>false</inherited>
-            </plugin>
             <plugin>
                 <groupId>org.eclipse.tycho</groupId>
                 <artifactId>tycho-maven-plugin</artifactId>
@@ -85,7 +61,7 @@
                 <groupId>org.eclipse.tycho</groupId>
                 <artifactId>target-platform-configuration</artifactId>
                 <version>${tycho.version}</version>
-                <configuration>
+                <configuration>             
                     <pomDependencies>consider</pomDependencies>
                     <environments>
                         <environment>
@@ -109,71 +85,6 @@
                             <arch>x86_64</arch>
                         </environment>
                     </environments>
-                    <filters>
-                        <filter>
-                            <type>eclipse-plugin</type>
-                            <id>org.eclipse.dltk.javascript.rhino</id>
-                            <restrictTo>
-                                <version>${rhino.version}</version>
-                            </restrictTo>
-                        </filter>
-                        <filter>
-                            <type>eclipse-plugin</type>
-                            <id>com.servoy.eclipse.model</id>
-                            <restrictTo>
-                                <versionRange>${servoy.version.range}</versionRange> <!-- alternative: <version> for selecting exactly one versions -->
-                            </restrictTo>
-                        </filter>
-                        <filter>
-                            <type>eclipse-plugin</type>
-                            <id>servoy_ngclient</id>
-                            <restrictTo>
-                                <versionRange>${servoy.version.range}</versionRange> <!-- alternative: <version> for selecting exactly one versions -->
-                            </restrictTo>
-                        </filter>
-                        <filter>
-                            <type>eclipse-plugin</type>
-                            <id>com.servoy.eclipse.ngclient</id>
-                            <restrictTo>
-                                <versionRange>${servoy.version.range}</versionRange> <!-- alternative: <version> for selecting exactly one versions -->
-                            </restrictTo>
-                        </filter>
-                        <filter>
-                            <type>eclipse-plugin</type>
-                            <id>j2db_log4j</id>
-                            <restrictTo>
-                                <versionRange>${servoy.version.range}</versionRange> <!-- alternative: <version> for selecting exactly one versions -->
-                            </restrictTo>
-                        </filter>
-                        <filter>
-                            <type>eclipse-plugin</type>
-                            <id>j2db_server</id>
-                            <restrictTo>
-                                <versionRange>${servoy.version.range}</versionRange> <!-- alternative: <version> for selecting exactly one versions -->
-                            </restrictTo>
-                        </filter>
-                        <filter>
-                            <type>eclipse-plugin</type>
-                            <id>servoy_base</id>
-                            <restrictTo>
-                                <versionRange>${servoy.version.range}</versionRange> <!-- alternative: <version> for selecting exactly one versions -->
-                            </restrictTo>
-                        </filter>
-                        <filter>
-                            <type>eclipse-plugin</type>
-                            <id>servoy_smart_client</id>
-                            <restrictTo>
-                                <versionRange>${servoy.version.range}</versionRange> <!-- alternative: <version> for selecting exactly one versions -->
-                            </restrictTo>
-                        </filter>
-                       <filter>
-                            <type>eclipse-plugin</type>
-                            <id>com.servoy.eclipse.docgenerator</id>
-                            <restrictTo>
-                                <version>${project.version}</version> <!-- alternative: <version> for selecting exactly one versions -->
-                            </restrictTo>
-                        </filter>
-                    </filters>
                 </configuration>
             </plugin>
             <plugin>
